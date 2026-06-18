@@ -71,7 +71,8 @@ export async function POST(request, { params }) {
         createdAt: new Date().toISOString(),
       }
       await db.collection('leads').insertOne(lead)
-      return json({ success: true, lead })
+      const { _id: _l, ...cleanLead } = lead
+      return json({ success: true, lead: cleanLead })
     }
 
     if (p === '/visits' || p === '/visit') {
@@ -88,7 +89,8 @@ export async function POST(request, { params }) {
         createdAt: new Date().toISOString(),
       }
       await db.collection('visits').insertOne(visit)
-      return json({ success: true, visit })
+      const { _id: _v, ...cleanVisit } = visit
+      return json({ success: true, visit: cleanVisit })
     }
 
     if (p === '/brochure') {
@@ -101,7 +103,8 @@ export async function POST(request, { params }) {
         createdAt: new Date().toISOString(),
       }
       await db.collection('brochure_requests').insertOne(req)
-      return json({ success: true, request: req })
+      const { _id: _b, ...cleanReq } = req
+      return json({ success: true, request: cleanReq })
     }
 
     if (p === '/calculator') {
@@ -113,7 +116,8 @@ export async function POST(request, { params }) {
         createdAt: new Date().toISOString(),
       }
       await db.collection('calculator_runs').insertOne(record)
-      return json({ success: true, record })
+      const { _id: _c, ...cleanRec } = record
+      return json({ success: true, record: cleanRec })
     }
 
     return json({ error: 'Not found', path: p }, 404)
