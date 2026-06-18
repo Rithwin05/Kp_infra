@@ -21,9 +21,8 @@ const montserrat = Montserrat({
 })
 
 export const metadata = {
-  title: 'KP Infra Projects — Building Telangana\'s Future Since 2003',
-  description: 'Premium HMDA & DTCP approved plots, luxury villas, farm lands and infrastructure developments across Hyderabad and Telangana. Schedule a site visit today.',
-  keywords: 'HMDA plots Hyderabad, farm lands Shadnagar, investment plots Telangana, luxury villas, DTCP approved layouts, KP Infra',
+  title: 'Kings Pride Infra — A Bridge to Your Dream Home | Est. 2003',
+  description: 'K.P. Infra Projects Pvt. Ltd. — Telangana\'s trusted real estate developer since 2003. Explore Golden Palm City (NH-44, Macharam), Vantage Farms, Chandan Valley and our delivered portfolio of HMDA, DTCP & MUDA approved layouts.',
 }
 
 export default function RootLayout({ children }) {

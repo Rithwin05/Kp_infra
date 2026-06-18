@@ -4,10 +4,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import {
   Phone, MessageCircle, Calendar, Download, MapPin, ArrowRight, ArrowUpRight,
-  CheckCircle2, Award, Building2, Leaf, Trees, Home, Landmark, Shield,
-  Sparkles, Star, ChevronRight, Menu, X, PlayCircle, TrendingUp, Users,
-  Clock, BadgeCheck, Mail, ChevronDown, Quote, Compass, Wallet, LineChart,
-  Plane, GraduationCap, Train, Hospital
+  Award, Building2, Trees, Home, Landmark, Shield, Sparkles, Star, ChevronRight,
+  Menu, X, TrendingUp, Users, Clock, BadgeCheck, Mail, ChevronDown, Quote,
+  Compass, LineChart, Plane, GraduationCap, Train, Hospital, FileText,
+  Layers, Ruler, KeyRound, Briefcase, CheckCircle2, Globe, Hammer
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,149 +15,32 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger
+  Dialog, DialogContent, DialogTitle, DialogDescription
 } from '@/components/ui/dialog'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { toast } from 'sonner'
+import { BRAND, STATS, PROJECTS, TIMELINE, TESTIMONIALS, BLOGS, FILTERS } from '@/lib/projects'
 
-// ------------------- DATA -------------------
+const FLAGSHIP = PROJECTS.find(p => p.isFlagship)
 const HERO_IMAGES = [
-  'https://images.unsplash.com/photo-1635111057505-3b7dcc2b72fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHw0fHxsdXh1cnklMjBlc3RhdGV8ZW58MHx8fHwxNzgxODEzMTExfDA&ixlib=rb-4.1.0&q=85',
-  'https://images.unsplash.com/photo-1756435292384-1bf32eff7baf?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxsdXh1cnklMjBlc3RhdGV8ZW58MHx8fHwxNzgxODEzMTExfDA&ixlib=rb-4.1.0&q=85',
-  'https://images.unsplash.com/photo-1505843795480-5cfb3c03f6ff?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxsdXh1cnklMjBlc3RhdGV8ZW58MHx8fHwxNzgxODEzMTExfDA&ixlib=rb-4.1.0&q=85',
-]
+  FLAGSHIP.gallery[0],
+  PROJECTS.find(p => p.id === 'vantage-farms').gallery[0],
+  PROJECTS.find(p => p.id === 'royale-meadows').gallery[0],
+  PROJECTS.find(p => p.id === 'moinabad-township').gallery[0],
+].filter(Boolean)
 
-const PROJECTS = [
-  {
-    id: 'kp-emerald-county',
-    name: 'KP Emerald County',
-    category: 'HMDA',
-    status: 'Ongoing',
-    type: 'HMDA Plots',
-    location: 'Shadnagar, Hyderabad',
-    distance: '5 km from ORR',
-    price: '₹ 18,500 / sq.yd onwards',
-    possession: 'Dec 2025',
-    rera: 'P02400003251',
-    image: 'https://images.pexels.com/photos/34823937/pexels-photo-34823937.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-    highlights: ['Gated Community', 'Clubhouse', '40 ft Roads', 'Avenue Plantation'],
-  },
-  {
-    id: 'kp-grand-villas',
-    name: 'KP Grand Villas',
-    category: 'Villas',
-    status: 'Upcoming',
-    type: 'Luxury Villas',
-    location: 'Kollur, Hyderabad',
-    distance: '2 km from Outer Ring Road',
-    price: '₹ 3.85 Cr onwards',
-    possession: 'Jun 2026',
-    rera: 'P02400004122',
-    image: 'https://images.unsplash.com/photo-1505843513577-22bb7d21e455?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBlc3RhdGV8ZW58MHx8fHwxNzgxODEzMTExfDA&ixlib=rb-4.1.0&q=85',
-    highlights: ['4 & 5 BHK Villas', 'Smart Homes', 'Private Pool', 'Concierge'],
-  },
-  {
-    id: 'kp-greens-retreat',
-    name: 'KP Greens Retreat',
-    category: 'Farm Lands',
-    status: 'Ongoing',
-    type: 'Managed Farm Lands',
-    location: 'Sadasivpet, Telangana',
-    distance: '45 min from Gachibowli',
-    price: '₹ 8,99,000 onwards',
-    possession: 'Ready to Register',
-    rera: 'P02400005099',
-    image: 'https://images.unsplash.com/photo-1635111057505-3b7dcc2b72fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHw0fHxsdXh1cnklMjBlc3RhdGV8ZW58MHx8fHwxNzgxODEzMTExfDA&ixlib=rb-4.1.0&q=85',
-    highlights: ['Mango Orchards', 'Caretaker Service', 'Farm Stay', 'Solar Powered'],
-  },
-  {
-    id: 'kp-royal-meadows',
-    name: 'KP Royal Meadows',
-    category: 'DTCP',
-    status: 'Completed',
-    type: 'DTCP Plots',
-    location: 'Yadadri, Telangana',
-    distance: '60 km from Airport',
-    price: '₹ 9,250 / sq.yd',
-    possession: 'Handover Done',
-    rera: 'P02300001847',
-    image: 'https://images.unsplash.com/photo-1756435292384-1bf32eff7baf?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwzfHxsdXh1cnklMjBlc3RhdGV8ZW58MHx8fHwxNzgxODEzMTExfDA&ixlib=rb-4.1.0&q=85',
-    highlights: ['Temple Town', 'Resale 2.3x', 'Clear Titles', 'Bank Loans'],
-  },
-  {
-    id: 'kp-skyline-residences',
-    name: 'KP Skyline Residences',
-    category: 'Villas',
-    status: 'Ongoing',
-    type: 'High-Rise Villas',
-    location: 'Tellapur, Hyderabad',
-    distance: '6 km from Financial District',
-    price: '₹ 2.45 Cr onwards',
-    possession: 'Mar 2026',
-    rera: 'P02400006611',
-    image: 'https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzV8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmV8ZW58MHx8fGJsYWNrfDE3ODE4MTMxMDR8MA&ixlib=rb-4.1.0&q=85',
-    highlights: ['Rooftop Sky Lounge', 'Italian Marble', 'EV Charging', '24/7 Security'],
-  },
-  {
-    id: 'kp-airport-heights',
-    name: 'KP Airport Heights',
-    category: 'HMDA',
-    status: 'Upcoming',
-    type: 'HMDA Plots',
-    location: 'Shamshabad, Hyderabad',
-    distance: '3 km from Airport',
-    price: '₹ 24,000 / sq.yd onwards',
-    possession: 'Sep 2026',
-    rera: 'P02400007223',
-    image: 'https://images.unsplash.com/photo-1505843795480-5cfb3c03f6ff?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxsdXh1cnklMjBlc3RhdGV8ZW58MHx8fHwxNzgxODEzMTExfDA&ixlib=rb-4.1.0&q=85',
-    highlights: ['Airport View', 'SEZ Proximity', 'Premium Boulevard', 'High Appreciation'],
-  },
-]
+const APPROVALS = ['HMDA', 'DTCP', 'MUDA', 'TG RERA', 'ISO 9001:2015', 'Bank Approved']
 
-const TIMELINE = [
-  { year: '2003', title: 'Foundation', desc: 'KP Infra founded with a vision to redefine Telangana real estate.' },
-  { year: '2008', title: 'First Township', desc: 'Delivered our first 120-acre integrated township in Shadnagar.' },
-  { year: '2014', title: 'Land Bank 1000+ Acres', desc: 'Strategic land acquisitions along the Hyderabad growth corridors.' },
-  { year: '2019', title: 'Luxury Vertical Launch', desc: 'Entered the premium villa and gated community segment.' },
-  { year: '2023', title: '20 Years of Trust', desc: 'Celebrated two decades with 12,000+ delighted families.' },
-  { year: '2025', title: 'The Next Chapter', desc: 'Pioneering AI-led property advisory and managed farm-land assets.' },
-]
-
-const TESTIMONIALS = [
-  { name: 'Ravi Teja', role: 'NRI Investor, Dubai', rating: 5, quote: 'KP Infra made my investment journey effortless from across continents. Their transparency and execution are second to none. My plot value doubled in 4 years.' },
-  { name: 'Sandhya Reddy', role: 'IT Professional, Hyderabad', rating: 5, quote: 'From the first site visit to registration, the KP team treated us like family. The villa quality is comparable to international standards.' },
-  { name: 'Arjun Khanna', role: 'Entrepreneur, Bangalore', rating: 5, quote: 'I have invested in three KP projects. Every commitment was honoured, every document was clean. That is rare in this industry.' },
-  { name: 'Dr. Meera Iyer', role: 'NRI, San Francisco', rating: 5, quote: 'The drone walkthroughs and virtual tours sealed it for me. KP Infra is the gold standard of Hyderabad real estate.' },
-]
-
-const BLOGS = [
-  { title: 'Why Shadnagar is the Next Real Estate Goldmine', tag: 'Market Insights', date: 'Jun 2025', read: '6 min', img: 'https://images.unsplash.com/photo-1505843795480-5cfb3c03f6ff?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxsdXh1cnklMjBlc3RhdGV8ZW58MHx8fHwxNzgxODEzMTExfDA&ixlib=rb-4.1.0&q=85' },
-  { title: 'Hyderabad 2030: Infrastructure Megatrends Investors Must Watch', tag: 'Investment', date: 'May 2025', read: '8 min', img: 'https://images.unsplash.com/photo-1637340139454-35be65edf2bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzV8MHwxfHNlYXJjaHw0fHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmV8ZW58MHx8fGJsYWNrfDE3ODE4MTMxMDR8MA&ixlib=rb-4.1.0&q=85' },
-  { title: 'HMDA vs DTCP Approvals \u2014 The Complete Buyer Guide', tag: 'Guide', date: 'May 2025', read: '5 min', img: 'https://images.unsplash.com/photo-1525367922492-f15fe7b709cb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzV8MHwxfHNlYXJjaHwyfHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmV8ZW58MHx8fGJsYWNrfDE3ODE4MTMxMDR8MA&ixlib=rb-4.1.0&q=85' },
-]
-
-const TRUST_STATS = [
-  { value: 22, suffix: '+', label: 'Years of Legacy', icon: Award },
-  { value: 12000, suffix: '+', label: 'Happy Families', icon: Users },
-  { value: 48, suffix: '', label: 'Projects Delivered', icon: Building2 },
-  { value: 3200, suffix: '+', label: 'Acres Developed', icon: Trees },
-]
-
-const APPROVALS = ['HMDA', 'DTCP', 'RERA Certified', 'ISO 9001:2015', 'CRISIL Rated', 'Bank Approved']
-
-// ------------------- HELPERS -------------------
 function useCountUp(target, inView, duration = 1800) {
   const [val, setVal] = useState(0)
   useEffect(() => {
     if (!inView) return
-    let start = 0
     const startTime = performance.now()
     const tick = (now) => {
       const p = Math.min((now - startTime) / duration, 1)
@@ -177,19 +60,19 @@ const formatINR = (n) => {
   return `₹ ${n.toLocaleString('en-IN')}`
 }
 
-// ------------------- COMPONENTS -------------------
+// ============================================================
+// NAV
+// ============================================================
 function TopBar() {
   return (
     <div className="hidden md:block bg-navy-deep text-white/80 text-xs">
       <div className="container mx-auto flex items-center justify-between py-2 px-6">
         <div className="flex items-center gap-6">
-          <span className="flex items-center gap-2"><Phone className="w-3 h-3 text-gold" /> +91 98480 00000</span>
-          <span className="flex items-center gap-2"><Mail className="w-3 h-3 text-gold" /> sales@kpinfra.com</span>
-          <span className="flex items-center gap-2"><MapPin className="w-3 h-3 text-gold" /> Hyderabad, Telangana</span>
+          <span className="flex items-center gap-2"><Phone className="w-3 h-3 text-gold" /> {BRAND.phoneIntl}</span>
+          <span className="flex items-center gap-2"><Mail className="w-3 h-3 text-gold" /> {BRAND.email}</span>
+          <span className="flex items-center gap-2"><MapPin className="w-3 h-3 text-gold" /> {BRAND.office.area}, {BRAND.office.city}</span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-gold tracking-widest font-numbers">RERA • HMDA • DTCP APPROVED</span>
-        </div>
+        <div className="text-gold tracking-widest font-numbers">TG RERA • DTCP • HMDA • MUDA APPROVED PROJECTS</div>
       </div>
     </div>
   )
@@ -204,25 +87,34 @@ function Nav({ onCTA }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const links = ['Home', 'About', 'Projects', 'Land Bank', 'Investor Relations', 'Blogs', 'Contact']
+  const links = [
+    { l: 'Home', h: '#home' },
+    { l: 'Projects', h: '#projects' },
+    { l: 'Flagship', h: '#flagship' },
+    { l: 'Legacy', h: '#legacy' },
+    { l: 'Investor', h: '#investor' },
+    { l: 'Blogs', h: '#blogs' },
+    { l: 'Contact', h: '#contact' },
+  ]
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-navy/95 backdrop-blur-md shadow-xl' : 'bg-transparent'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-navy/95 backdrop-blur-md shadow-2xl' : 'bg-transparent'}`}>
       <TopBar />
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         <a href="#home" className="flex items-center gap-3 group">
-          <div className="w-11 h-11 rounded-sm border-2 border-gold flex items-center justify-center bg-navy/30 group-hover:bg-gold/10 transition">
+          <div className="w-12 h-12 rounded-sm border-2 border-gold flex items-center justify-center bg-navy/30 group-hover:bg-gold/10 transition relative">
             <span className="font-heading text-gold text-xl font-bold tracking-tighter">KP</span>
+            <span className="absolute -bottom-1 -right-1 w-2 h-2 bg-gold rounded-full" />
           </div>
           <div className="leading-tight">
-            <div className="font-heading text-white text-lg tracking-wide">KP INFRA</div>
-            <div className="text-[10px] tracking-[0.3em] text-gold uppercase font-numbers">Projects since 2003</div>
+            <div className="font-heading text-white text-lg tracking-wide">{BRAND.displayName}</div>
+            <div className="text-[10px] tracking-[0.3em] text-gold uppercase font-numbers">Est. {BRAND.established} • Hyderabad</div>
           </div>
         </a>
 
-        <nav className="hidden lg:flex items-center gap-8">
-          {links.map(l => (
-            <a key={l} href={`#${l.toLowerCase().replace(/ /g,'-')}`}
+        <nav className="hidden xl:flex items-center gap-7">
+          {links.map(({ l, h }) => (
+            <a key={l} href={h}
               className="text-white/90 text-sm tracking-wide hover:text-gold transition relative group">
               {l}
               <span className="absolute -bottom-1 left-0 w-0 h-px bg-gold group-hover:w-full transition-all duration-300" />
@@ -236,15 +128,15 @@ function Nav({ onCTA }) {
           </Button>
         </div>
 
-        <button className="lg:hidden text-white" onClick={() => setOpen(!open)}>
+        <button className="xl:hidden text-white" onClick={() => setOpen(!open)}>
           {open ? <X /> : <Menu />}
         </button>
       </div>
 
       {open && (
-        <div className="lg:hidden bg-navy-deep border-t border-gold/20 px-6 py-4 space-y-3">
-          {links.map(l => (
-            <a key={l} href={`#${l.toLowerCase().replace(/ /g,'-')}`} onClick={() => setOpen(false)}
+        <div className="xl:hidden bg-navy-deep border-t border-gold/20 px-6 py-4 space-y-3">
+          {links.map(({ l, h }) => (
+            <a key={l} href={h} onClick={() => setOpen(false)}
               className="block text-white/90 hover:text-gold py-2">{l}</a>
           ))}
           <Button onClick={() => { onCTA(); setOpen(false) }} className="w-full bg-gold text-navy font-semibold">
@@ -256,18 +148,21 @@ function Nav({ onCTA }) {
   )
 }
 
+// ============================================================
+// HERO
+// ============================================================
 function Hero({ onCTA, onBrochure }) {
   const [idx, setIdx] = useState(0)
   useEffect(() => {
-    const t = setInterval(() => setIdx(i => (i + 1) % HERO_IMAGES.length), 6000)
+    const t = setInterval(() => setIdx(i => (i + 1) % HERO_IMAGES.length), 6500)
     return () => clearInterval(t)
   }, [])
 
   return (
-    <section id="home" className="relative h-screen min-h-[720px] w-full overflow-hidden">
+    <section id="home" className="relative h-screen min-h-[760px] w-full overflow-hidden">
       {HERO_IMAGES.map((src, i) => (
         <div key={src} className={`absolute inset-0 transition-opacity duration-[1800ms] ${i === idx ? 'opacity-100' : 'opacity-0'}`}>
-          <img src={src} alt="luxury estate" className="w-full h-full object-cover ken-burns" />
+          <img src={src} alt="" className="w-full h-full object-cover ken-burns" loading={i === 0 ? 'eager' : 'lazy'} />
         </div>
       ))}
       <div className="absolute inset-0 hero-overlay" />
@@ -280,33 +175,36 @@ function Hero({ onCTA, onBrochure }) {
         >
           <div className="flex items-center gap-3 mb-6">
             <div className="h-px w-12 bg-gold" />
-            <span className="text-gold text-xs tracking-[0.4em] font-numbers uppercase">Telangana&apos;s Premier Real Estate</span>
+            <span className="text-gold text-xs tracking-[0.4em] font-numbers uppercase">{BRAND.displayName} • Since {BRAND.established}</span>
           </div>
           <h1 className="font-heading text-5xl md:text-7xl lg:text-[88px] leading-[1.05] font-medium mb-6">
-            Building <span className="text-gradient-gold italic">Telangana&apos;s</span><br />
-            Future <span className="text-white/95">Since 2003</span>
+            A Bridge to Your<br />
+            <span className="text-gradient-gold italic">Dream Home</span>
           </h1>
           <p className="text-lg md:text-xl text-white/85 max-w-2xl mb-10 font-light leading-relaxed">
-            Premium HMDA &amp; DTCP plots, ultra-luxury villas, managed farm lands and landmark
-            infrastructure developments crafted for discerning investors and families.
+            Twenty-two years of crafting Telangana&apos;s most trusted addresses — from integrated
+            townships and managed farm lands to our flagship NH-44 highway city,
+            <span className="text-gold"> Golden Palm City.</span>
           </p>
 
           <div className="flex flex-wrap gap-4">
             <Button onClick={onCTA} size="lg" className="bg-gold hover:bg-gold-dark text-navy font-semibold tracking-wide h-14 px-8 gold-shadow text-base">
               <Calendar className="w-5 h-5 mr-2" /> Schedule Site Visit
             </Button>
-            <Button onClick={onBrochure} size="lg" variant="outline" className="h-14 px-8 bg-white/5 backdrop-blur-md border-white/40 text-white hover:bg-white/15 hover:text-white text-base">
-              <Download className="w-5 h-5 mr-2" /> Download Brochure
-            </Button>
-            <a href="https://wa.me/919848000000" target="_blank" rel="noopener noreferrer">
+            <a href="#flagship">
+              <Button size="lg" variant="outline" className="h-14 px-8 bg-white/5 backdrop-blur-md border-white/40 text-white hover:bg-white/15 hover:text-white text-base">
+                Discover Golden Palm City <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </a>
+            <a href={`https://wa.me/${BRAND.whatsapp}`} target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="ghost" className="h-14 px-8 text-white hover:bg-white/10 text-base">
-                <MessageCircle className="w-5 h-5 mr-2 text-green-400" /> Chat on WhatsApp
+                <MessageCircle className="w-5 h-5 mr-2 text-green-400" /> WhatsApp
               </Button>
             </a>
           </div>
 
           <div className="mt-16 flex items-center gap-6 flex-wrap">
-            {APPROVALS.slice(0, 4).map(a => (
+            {APPROVALS.slice(0, 5).map(a => (
               <div key={a} className="flex items-center gap-2 text-sm text-white/80">
                 <BadgeCheck className="w-4 h-4 text-gold" /> {a}
               </div>
@@ -322,8 +220,8 @@ function Hero({ onCTA, onBrochure }) {
 
       <div className="absolute right-6 bottom-10 flex flex-col gap-2 z-10">
         {HERO_IMAGES.map((_, i) => (
-          <button key={i} onClick={() => setIdx(i)}
-            className={`w-1 h-8 rounded-full transition-all ${i === idx ? 'bg-gold h-12' : 'bg-white/40'}`} />
+          <button key={i} onClick={() => setIdx(i)} aria-label="hero slide"
+            className={`w-1 rounded-full transition-all ${i === idx ? 'bg-gold h-12' : 'bg-white/40 h-8'}`} />
         ))}
       </div>
     </section>
@@ -344,11 +242,13 @@ function MarqueeApprovals() {
   )
 }
 
-function StatCard({ stat }) {
+// ============================================================
+// TRUST
+// ============================================================
+function StatCard({ value, suffix, label, icon: Icon }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-50px' })
-  const v = useCountUp(stat.value, inView)
-  const Icon = stat.icon
+  const v = useCountUp(value, inView)
   return (
     <div ref={ref} className="text-center group">
       <div className="w-16 h-16 mx-auto mb-4 rounded-full border border-gold/40 flex items-center justify-center bg-navy/5 group-hover:bg-gold/10 transition">
@@ -356,9 +256,9 @@ function StatCard({ stat }) {
       </div>
       <div className="font-heading text-5xl md:text-6xl text-navy font-medium">
         <span className="font-numbers">{v.toLocaleString('en-IN')}</span>
-        <span className="text-gold">{stat.suffix}</span>
+        <span className="text-gold">{suffix}</span>
       </div>
-      <div className="mt-2 text-sm tracking-[0.25em] uppercase text-muted-foreground">{stat.label}</div>
+      <div className="mt-2 text-sm tracking-[0.25em] uppercase text-muted-foreground">{label}</div>
     </div>
   )
 }
@@ -373,27 +273,34 @@ function TrustSection() {
           <div className="gold-divider w-32 mx-auto mt-6" />
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
-          {TRUST_STATS.map(s => <StatCard key={s.label} stat={s} />)}
+          <StatCard value={STATS.yearsOfLegacy} suffix="+" label="Years of Legacy" icon={Award} />
+          <StatCard value={STATS.happyFamilies} suffix="+" label="Happy Families" icon={Users} />
+          <StatCard value={STATS.projectsDelivered} suffix="+" label="Ventures Delivered" icon={Building2} />
+          <StatCard value={STATS.acresDeveloped} suffix="+" label="Acres Developed" icon={Trees} />
         </div>
       </div>
     </section>
   )
 }
 
-function ProjectCard({ p, onBook }) {
+// ============================================================
+// PROJECTS
+// ============================================================
+function ProjectCard({ p, onBook, onDetails }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.7 }}
-      className="group bg-white border border-border hover:border-gold/40 luxe-shadow rounded-sm overflow-hidden transition"
+      className="group bg-white border border-border hover:border-gold/40 luxe-shadow rounded-sm overflow-hidden transition flex flex-col"
     >
       <div className="relative h-72 overflow-hidden">
-        <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1500ms]" />
+        <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1500ms]" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/20 to-transparent" />
-        <div className="absolute top-4 left-4 flex gap-2">
-          <Badge className="bg-gold text-navy hover:bg-gold border-0 font-semibold tracking-wide">{p.category}</Badge>
+        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+          {p.isFlagship && <Badge className="bg-gold text-navy hover:bg-gold border-0 font-semibold tracking-wide">★ Flagship</Badge>}
+          <Badge className="bg-white/90 text-navy hover:bg-white border-0 font-medium">{p.category}</Badge>
           <Badge variant="outline" className="bg-white/10 backdrop-blur-md text-white border-white/30">{p.status}</Badge>
         </div>
         <div className="absolute bottom-4 left-4 right-4 text-white">
@@ -405,41 +312,50 @@ function ProjectCard({ p, onBook }) {
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-6 flex-1 flex flex-col">
+        <p className="text-sm text-muted-foreground italic mb-4 line-clamp-2">&ldquo;{p.tagline}&rdquo;</p>
+
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <div className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">Pricing</div>
-            <div className="font-numbers font-semibold text-navy mt-1">{p.price}</div>
+            <div className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">Plot Range</div>
+            <div className="font-numbers text-sm font-semibold text-navy mt-1">{p.plotRange}</div>
           </div>
           <div>
             <div className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">Possession</div>
-            <div className="font-numbers font-semibold text-navy mt-1">{p.possession}</div>
+            <div className="font-numbers text-sm font-semibold text-navy mt-1">{p.possession}</div>
+          </div>
+          <div>
+            <div className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">Approval</div>
+            <div className="text-xs text-navy mt-1">{p.approval}</div>
           </div>
           <div>
             <div className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">Distance</div>
-            <div className="text-sm text-navy mt-1">{p.distance}</div>
-          </div>
-          <div>
-            <div className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">RERA</div>
-            <div className="font-numbers text-xs text-navy mt-1">{p.rera}</div>
+            <div className="text-xs text-navy mt-1">{p.distance}</div>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-5">
-          {p.highlights.map(h => (
+          {p.highlights.slice(0, 4).map(h => (
             <span key={h} className="text-xs px-2.5 py-1 bg-navy/5 text-navy border border-navy/10 rounded-sm">{h}</span>
           ))}
         </div>
 
-        <div className="flex gap-2">
-          <Button onClick={() => onBook(p)} className="flex-1 bg-navy hover:bg-navy-deep text-white">
-            <Calendar className="w-4 h-4 mr-2" /> Book Visit
+        <div className="flex gap-2 mt-auto">
+          <Button onClick={() => onDetails(p)} className="flex-1 bg-navy hover:bg-navy-deep text-white">
+            View Details
           </Button>
-          <Button variant="outline" className="border-gold text-gold-dark hover:bg-gold hover:text-navy" onClick={() => onBook(p)}>
-            <Download className="w-4 h-4" />
+          <Button onClick={() => onBook(p)} variant="outline" className="border-gold text-gold-dark hover:bg-gold hover:text-navy" title="Book Visit">
+            <Calendar className="w-4 h-4" />
           </Button>
-          <a href={`https://wa.me/919848000000?text=I'm interested in ${encodeURIComponent(p.name)}`} target="_blank" rel="noopener noreferrer">
-            <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-600 hover:text-white">
+          {p.brochureUrl && (
+            <a href={p.brochureUrl} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" className="border-navy/30 text-navy hover:bg-navy hover:text-white" title="Brochure">
+                <FileText className="w-4 h-4" />
+              </Button>
+            </a>
+          )}
+          <a href={`https://wa.me/${BRAND.whatsapp}?text=Interested%20in%20${encodeURIComponent(p.name)}`} target="_blank" rel="noopener noreferrer">
+            <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-600 hover:text-white" title="WhatsApp">
               <MessageCircle className="w-4 h-4" />
             </Button>
           </a>
@@ -449,10 +365,16 @@ function ProjectCard({ p, onBook }) {
   )
 }
 
-function FeaturedProjects({ onBook }) {
+function FeaturedProjects({ onBook, onDetails }) {
   const [filter, setFilter] = useState('All')
-  const filters = ['All', 'HMDA', 'DTCP', 'Farm Lands', 'Villas']
-  const list = useMemo(() => filter === 'All' ? PROJECTS : PROJECTS.filter(p => p.category === filter), [filter])
+
+  const filtered = useMemo(() => {
+    if (filter === 'All') return PROJECTS
+    if (filter === 'Flagship') return PROJECTS.filter(p => p.isFlagship)
+    if (filter === 'Ongoing') return PROJECTS.filter(p => p.status === 'Ongoing')
+    if (filter === 'Completed') return PROJECTS.filter(p => p.status === 'Completed')
+    return PROJECTS.filter(p => p.category === filter)
+  }, [filter])
 
   return (
     <section id="projects" className="py-24 bg-muted/40">
@@ -460,10 +382,13 @@ function FeaturedProjects({ onBook }) {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
           <div>
             <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Signature Portfolio</div>
-            <h2 className="font-heading text-4xl md:text-5xl text-navy max-w-xl leading-tight">Featured Projects, <span className="italic text-gradient-gold">Crafted to Inspire</span></h2>
+            <h2 className="font-heading text-4xl md:text-5xl text-navy max-w-2xl leading-tight">
+              Ten Ventures, <span className="italic text-gradient-gold">One Promise</span>
+            </h2>
+            <p className="text-muted-foreground mt-4 max-w-2xl">From early townships to our flagship NH-44 city, every project carries the same commitment to clean titles and on-time delivery.</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {filters.map(f => (
+            {FILTERS.map(f => (
               <button key={f} onClick={() => setFilter(f)}
                 className={`px-5 py-2.5 text-xs tracking-[0.2em] uppercase border transition ${
                   filter === f ? 'bg-navy text-white border-navy' : 'bg-white text-navy border-border hover:border-gold hover:text-gold-dark'
@@ -475,30 +400,241 @@ function FeaturedProjects({ onBook }) {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {list.map(p => <ProjectCard key={p.id} p={p} onBook={onBook} />)}
+          {filtered.map(p => <ProjectCard key={p.id} p={p} onBook={onBook} onDetails={onDetails} />)}
         </div>
-
-        {list.length === 0 && (
-          <div className="text-center py-20 text-muted-foreground">No projects in this category yet. Check back soon.</div>
-        )}
       </div>
     </section>
   )
 }
 
+// ============================================================
+// GOLDEN PALM CITY FLAGSHIP — Standalone experience
+// ============================================================
+function FlagshipSection({ onBook }) {
+  const p = FLAGSHIP
+  const [galleryIdx, setGalleryIdx] = useState(0)
+
+  return (
+    <section id="flagship" className="relative bg-navy-deep text-white overflow-hidden">
+      {/* Backdrop image */}
+      <div className="absolute inset-0">
+        <img src={p.image} alt="" className="w-full h-full object-cover opacity-25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-navy-deep via-navy-deep/85 to-navy" />
+      </div>
+
+      <div className="relative container mx-auto px-6 py-24">
+        {/* Top intro */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-3 px-5 py-2 border border-gold/40 bg-gold/5 rounded-full mb-6">
+            <Sparkles className="w-4 h-4 text-gold" />
+            <span className="text-gold text-xs tracking-[0.4em] font-numbers uppercase">Our Flagship</span>
+          </div>
+          <h2 className="font-heading text-5xl md:text-7xl leading-tight">
+            <span className="text-gradient-gold italic">Golden Palm City</span>
+          </h2>
+          <p className="font-heading text-xl md:text-2xl text-white/80 mt-4 italic">&ldquo;{p.tagline}&rdquo;</p>
+          <div className="flex items-center justify-center gap-2 text-white/70 mt-4">
+            <MapPin className="w-4 h-4 text-gold" /> {p.location}
+          </div>
+        </div>
+
+        {/* Quick metrics strip */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+          {[
+            { label: 'Total Area', value: '7.27', unit: 'Acres', icon: Ruler },
+            { label: 'Blocks', value: '9', unit: 'A → I', icon: Layers },
+            { label: 'Plot Range', value: '161 – 2,950', unit: 'sq.yds', icon: Home },
+            { label: 'Highway', value: '200', unit: 'm to NH-44', icon: Compass },
+          ].map(m => (
+            <div key={m.label} className="border border-gold/20 bg-navy/40 backdrop-blur-sm p-5 text-center hover:border-gold transition">
+              <m.icon className="w-6 h-6 mx-auto text-gold mb-3" />
+              <div className="font-numbers text-3xl font-bold">{m.value}</div>
+              <div className="text-xs text-white/60 uppercase tracking-widest mt-1">{m.unit}</div>
+              <div className="text-[10px] text-gold/80 uppercase tracking-[0.3em] mt-2">{m.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Two column hero */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+          {/* Image slider */}
+          <div className="relative h-[480px] luxe-shadow rounded-sm overflow-hidden">
+            {p.gallery.map((src, i) => (
+              <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ${i === galleryIdx ? 'opacity-100' : 'opacity-0'}`}>
+                <img src={src} alt="" className="w-full h-full object-cover" />
+              </div>
+            ))}
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+              <div className="flex gap-2">
+                {p.gallery.map((_, i) => (
+                  <button key={i} onClick={() => setGalleryIdx(i)}
+                    className={`h-1 transition-all ${i === galleryIdx ? 'w-12 bg-gold' : 'w-6 bg-white/40'}`} />
+                ))}
+              </div>
+              <Badge className="bg-gold text-navy">{galleryIdx + 1} / {p.gallery.length}</Badge>
+            </div>
+          </div>
+
+          {/* Story */}
+          <div>
+            <div className="text-gold text-[10px] tracking-[0.4em] uppercase font-numbers mb-3">{p.approval}</div>
+            <h3 className="font-heading text-4xl mb-6">A premium highway-facing city, designed for legacy.</h3>
+            <p className="text-white/80 leading-relaxed font-light mb-6">
+              Spread across 7 acres 27 guntas along the Hyderabad–Bengaluru NH-44, Golden Palm City is more than a layout —
+              it is a meticulously planned residential and commercial community, just five minutes from the Jadcherla IT Park
+              and adjacent to the 1,000+ acre Pollepally SEZ.
+            </p>
+            <div className="space-y-3 mb-8">
+              {p.usps.map(u => (
+                <div key={u} className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-gold mt-0.5 shrink-0" />
+                  <span className="text-white/85">{u}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => onBook(p)} size="lg" className="bg-gold hover:bg-gold-dark text-navy font-semibold gold-shadow">
+                <Calendar className="w-5 h-5 mr-2" /> Book Private Tour
+              </Button>
+              {p.brochureUrl && (
+                <a href={p.brochureUrl} target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/15 hover:text-white">
+                    <FileText className="w-5 h-5 mr-2" /> Brochure
+                  </Button>
+                </a>
+              )}
+              {p.layoutPdf && (
+                <a href={p.layoutPdf} target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/15 hover:text-white">
+                    <Layers className="w-5 h-5 mr-2" /> Master Plan
+                  </Button>
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Composition pie / bars */}
+        <div className="grid lg:grid-cols-2 gap-10 mb-20">
+          <Card className="bg-navy/50 border-gold/20 p-8 text-white backdrop-blur-sm">
+            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Land Composition</div>
+            <h4 className="font-heading text-3xl mb-6">37,147 sq.yds, thoughtfully planned</h4>
+            <div className="space-y-5">
+              {Object.entries(p.composition).map(([key, c]) => (
+                <div key={key}>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>{c.label}</span>
+                    <span className="font-numbers"><span className="text-gold">{c.pct}%</span> · {c.sqYds} sq.yds</span>
+                  </div>
+                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full gradient-gold" style={{ width: `${c.pct}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card className="bg-navy/50 border-gold/20 p-8 text-white backdrop-blur-sm">
+            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Block Composition</div>
+            <h4 className="font-heading text-3xl mb-6">Nine premium blocks</h4>
+            <div className="grid grid-cols-3 gap-3">
+              {p.blocks.map(b => (
+                <div key={b.name} className="border border-gold/20 p-3 text-center hover:border-gold transition">
+                  <div className="font-heading text-gold text-2xl">{b.name}</div>
+                  <div className="font-numbers text-xs text-white/70 mt-1">{b.area}</div>
+                  <div className="text-[9px] uppercase tracking-widest text-white/40">sq.yds</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+
+        {/* Amenities */}
+        <div className="mb-20">
+          <div className="text-center mb-10">
+            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Lifestyle Amenities</div>
+            <h3 className="font-heading text-4xl">Everything for High Class Living</h3>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+            {p.amenities.map((a, i) => (
+              <motion.div
+                key={a}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.04 }}
+                className="border border-gold/20 bg-navy/30 p-4 text-sm text-white/85 hover:border-gold hover:bg-gold/5 transition"
+              >
+                <CheckCircle2 className="w-4 h-4 text-gold mb-2" />
+                {a}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Connectivity */}
+        <div className="mb-20">
+          <div className="text-center mb-10">
+            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Strategic Connectivity</div>
+            <h3 className="font-heading text-4xl">At the Crossroads of Growth</h3>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {p.nearby.map(n => (
+              <div key={n.name} className="border border-gold/20 bg-navy/30 p-5 hover:border-gold transition">
+                <Compass className="w-5 h-5 text-gold mb-3" />
+                <div className="text-sm text-white">{n.name}</div>
+                <div className="font-numbers text-xs text-gold mt-1">{n.dist}</div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 border border-gold/20 bg-navy/30 p-6">
+            <div className="text-gold text-[10px] tracking-[0.4em] uppercase font-numbers mb-3">Anchor Employers Nearby</div>
+            <div className="flex flex-wrap gap-2">
+              {p.neighbours.map(n => (
+                <span key={n} className="text-xs px-3 py-1.5 border border-white/15 text-white/80">{n}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center">
+          <h3 className="font-heading text-3xl md:text-5xl mb-6">Inventory is moving fast.</h3>
+          <p className="text-white/70 max-w-2xl mx-auto mb-8">
+            Speak to a Golden Palm City advisor today. Site visits include a 15-minute architectural walkthrough,
+            access to the live master plan, and a no-pressure investment consultation.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button onClick={() => onBook(p)} size="lg" className="bg-gold hover:bg-gold-dark text-navy font-semibold gold-shadow h-14 px-10">
+              <Calendar className="w-5 h-5 mr-2" /> Reserve Site Visit
+            </Button>
+            <a href={`https://wa.me/${BRAND.whatsapp}?text=I'm%20interested%20in%20Golden%20Palm%20City`} target="_blank" rel="noopener noreferrer">
+              <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/15 hover:text-white h-14 px-10">
+                <MessageCircle className="w-5 h-5 mr-2 text-green-400" /> Chat with Advisor
+              </Button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ============================================================
+// WHY KP / TIMELINE
+// ============================================================
 function WhyKP() {
   return (
-    <section id="about" className="py-24 bg-navy text-white relative overflow-hidden">
+    <section id="legacy" className="py-24 bg-navy text-white relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
-        <img src="https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzV8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmV8ZW58MHx8fGJsYWNrfDE3ODE4MTMxMDR8MA&ixlib=rb-4.1.0&q=85" alt="" className="w-full h-full object-cover" />
+        <img src={PROJECTS.find(p => p.id === 'moinabad-township').gallery[0]} alt="" className="w-full h-full object-cover" />
       </div>
       <div className="container mx-auto px-6 relative">
         <div className="text-center mb-16">
-          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Why KP Infra</div>
+          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">The Legacy</div>
           <h2 className="font-heading text-4xl md:text-5xl">Two Decades. <span className="italic text-gradient-gold">One Promise.</span></h2>
           <p className="text-white/70 max-w-2xl mx-auto mt-5 font-light">
-            From a single layout in 2003 to one of Telangana&apos;s most respected developers,
-            our journey has been built on transparency, design excellence and an obsession with delivery.
+            From Adarsh Nagar in 2009 to Golden Palm City in 2026, our journey has been built on
+            transparency, design excellence, and an obsession with on-time delivery.
           </p>
         </div>
 
@@ -532,10 +668,13 @@ function WhyKP() {
   )
 }
 
+// ============================================================
+// TESTIMONIALS, CALCULATOR, VISIT, BLOGS, CTA, FOOTER
+// ============================================================
 function Testimonials() {
   const [i, setI] = useState(0)
   useEffect(() => {
-    const t = setInterval(() => setI(x => (x + 1) % TESTIMONIALS.length), 6500)
+    const t = setInterval(() => setI(x => (x + 1) % TESTIMONIALS.length), 7000)
     return () => clearInterval(t)
   }, [])
   const t = TESTIMONIALS[i]
@@ -572,7 +711,7 @@ function Testimonials() {
 
           <div className="flex justify-center gap-2 mt-10">
             {TESTIMONIALS.map((_, k) => (
-              <button key={k} onClick={() => setI(k)}
+              <button key={k} onClick={() => setI(k)} aria-label="testimonial"
                 className={`h-1 transition-all ${k === i ? 'w-10 bg-gold' : 'w-5 bg-navy/20'}`} />
             ))}
           </div>
@@ -607,17 +746,17 @@ function InvestmentCalculator() {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ investment, appreciation, years }),
       })
-      toast.success('Personalized investment report saved. Our advisor will reach out.')
+      toast.success('Personalised investment report saved. Our advisor will reach out.')
     } catch { toast.error('Could not save. Try again.') }
   }
 
   return (
-    <section id="investor-relations" className="py-24 bg-gradient-to-b from-muted/40 to-white">
+    <section id="investor" className="py-24 bg-gradient-to-b from-muted/40 to-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Investor Confidence</div>
+          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Investor Intelligence</div>
           <h2 className="font-heading text-4xl md:text-5xl text-navy">Visualise Your <span className="italic text-gradient-gold">Wealth Growth</span></h2>
-          <p className="text-muted-foreground max-w-xl mx-auto mt-4">A transparent estimator powered by historic Telangana plot appreciation data.</p>
+          <p className="text-muted-foreground max-w-xl mx-auto mt-4">Calibrated against historic Telangana plot appreciation across our delivered portfolio.</p>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8 max-w-6xl mx-auto">
@@ -698,39 +837,6 @@ function InvestmentCalculator() {
   )
 }
 
-function LandmarksStrip() {
-  const items = [
-    { icon: Plane, label: 'Airport', value: '3 km' },
-    { icon: Train, label: 'Metro', value: '12 km' },
-    { icon: GraduationCap, label: 'Top Schools', value: '5+' },
-    { icon: Hospital, label: 'Multi-Specialty', value: '4 km' },
-    { icon: Compass, label: 'ORR Access', value: '7 km' },
-    { icon: Landmark, label: 'IT Corridor', value: '15 min' },
-  ]
-  return (
-    <section className="py-16 bg-navy-deep text-white">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-10">
-          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Strategic Connectivity</div>
-          <h3 className="font-heading text-3xl md:text-4xl">A Lifestyle Within Reach</h3>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
-          {items.map((it, i) => (
-            <motion.div key={i}
-              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.06 }}
-              className="text-center p-5 border border-gold/20 hover:border-gold transition group">
-              <it.icon className="w-7 h-7 mx-auto text-gold mb-3 group-hover:scale-110 transition" />
-              <div className="font-numbers text-2xl font-bold">{it.value}</div>
-              <div className="text-xs tracking-[0.2em] uppercase text-white/60 mt-1">{it.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 function ScheduleVisitForm() {
   const [form, setForm] = useState({ name: '', phone: '', email: '', project: '', date: '', time: '', notes: '' })
   const [loading, setLoading] = useState(false)
@@ -761,14 +867,15 @@ function ScheduleVisitForm() {
             <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Concierge Visit</div>
             <h2 className="font-heading text-4xl md:text-5xl text-navy leading-tight">Walk the Land. <span className="italic text-gradient-gold">Feel the Vision.</span></h2>
             <p className="text-muted-foreground mt-5 font-light leading-relaxed">
-              Schedule a curated site visit with our senior advisor. We arrange transportation
-              from Hyderabad city centre, a private property walkthrough, and a no-pressure consultation.
+              Schedule a curated site visit with our senior advisor. We arrange transportation from
+              Hyderabad city centre, a private walkthrough of your chosen project, and a no-pressure
+              consultation.
             </p>
             <div className="mt-8 space-y-4">
               {[
                 { icon: Clock, t: 'Within 30 mins', d: 'Confirmation call from your relationship manager' },
-                { icon: Shield, t: 'Zero Pressure', d: 'No aggressive sales tactics. Honest property guidance.' },
-                { icon: Award, t: 'Premium Hospitality', d: 'Curated tour with refreshments and concierge service.' },
+                { icon: Shield, t: 'Zero Pressure', d: 'Transparent property guidance — no aggressive tactics' },
+                { icon: Award, t: 'Premium Hospitality', d: 'Curated tour with refreshments and concierge' },
               ].map((b, i) => (
                 <div key={i} className="flex gap-4">
                   <div className="w-12 h-12 rounded-sm bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
@@ -780,6 +887,16 @@ function ScheduleVisitForm() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-8 p-5 bg-navy text-white">
+              <div className="text-gold text-[10px] tracking-[0.4em] uppercase font-numbers mb-2">Head Office</div>
+              <div className="text-sm font-light">{BRAND.office.line1}, {BRAND.office.line2}</div>
+              <div className="text-sm font-light">{BRAND.office.area}, {BRAND.office.city} – {BRAND.office.pincode}</div>
+              <div className="flex gap-4 mt-3 text-xs">
+                <a href={`tel:${BRAND.phone}`} className="text-gold hover:text-white"><Phone className="w-3 h-3 inline mr-1" /> {BRAND.phoneIntl}</a>
+                <a href={`mailto:${BRAND.email}`} className="text-gold hover:text-white"><Mail className="w-3 h-3 inline mr-1" /> {BRAND.email}</a>
+              </div>
             </div>
           </div>
 
@@ -805,7 +922,7 @@ function ScheduleVisitForm() {
                 <Select value={form.project} onValueChange={v => setForm({...form, project: v})}>
                   <SelectTrigger className="mt-1.5 h-11"><SelectValue placeholder="Choose a project" /></SelectTrigger>
                   <SelectContent>
-                    {PROJECTS.map(p => <SelectItem key={p.id} value={p.name}>{p.name}</SelectItem>)}
+                    {PROJECTS.map(p => <SelectItem key={p.id} value={p.name}>{p.name}{p.isFlagship ? ' ★ Flagship' : ''}</SelectItem>)}
                     <SelectItem value="Open Consultation">Open Consultation</SelectItem>
                   </SelectContent>
                 </Select>
@@ -830,7 +947,7 @@ function ScheduleVisitForm() {
               </div>
               <div>
                 <Label className="text-xs uppercase tracking-widest text-navy">Notes</Label>
-                <Textarea className="mt-1.5" rows={3} value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} placeholder="Anything specific you'd like us to prepare for your visit?" />
+                <Textarea className="mt-1.5" rows={3} value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} placeholder="Anything specific you'd like us to prepare?" />
               </div>
               <Button type="submit" disabled={loading} className="w-full h-12 bg-gold hover:bg-gold-dark text-navy font-semibold text-base">
                 {loading ? 'Booking…' : <>Confirm Site Visit <ArrowRight className="w-4 h-4 ml-2" /></>}
@@ -850,7 +967,7 @@ function Blogs() {
       <div className="container mx-auto px-6">
         <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
           <div>
-            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Insights &amp; Intelligence</div>
+            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Insights & Intelligence</div>
             <h2 className="font-heading text-4xl md:text-5xl text-navy">Stories from the <span className="italic text-gradient-gold">Growth Corridor</span></h2>
           </div>
           <Button variant="outline" className="border-navy text-navy hover:bg-navy hover:text-white">All Articles <ArrowUpRight className="w-4 h-4 ml-2" /></Button>
@@ -862,13 +979,14 @@ function Blogs() {
               viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.1 }}
               className="bg-white group cursor-pointer border border-border hover:border-gold/40 transition">
               <div className="h-56 overflow-hidden">
-                <img src={b.img} alt={b.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1200ms]" />
+                <img src={b.img} alt={b.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1200ms]" loading="lazy" />
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3">
                   <span className="text-gold-dark">{b.tag}</span> • <span>{b.date}</span> • <span>{b.read}</span>
                 </div>
                 <h3 className="font-heading text-xl text-navy group-hover:text-gold-dark transition leading-snug">{b.title}</h3>
+                <p className="text-sm text-muted-foreground mt-3 line-clamp-2">{b.excerpt}</p>
                 <div className="mt-5 inline-flex items-center text-sm text-navy group-hover:text-gold-dark">
                   Read more <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition" />
                 </div>
@@ -885,22 +1003,22 @@ function CTABand({ onCTA }) {
   return (
     <section className="py-20 relative overflow-hidden">
       <div className="absolute inset-0">
-        <img src="https://images.unsplash.com/photo-1635111057505-3b7dcc2b72fb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHw0fHxsdXh1cnklMjBlc3RhdGV8ZW58MHx8fHwxNzgxODEzMTExfDA&ixlib=rb-4.1.0&q=85" className="w-full h-full object-cover" alt="" />
+        <img src={FLAGSHIP.image} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-navy/85" />
       </div>
       <div className="relative container mx-auto px-6 text-center text-white">
-        <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Limited Inventory</div>
+        <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Limited Inventory at Golden Palm City</div>
         <h2 className="font-heading text-4xl md:text-6xl max-w-3xl mx-auto leading-tight">Your address of distinction <span className="italic text-gradient-gold">awaits.</span></h2>
         <p className="text-white/80 max-w-2xl mx-auto mt-5 font-light">
-          Join 12,000+ families who trusted KP Infra with the most important decision of their lives.
+          Join 12,000+ families who trusted Kings Pride Infra with the most important decision of their lives.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Button onClick={onCTA} size="lg" className="bg-gold hover:bg-gold-dark text-navy font-semibold h-14 px-10 gold-shadow">
             Schedule Site Visit <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
-          <a href="tel:+919848000000">
+          <a href={`tel:${BRAND.phone}`}>
             <Button variant="outline" size="lg" className="h-14 px-10 bg-transparent border-white/40 text-white hover:bg-white/10 hover:text-white">
-              <Phone className="w-5 h-5 mr-2" /> +91 98480 00000
+              <Phone className="w-5 h-5 mr-2" /> {BRAND.phoneIntl}
             </Button>
           </a>
         </div>
@@ -916,43 +1034,57 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-10 mb-12">
           <div>
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-11 h-11 rounded-sm border-2 border-gold flex items-center justify-center">
+              <div className="w-12 h-12 rounded-sm border-2 border-gold flex items-center justify-center">
                 <span className="font-heading text-gold text-xl font-bold">KP</span>
               </div>
               <div className="leading-tight">
-                <div className="font-heading text-lg">KP INFRA</div>
-                <div className="text-[10px] tracking-[0.3em] text-gold uppercase font-numbers">Since 2003</div>
+                <div className="font-heading text-lg">{BRAND.displayName}</div>
+                <div className="text-[10px] tracking-[0.3em] text-gold uppercase font-numbers">Est. {BRAND.established}</div>
               </div>
             </div>
             <p className="text-white/60 text-sm font-light leading-relaxed">
-              Telangana&apos;s most trusted real estate brand, building landmark addresses and lifelong relationships.
+              {BRAND.legalName}. {BRAND.tagline}.
             </p>
+            <div className="mt-4 text-xs text-white/40">
+              <Globe className="w-3 h-3 inline mr-1" /> {BRAND.website}
+            </div>
           </div>
 
           <div>
-            <h4 className="font-heading text-lg mb-5 text-gold">Explore</h4>
+            <h4 className="font-heading text-lg mb-5 text-gold">Projects</h4>
             <ul className="space-y-2.5 text-sm text-white/70">
-              {['About', 'Projects', 'Land Bank', 'Gallery', 'Investor Relations', 'Careers', 'Blogs'].map(x =>
-                <li key={x}><a href={`#${x.toLowerCase()}`} className="hover:text-gold transition">{x}</a></li>
-              )}
+              {PROJECTS.slice(0, 7).map(p => (
+                <li key={p.id}>
+                  <a href="#projects" className="hover:text-gold transition">
+                    {p.name} {p.isFlagship && <span className="text-gold text-xs">★</span>}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
             <h4 className="font-heading text-lg mb-5 text-gold">Reach Us</h4>
             <div className="space-y-3 text-sm text-white/70">
-              <div className="flex items-start gap-2"><MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" /> KP House, Banjara Hills, Road No. 12, Hyderabad — 500034</div>
-              <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gold" /> +91 98480 00000</div>
-              <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-gold" /> sales@kpinfra.com</div>
+              <div className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
+                <span>{BRAND.office.line1}, {BRAND.office.area}, {BRAND.office.city} – {BRAND.office.pincode}</span>
+              </div>
+              <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gold" /> {BRAND.phoneIntl}</div>
+              <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-gold" /> {BRAND.email}</div>
+              <div className="flex items-center gap-2"><Globe className="w-4 h-4 text-gold" /> {BRAND.website}</div>
             </div>
           </div>
 
           <div>
             <h4 className="font-heading text-lg mb-5 text-gold">Newsletter</h4>
-            <p className="text-white/60 text-sm mb-4">Get curated market insights and project launch alerts.</p>
+            <p className="text-white/60 text-sm mb-4">Get curated market insights and Golden Palm City launch updates.</p>
             <div className="flex gap-2">
               <Input placeholder="Email address" className="bg-navy border-white/20 text-white placeholder:text-white/40" />
               <Button className="bg-gold hover:bg-gold-dark text-navy"><ArrowRight className="w-4 h-4" /></Button>
+            </div>
+            <div className="mt-6 text-xs text-white/40">
+              {APPROVALS.join(' • ')}
             </div>
           </div>
         </div>
@@ -960,7 +1092,7 @@ function Footer() {
         <Separator className="bg-white/10" />
 
         <div className="pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50">
-          <div>© {new Date().getFullYear()} KP Infra Projects Pvt. Ltd. All Rights Reserved.</div>
+          <div>© {new Date().getFullYear()} {BRAND.legalName}. All Rights Reserved.</div>
           <div className="flex gap-6">
             <a className="hover:text-gold" href="#">Privacy</a>
             <a className="hover:text-gold" href="#">Terms</a>
@@ -972,22 +1104,24 @@ function Footer() {
   )
 }
 
+// ============================================================
+// FLOATING ACTIONS & DIALOGS
+// ============================================================
 function FloatingActions({ onCTA }) {
   return (
     <>
-      <a href="https://wa.me/919848000000?text=Hi%20KP%20Infra%20Team" target="_blank" rel="noopener noreferrer"
+      <a href={`https://wa.me/${BRAND.whatsapp}?text=Hi%20Kings%20Pride%20Infra`} target="_blank" rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center shadow-2xl transition group">
         <MessageCircle className="w-6 h-6 text-white" />
         <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping" />
         <span className="absolute right-16 bg-white text-navy text-xs px-3 py-1.5 rounded shadow-lg opacity-0 group-hover:opacity-100 transition whitespace-nowrap font-medium">Chat with us</span>
       </a>
 
-      {/* Mobile sticky CTA */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-navy text-white border-t border-gold/20 grid grid-cols-3">
-        <a href="tel:+919848000000" className="py-3 text-center text-xs flex flex-col items-center gap-1 hover:bg-navy-deep">
+        <a href={`tel:${BRAND.phone}`} className="py-3 text-center text-xs flex flex-col items-center gap-1 hover:bg-navy-deep">
           <Phone className="w-4 h-4 text-gold" /> Call
         </a>
-        <a href="https://wa.me/919848000000" target="_blank" rel="noopener noreferrer" className="py-3 text-center text-xs flex flex-col items-center gap-1 bg-green-600">
+        <a href={`https://wa.me/${BRAND.whatsapp}`} target="_blank" rel="noopener noreferrer" className="py-3 text-center text-xs flex flex-col items-center gap-1 bg-green-600">
           <MessageCircle className="w-4 h-4" /> WhatsApp
         </a>
         <button onClick={onCTA} className="py-3 text-center text-xs flex flex-col items-center gap-1 bg-gold text-navy font-semibold">
@@ -1055,13 +1189,130 @@ function LeadDialog({ open, onOpenChange, project }) {
   )
 }
 
-// ------------------- ROOT -------------------
+function ProjectDetailDialog({ open, onOpenChange, project, onBook }) {
+  if (!project) return null
+  const p = project
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
+        <div className="relative h-72 overflow-hidden">
+          <img src={p.image} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/40 to-transparent" />
+          <div className="absolute bottom-4 left-6 right-6 text-white">
+            <div className="flex flex-wrap gap-2 mb-3">
+              {p.isFlagship && <Badge className="bg-gold text-navy">★ Flagship</Badge>}
+              <Badge className="bg-white/90 text-navy">{p.category}</Badge>
+              <Badge variant="outline" className="bg-white/10 backdrop-blur-md text-white border-white/30">{p.status}</Badge>
+            </div>
+            <DialogTitle className="font-heading text-3xl">{p.name}</DialogTitle>
+            <p className="text-sm italic text-gold/90 mt-1">&ldquo;{p.tagline}&rdquo;</p>
+            <p className="text-sm text-white/80 mt-1"><MapPin className="w-3.5 h-3.5 inline text-gold mr-1" /> {p.location}</p>
+          </div>
+        </div>
+
+        <div className="p-8 space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { l: 'Type', v: p.type },
+              { l: 'Plot Range', v: p.plotRange },
+              { l: 'Total Area', v: p.totalArea || '—' },
+              { l: 'Possession', v: p.possession },
+              { l: 'Approval', v: p.approval },
+              { l: 'RERA', v: p.rera || '—' },
+              { l: 'Distance', v: p.distance },
+              { l: 'Price', v: p.price },
+            ].map(x => (
+              <div key={x.l} className="border-l-2 border-gold pl-3">
+                <div className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">{x.l}</div>
+                <div className="text-sm text-navy font-medium mt-1">{x.v}</div>
+              </div>
+            ))}
+          </div>
+
+          {p.usps.length > 0 && (
+            <div>
+              <h4 className="font-heading text-xl text-navy mb-3">Why this project</h4>
+              <div className="space-y-2">
+                {p.usps.map(u => (
+                  <div key={u} className="flex items-start gap-2 text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-gold mt-0.5 shrink-0" /> {u}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {p.amenities.length > 0 && (
+            <div>
+              <h4 className="font-heading text-xl text-navy mb-3">Amenities</h4>
+              <div className="flex flex-wrap gap-2">
+                {p.amenities.map(a => (
+                  <span key={a} className="text-xs px-3 py-1.5 bg-navy/5 text-navy border border-navy/10">{a}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {p.nearby && p.nearby.length > 0 && (
+            <div>
+              <h4 className="font-heading text-xl text-navy mb-3">Nearby</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {p.nearby.map(n => (
+                  <div key={n.name} className="border border-border p-3">
+                    <div className="text-sm text-navy">{n.name}</div>
+                    <div className="text-xs text-gold-dark font-numbers mt-0.5">{n.dist}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {p.gallery.length > 1 && (
+            <div>
+              <h4 className="font-heading text-xl text-navy mb-3">Gallery</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {p.gallery.map((g, i) => (
+                  <img key={i} src={g} alt="" className="w-full h-32 object-cover" loading="lazy" />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-3 pt-4 border-t">
+            <Button onClick={() => { onBook(p); onOpenChange(false) }} className="flex-1 bg-gold hover:bg-gold-dark text-navy font-semibold">
+              <Calendar className="w-4 h-4 mr-2" /> Book Site Visit
+            </Button>
+            {p.brochureUrl && (
+              <a href={p.brochureUrl} target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" className="border-navy text-navy hover:bg-navy hover:text-white">
+                  <FileText className="w-4 h-4 mr-2" /> Brochure
+                </Button>
+              </a>
+            )}
+            <a href={`https://wa.me/${BRAND.whatsapp}?text=Interested%20in%20${encodeURIComponent(p.name)}`} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-600 hover:text-white">
+                <MessageCircle className="w-4 h-4 mr-2" /> WhatsApp
+              </Button>
+            </a>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ============================================================
+// ROOT
+// ============================================================
 export default function App() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogProject, setDialogProject] = useState(null)
+  const [detailsOpen, setDetailsOpen] = useState(false)
+  const [detailsProject, setDetailsProject] = useState(null)
 
   const openCTA = () => { setDialogProject(null); setDialogOpen(true) }
   const onBook = (p) => { setDialogProject(p); setDialogOpen(true) }
+  const onDetails = (p) => { setDetailsProject(p); setDetailsOpen(true) }
 
   return (
     <main className="min-h-screen bg-background">
@@ -1069,9 +1320,9 @@ export default function App() {
       <Hero onCTA={openCTA} onBrochure={openCTA} />
       <MarqueeApprovals />
       <TrustSection />
-      <FeaturedProjects onBook={onBook} />
+      <FeaturedProjects onBook={onBook} onDetails={onDetails} />
+      <FlagshipSection onBook={onBook} />
       <WhyKP />
-      <LandmarksStrip />
       <InvestmentCalculator />
       <Testimonials />
       <ScheduleVisitForm />
@@ -1080,6 +1331,7 @@ export default function App() {
       <Footer />
       <FloatingActions onCTA={openCTA} />
       <LeadDialog open={dialogOpen} onOpenChange={setDialogOpen} project={dialogProject} />
+      <ProjectDetailDialog open={detailsOpen} onOpenChange={setDetailsOpen} project={detailsProject} onBook={onBook} />
       <div className="md:hidden h-14" />
     </main>
   )
