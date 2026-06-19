@@ -25,15 +25,16 @@ import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { toast } from 'sonner'
-import { BRAND, STATS, PROJECTS, TIMELINE, TESTIMONIALS, BLOGS, FILTERS } from '@/lib/projects'
+import { BRAND, STATS, PROJECTS, TIMELINE, TESTIMONIALS, BLOGS, FILTERS, HERO_RENDERS } from '@/lib/projects'
 
 const FLAGSHIP = PROJECTS.find(p => p.isFlagship)
 const HERO_IMAGES = [
-  FLAGSHIP.gallery[0],
-  PROJECTS.find(p => p.id === 'vantage-farms').gallery[0],
-  PROJECTS.find(p => p.id === 'royale-meadows').gallery[0],
-  PROJECTS.find(p => p.id === 'moinabad-township').gallery[0],
-].filter(Boolean)
+  HERO_RENDERS.goldenPalmTower,
+  HERO_RENDERS.goldenPalmEntrance,
+  HERO_RENDERS.goldenPalmGate,
+  HERO_RENDERS.vantageFarms,
+  HERO_RENDERS.chandanValley,
+]
 
 const APPROVALS = ['HMDA', 'DTCP', 'MUDA', 'TG RERA', 'ISO 9001:2015', 'Bank Approved']
 
