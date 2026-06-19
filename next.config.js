@@ -1,13 +1,18 @@
 const nextConfig = {
-  output: 'standalone',
+  // NOTE: Do NOT set output:'standalone' when deploying to Vercel.
+  // Vercel manages its own serverless output format.
   images: {
     unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: 'avatars.githubusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'customer-assets.emergentagent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'drive.google.com', pathname: '/**' },
     ],
   },
   experimental: {
-    // Remove if not using Server Components
+    // In Next.js 14.x the correct key is still serverComponentsExternalPackages.
+    // It was promoted to the stable top-level serverExternalPackages in Next 15.
     serverComponentsExternalPackages: ['mongodb'],
   },
   webpack(config, { dev }) {
@@ -20,10 +25,6 @@ const nextConfig = {
       };
     }
     return config;
-  },
-  onDemandEntries: {
-    maxInactiveAge: 10000,
-    pagesBufferLength: 2,
   },
   async headers() {
     return [

@@ -5,11 +5,20 @@ import { v4 as uuidv4 } from 'uuid'
 const uri = process.env.MONGO_URL
 const dbName = process.env.DB_NAME || 'kp_infra'
 
-let cachedClient = null
+// Use global to preserve connection across warm Lambda invocations on Vercel
+let cachedClient = global._mongoClient || null
+
 async function getDb() {
+  if (!uri) {
+    throw new Error('MONGO_URL environment variable is not set. Add it to your Vercel project settings.')
+  }
   if (!cachedClient) {
-    cachedClient = new MongoClient(uri)
+    cachedClient = new MongoClient(uri, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 10000,
+    })
     await cachedClient.connect()
+    global._mongoClient = cachedClient
   }
   return cachedClient.db(dbName)
 }
