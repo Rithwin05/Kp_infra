@@ -21,6 +21,7 @@ const montserrat = Montserrat({
 })
 
 export const metadata = {
+  metadataBase: new URL('https://www.kpinfraprojects.com'),
   title: 'Kings Pride Infra — A Bridge to Your Dream Home | Est. 2003',
   description: 'K.P. Infra Projects Pvt. Ltd. — Telangana\'s trusted real estate developer since 2003. Explore Golden Palm City (NH-44, Macharam), Vantage Farms, Chandan Valley and our delivered portfolio of HMDA, DTCP & MUDA approved layouts.',
 }

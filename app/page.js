@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import { motion, useInView, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion'
 import {
   Phone, MessageCircle, Calendar, MapPin, ArrowRight, ArrowUpRight,
   Award, Building2, Trees, Home, Shield, Sparkles, Star, ChevronRight,
   Menu, X, Users, Clock, BadgeCheck, Mail, ChevronDown, Quote,
-  Compass, FileText, Layers, Ruler, CheckCircle2, Globe
+  Compass, FileText, Layers, Ruler, CheckCircle2, Globe, Eye
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -240,6 +241,7 @@ function Nav({ onCTA }) {
   const links = [
     { l: 'Home', h: '#home' },
     { l: 'Projects', h: '#projects' },
+    { l: 'Portfolio', h: '/projects' },
     { l: 'Flagship', h: '#flagship' },
     { l: 'Legacy', h: '#legacy' },
     { l: 'Investor', h: '#investor' },
@@ -513,13 +515,15 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
         shadow-[0_4px_20px_rgba(11,31,53,0.08)] hover:shadow-[0_20px_60px_rgba(11,31,53,0.18)]"
     >
       <div className="relative h-72 overflow-hidden">
-        <motion.img
-          src={p.image} alt={p.name} className="w-full h-full object-cover"
-          loading="lazy"
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/20 to-transparent" />
+        <Link href={`/projects/${p.slug || p.id}`} className="block w-full h-full">
+          <motion.img
+            src={p.image} alt={p.name} className="w-full h-full object-cover"
+            loading="lazy"
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 1.5, ease: 'easeOut' }}
+          />
+        </Link>
+        <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/20 to-transparent pointer-events-none" />
 
         {/* Badges */}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
@@ -530,7 +534,9 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
 
         <div className="absolute bottom-4 left-4 right-4 text-white">
           <div className="text-xs tracking-[0.2em] uppercase text-gold/90">{p.type}</div>
-          <h3 className="font-heading text-2xl mt-1">{p.name}</h3>
+          <Link href={`/projects/${p.slug || p.id}`} className="hover:text-gold transition-colors">
+            <h3 className="font-heading text-2xl mt-1">{p.name}</h3>
+          </Link>
           <div className="flex items-center gap-2 text-sm text-white/85 mt-1">
             <MapPin className="w-3.5 h-3.5 text-gold" /> {p.location}
           </div>
@@ -561,8 +567,14 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
         </div>
 
         <div className="flex gap-2 mt-auto">
-          <Button onClick={() => onDetails(p)} className="flex-1 bg-navy hover:bg-navy-deep text-white transition-all duration-300">
-            View Details
+          <Link href={`/projects/${p.slug || p.id}`} className="flex-1">
+            <Button className="w-full bg-navy hover:bg-navy-deep text-white transition-all duration-300 flex items-center justify-center gap-1.5 shadow-md">
+              <span>View Project</span>
+              <ChevronRight className="w-3.5 h-3.5 text-gold" />
+            </Button>
+          </Link>
+          <Button onClick={() => onDetails(p)} variant="outline" className="border-navy/30 text-navy hover:bg-navy hover:text-white transition-all" title="Quick Preview">
+            <Eye className="w-4 h-4" />
           </Button>
           <Button onClick={() => onBook(p)} variant="outline" className="border-gold text-gold-dark hover:bg-gold hover:text-navy transition-all duration-300" title="Book Visit">
             <Calendar className="w-4 h-4" />
@@ -625,6 +637,15 @@ function FeaturedProjects({ onBook, onDetails }) {
           {filtered.map((p, i) => (
             <ProjectCard key={p.id} p={p} onBook={onBook} onDetails={onDetails} delay={i * 0.05} />
           ))}
+        </div>
+
+        <div className="mt-14 text-center">
+          <Link href="/projects">
+            <Button size="lg" className="bg-navy hover:bg-navy-deep text-white border border-gold/40 hover:border-gold px-8 py-6 rounded-xl font-bold tracking-wider text-xs uppercase shadow-xl hover:scale-105 transition-all duration-300">
+              <span>Explore All 10 Projects in Dedicated Directory</span>
+              <ArrowRight className="w-4 h-4 ml-2 text-gold" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
@@ -876,11 +897,16 @@ function FlagshipSection({ onBook }) {
             access to the live master plan, and a no-pressure investment consultation.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button onClick={() => onBook(p)} size="lg" className="bg-gold hover:bg-gold-dark text-navy font-semibold gold-shadow h-14 px-10 transition-all duration-300 hover:scale-105">
+            <Link href="/projects/golden-palm-city">
+              <Button size="lg" className="bg-gradient-to-r from-gold via-[#F4D078] to-[#B8860B] hover:brightness-110 text-navy font-bold gold-shadow h-14 px-8 transition-all duration-300 hover:scale-105">
+                <Sparkles className="w-5 h-5 mr-2" /> Explore Golden Palm City
+              </Button>
+            </Link>
+            <Button onClick={() => onBook(p)} size="lg" variant="outline" className="border-gold text-gold hover:bg-gold hover:text-navy h-14 px-8 transition-all duration-300">
               <Calendar className="w-5 h-5 mr-2" /> Reserve Site Visit
             </Button>
             <a href={`https://wa.me/${BRAND.whatsapp}?text=I'm%20interested%20in%20Golden%20Palm%20City`} target="_blank" rel="noopener noreferrer">
-              <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/15 hover:text-white h-14 px-10">
+              <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/15 hover:text-white h-14 px-8">
                 <MessageCircle className="w-5 h-5 mr-2 text-green-400" /> Chat with Advisor
               </Button>
             </a>
@@ -900,7 +926,7 @@ function WhyKP() {
   return (
     <section ref={ref} id="legacy" className="py-24 bg-navy text-white relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
-        <img src={PROJECTS.find(p => p.id === 'moinabad-township').gallery[0]} alt="" className="w-full h-full object-cover" />
+        <img src={PROJECTS.find(p => p.id === 'moinabad-township')?.image || HERO_RENDERS.goldenPalmGate} alt="" className="w-full h-full object-cover" />
       </div>
       <div className="container mx-auto px-6 relative">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
