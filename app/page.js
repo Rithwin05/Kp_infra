@@ -161,7 +161,6 @@ function ScrollProgress() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 })
   return (
     <motion.div
-      style={{ scaleX, transformOrigin: '0%' }}
       className="fixed top-0 left-0 right-0 h-[2px] z-[200] origin-left"
       style={{ scaleX, background: 'linear-gradient(90deg,#B8860B,#F5E070,#D4AF37,#F5E070,#B8860B)', transformOrigin: '0%' }}
     />
@@ -333,9 +332,9 @@ function Hero({ onCTA }) {
   return (
     <section ref={ref} id="home" className="relative h-screen min-h-[760px] w-full overflow-hidden">
       {/* Parallax background */}
-      <motion.div style={{ y: imgY }} className="absolute inset-0 will-change-transform" style={{ y: imgY, scale: 1.15 }}>
+      <motion.div className="absolute inset-0 will-change-transform" style={{ y: imgY, scale: 1.15 }}>
         {HERO_IMAGES.map((src, i) => (
-          <div key={src} className={`absolute inset-0 transition-opacity duration-[2000ms] ease-in-out ${i === idx ? 'opacity-100' : 'opacity-0'}`}>
+          <div key={src} style={{ transitionDuration: '2000ms' }} className={`absolute inset-0 transition-opacity ease-in-out ${i === idx ? 'opacity-100' : 'opacity-0'}`}>
             <img src={src} alt="" className="w-full h-full object-cover ken-burns" loading={i === 0 ? 'eager' : 'lazy'} />
           </div>
         ))}

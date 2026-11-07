@@ -5,13 +5,19 @@ import { v4 as uuidv4 } from 'uuid'
 const uri = process.env.MONGO_URL
 const dbName = process.env.DB_NAME || 'kp_infra'
 
+// In-memory store fallback when MONGO_URL is not provided
+global._inMemoryStore = global._inMemoryStore || {
+  leads: [],
+  visits: [],
+  brochure_requests: [],
+  calculator_runs: [],
+}
+
 // Use global to preserve connection across warm Lambda invocations on Vercel
 let cachedClient = global._mongoClient || null
 
 async function getDb() {
-  if (!uri) {
-    throw new Error('MONGO_URL environment variable is not set. Add it to your Vercel project settings.')
-  }
+  if (!uri) return null
   if (!cachedClient) {
     cachedClient = new MongoClient(uri, {
       serverSelectionTimeoutMS: 5000,
@@ -42,17 +48,28 @@ export async function GET(request, { params }) {
   const p = route(path)
   try {
     if (p === '/' || p === '/health') {
-      return json({ status: 'ok', service: 'KP Infra API', time: new Date().toISOString() })
+      return json({
+        status: 'ok',
+        service: 'KP Infra API',
+        storage: uri ? 'mongodb' : 'in-memory',
+        time: new Date().toISOString(),
+      })
     }
     if (p === '/leads') {
       const db = await getDb()
-      const leads = await db.collection('leads').find({}, { projection: { _id: 0 } }).sort({ createdAt: -1 }).limit(100).toArray()
-      return json({ leads })
+      if (db) {
+        const leads = await db.collection('leads').find({}, { projection: { _id: 0 } }).sort({ createdAt: -1 }).limit(100).toArray()
+        return json({ leads })
+      }
+      return json({ leads: global._inMemoryStore.leads })
     }
     if (p === '/visits') {
       const db = await getDb()
-      const visits = await db.collection('visits').find({}, { projection: { _id: 0 } }).sort({ createdAt: -1 }).limit(100).toArray()
-      return json({ visits })
+      if (db) {
+        const visits = await db.collection('visits').find({}, { projection: { _id: 0 } }).sort({ createdAt: -1 }).limit(100).toArray()
+        return json({ visits })
+      }
+      return json({ visits: global._inMemoryStore.visits })
     }
     return json({ error: 'Not found', path: p }, 404)
   } catch (e) {
@@ -79,9 +96,13 @@ export async function POST(request, { params }) {
         source: body.source || 'website',
         createdAt: new Date().toISOString(),
       }
-      await db.collection('leads').insertOne(lead)
-      const { _id: _l, ...cleanLead } = lead
-      return json({ success: true, lead: cleanLead })
+      if (db) {
+        await db.collection('leads').insertOne(lead)
+        const { _id: _l, ...cleanLead } = lead
+        return json({ success: true, lead: cleanLead })
+      }
+      global._inMemoryStore.leads.unshift(lead)
+      return json({ success: true, lead, inMemory: true })
     }
 
     if (p === '/visits' || p === '/visit') {
@@ -97,9 +118,13 @@ export async function POST(request, { params }) {
         status: 'pending',
         createdAt: new Date().toISOString(),
       }
-      await db.collection('visits').insertOne(visit)
-      const { _id: _v, ...cleanVisit } = visit
-      return json({ success: true, visit: cleanVisit })
+      if (db) {
+        await db.collection('visits').insertOne(visit)
+        const { _id: _v, ...cleanVisit } = visit
+        return json({ success: true, visit: cleanVisit })
+      }
+      global._inMemoryStore.visits.unshift(visit)
+      return json({ success: true, visit, inMemory: true })
     }
 
     if (p === '/brochure') {
@@ -111,9 +136,13 @@ export async function POST(request, { params }) {
         project: body.project || '',
         createdAt: new Date().toISOString(),
       }
-      await db.collection('brochure_requests').insertOne(req)
-      const { _id: _b, ...cleanReq } = req
-      return json({ success: true, request: cleanReq })
+      if (db) {
+        await db.collection('brochure_requests').insertOne(req)
+        const { _id: _b, ...cleanReq } = req
+        return json({ success: true, request: cleanReq })
+      }
+      global._inMemoryStore.brochure_requests.unshift(req)
+      return json({ success: true, request: req, inMemory: true })
     }
 
     if (p === '/calculator') {
@@ -124,9 +153,13 @@ export async function POST(request, { params }) {
         years: Number(body.years) || 0,
         createdAt: new Date().toISOString(),
       }
-      await db.collection('calculator_runs').insertOne(record)
-      const { _id: _c, ...cleanRec } = record
-      return json({ success: true, record: cleanRec })
+      if (db) {
+        await db.collection('calculator_runs').insertOne(record)
+        const { _id: _c, ...cleanRec } = record
+        return json({ success: true, record: cleanRec })
+      }
+      global._inMemoryStore.calculator_runs.unshift(record)
+      return json({ success: true, record, inMemory: true })
     }
 
     return json({ error: 'Not found', path: p }, 404)
