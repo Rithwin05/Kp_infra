@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { BRAND, STATS, PROJECTS, TESTIMONIALS, HERO_RENDERS, driveImg, driveFile } from '@/lib/projects'
+import { BRAND, STATS, PROJECTS, TESTIMONIALS, HERO_RENDERS } from '@/lib/projects'
 
 const FLAGSHIP = PROJECTS.find(p => p.isFlagship) || PROJECTS[0]
 
@@ -30,49 +30,54 @@ const HERO_SLIDES = [
     slug: 'golden-palm-city',
     badge: '★ Flagship Highway Township',
     location: 'NH-44 Macharam, Jadcherla',
-    desc: '7.27-Acre DTCP & RERA Approved Layout with Luxury Clubhouse & Swimming Pool',
+    desc: '7.27-Acre DTCP, MUDA & TG RERA Approved Layout with Luxury Clubhouse & Swimming Pool',
     price: 'Price On Request',
     plots: '161 – 2,950 sq.yds',
+    approval: 'DTCP • MUDA • TG RERA',
   },
   {
-    src: driveImg('1G1PBjWeVf7EO9uQpQ8Wpt_vvJz9k8D2g'),
+    src: '/images/projects/vantage-farms/IMG_2774.jpg',
     name: 'Vantage Farms',
     slug: 'vantage-farms',
     badge: 'Luxury Eco-Living Farmland',
     location: 'Rangareddyguda, Shadnagar (NH-44)',
-    desc: 'Mature 20+ Year Fruit Groves with Pre-Cast Compound & 24/7 Gated Security',
+    desc: 'Mature 20+ Year Mango Groves with Pre-Cast Compound & 24/7 Gated Security',
     price: '₹ 5,000 / sq.yd',
     plots: '605 – 1,001 sq.yds',
+    approval: 'Non-Agri Approved',
   },
   {
-    src: driveImg('1i2T6mgtawSKjXFpYE-2kRMaV-sofB-ZI'),
-    name: 'Magnetic City',
-    slug: 'magnetic-city',
-    badge: 'Southern Growth Corridor',
-    location: 'Hyderabad – Bangalore Axis',
-    desc: 'Master-Planned DTCP Plotted Township • 40ft & 33ft Wide Black-Top Roads',
-    price: 'Spot Registration Ready',
-    plots: '150 – 500 sq.yds',
-  },
-  {
-    src: driveImg('1iOaDRJhU1FwEioHBm2Envh3bTc6kI138'),
+    src: '/images/projects/chandan-valley/IMG_2845.jpeg',
     name: 'Chandan Valley',
     slug: 'chandan-valley',
     badge: 'Scenic Hill-View Farmland',
-    location: 'Shamshabad Corridor (Chandanvelly)',
-    desc: 'Directly Adjacent to 1,600-Acre SEZ, Amazon & Microsoft Cloud Hub',
-    price: 'Exclusive Holding',
+    location: 'Chandenvalle / Shamshabad (Survey 170 & 184)',
+    desc: 'Directly Adjacent to 1,600-Acre SEZ, Amazon AWS & Microsoft Data Centre Cloud Hub',
+    price: 'Spot Demarcated',
     plots: '1,210 – 1,702 sq.yds',
+    approval: 'Clear Title Farmland',
   },
   {
-    src: driveImg('1MF9AiHc4GlV9jCq7syZWc0w_W7hn9570'),
+    src: '/images/projects/doctors-colony/DJI_0477.JPG',
     name: 'Doctor’s Colony',
     slug: 'doctors-colony',
     badge: 'Boutique DTCP Layout',
     location: 'Balanagar Railway Station (NH-44)',
-    desc: '38 Exclusive Plots • Full Underground Drainage • 2 min to Railway Station',
-    price: 'Spot Registration Available',
+    desc: '38 Exclusive Plots (LP No. 14/2022) • Full Underground Drainage • 2 min to Station',
+    price: 'Spot Registration Ready',
     plots: '183 – 329 sq.yds',
+    approval: 'DTCP Approved',
+  },
+  {
+    src: '/images/projects/farm-house-etb/84cb76e8-a7c1-4152-bb87-cc6dc47585f3.jpeg',
+    name: 'Farm House ETB',
+    slug: 'farm-house-etb',
+    badge: 'Luxury Farmhouse & Convention',
+    location: 'Hyderabad Countryside Belt',
+    desc: 'Custom Luxury Villa Architecture, Swimming Pool, Banquet Lawn & Interiors by Studio Arterio',
+    price: 'Custom Estate',
+    plots: '1,000 – 5,000 sq.yds',
+    approval: 'Estate Master Plan',
   },
 ]
 
@@ -105,7 +110,7 @@ function useCountUp(target, inView, duration = 1600) {
   return val
 }
 
-// ─── Header & Top Bar (Googee Style) ──────────────────────────
+// ─── Header & Top Bar (Googee Style Peak Detailing) ───────────
 function TopBar() {
   return (
     <div className="bg-[#0B2545] text-slate-200 text-xs py-2 px-4 border-b border-white/10 hidden md:block">
@@ -113,26 +118,33 @@ function TopBar() {
         <div className="flex items-center gap-6">
           <a href={`tel:${BRAND.phoneIntl}`} className="flex items-center gap-1.5 hover:text-[#D4AF37] transition-colors">
             <Phone className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <span>{BRAND.phone}</span>
+            <span className="font-medium">{BRAND.phone}</span>
           </a>
-          <a href={`mailto:${BRAND.email}`} className="flex items-center gap-1.5 hover:text-[#D4AF37] transition-colors">
+          <a href={`tel:${BRAND.mobile1}`} className="flex items-center gap-1.5 hover:text-[#D4AF37] transition-colors">
+            <span className="text-slate-400">Direct:</span>
+            <span className="font-medium">{BRAND.mobile1}</span>
+          </a>
+          <a href={`mailto:${BRAND.email}`} className="flex items-center gap-1.5 hover:text-[#D4AF37] transition-colors hidden lg:flex">
             <Mail className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>{BRAND.email}</span>
           </a>
-          <span className="flex items-center gap-1.5 text-slate-300">
+          <span className="flex items-center gap-1.5 text-slate-300 hidden xl:flex">
             <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <span>Mehdipatnam, Hyderabad</span>
+            <span>Mehdipatnam, Hyderabad (Opp. Pillar 56)</span>
           </span>
         </div>
 
-        <div className="flex items-center gap-5 text-[11px] tracking-wide">
-          <span className="text-[#F4D078] font-medium">TG RERA Registered • DTCP &amp; HMDA Approved</span>
-          <span className="text-slate-400">|</span>
+        <div className="flex items-center gap-4 text-[11px] tracking-wide">
+          <span className="text-[#F4D078] font-semibold flex items-center gap-1">
+            <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>TG RERA Registered • DTCP &amp; HMDA Approved</span>
+          </span>
+          <span className="text-white/20">|</span>
           <a
             href={`https://wa.me/${BRAND.whatsapp}?text=Hello%20KP%20Infra,%20I%20am%20interested%20in%20your%20ventures.`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-semibold transition-colors"
+            className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold transition-colors bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30"
           >
             <MessageCircle className="w-3.5 h-3.5" />
             <span>WhatsApp Connect</span>
@@ -158,36 +170,40 @@ function MainNavbar({ onBook }) {
   const navLinks = [
     { label: 'Home', href: '#home' },
     { label: 'About Us', href: '#about' },
-    { label: 'Ventures', href: '#projects' },
-    { label: 'Flagship City', href: '#flagship' },
-    { label: 'Why Choose Us', href: '#why-choose-us' },
+    { label: 'Ongoing Layouts', href: '#projects' },
+    { label: 'Completed Ventures', href: '#projects' },
+    { label: 'Why KP Infra', href: '#why-choose-us' },
     { label: 'Testimonials', href: '#testimonials' },
     { label: 'Contact', href: '#contact' },
   ]
 
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-white shadow-md border-b border-slate-200' : 'bg-white/95 backdrop-blur-md border-b border-slate-100'
+      scrolled ? 'bg-white shadow-md border-b border-slate-200' : 'bg-white/98 backdrop-blur-md border-b border-slate-100'
     }`}>
       <TopBar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-        {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-12 h-12 rounded-full border border-[#D4AF37]/50 overflow-hidden bg-[#0B2545] p-1 flex items-center justify-center shadow-md">
-            <img src={BRAND.logo} alt="KP Infra Logo" className="w-full h-full object-contain" />
+        {/* Brand Logo with Official Crest from D:\Logo */}
+        <Link href="/" className="flex items-center gap-3.5 group shrink-0">
+          <div className="h-12 sm:h-14 w-12 sm:w-14 rounded-2xl border border-[#D4AF37]/40 overflow-hidden bg-[#0B2545] p-1 flex items-center justify-center shadow-md group-hover:border-[#D4AF37] transition-all">
+            <img
+              src={BRAND.logo}
+              alt="KP Infra Official Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
-            <div className="font-heading text-lg sm:text-xl font-bold tracking-tight text-[#0B2545] group-hover:text-[#B8860B] transition-colors leading-none">
-              KINGS PRIDE <span className="text-[#B8860B]">INFRA</span>
+            <div className="font-heading text-lg sm:text-xl font-extrabold tracking-tight text-[#0B2545] group-hover:text-[#B8860B] transition-colors leading-none">
+              K.P. INFRA <span className="text-[#B8860B]">PROJECTS</span>
             </div>
-            <div className="text-[10px] tracking-wider uppercase text-slate-500 font-semibold mt-1">
+            <div className="text-[10px] sm:text-[11px] tracking-wider uppercase text-slate-500 font-semibold mt-1">
               A Bridge To Your Dream Home • Est. 2003
             </div>
           </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-medium text-slate-700">
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-sm font-semibold text-slate-700">
           {navLinks.map((link) => (
             <a
               key={link.label}
@@ -200,42 +216,80 @@ function MainNavbar({ onBook }) {
           ))}
           <Link
             href="/projects"
-            className="text-xs uppercase tracking-wider font-bold text-[#B8860B] bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg border border-amber-200/80 transition-colors"
+            className="text-xs uppercase tracking-wider font-extrabold text-[#9A7000] bg-amber-50 hover:bg-amber-100 px-3.5 py-1.5 rounded-xl border border-amber-300 transition-all shadow-sm"
           >
             All 11 Projects Directory
           </Link>
         </nav>
 
-        {/* Header Action Buttons */}
-        <div className="hidden sm:flex items-center gap-3">
+        {/* Header Action Buttons (Googee Style) */}
+        <div className="hidden sm:flex items-center gap-2.5">
           <a
             href={`tel:${BRAND.phoneIntl}`}
-            className="p-2.5 rounded-xl border border-slate-200 text-slate-700 hover:text-[#0B2545] hover:border-[#0B2545] transition-colors"
+            className="hidden xl:inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:text-[#0B2545] hover:border-[#0B2545] transition-colors"
             title="Call Office"
           >
-            <Phone className="w-4 h-4" />
+            <Phone className="w-3.5 h-3.5 text-[#B8860B]" />
+            <span>040-23522339</span>
+          </a>
+
+          <a
+            href={`https://wa.me/${BRAND.whatsapp}?text=Hi%20KP%20Infra,%20I%20am%20interested%20in%20your%20ventures.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors"
+            title="WhatsApp Consultation"
+          >
+            <MessageCircle className="w-4 h-4" />
           </a>
 
           <Button
             onClick={() => onBook(null)}
-            className="bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 hover:brightness-105 font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-md shadow-[#D4AF37]/20 transition-all"
+            className="bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 hover:brightness-105 font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-md shadow-[#D4AF37]/25 transition-all"
           >
             <Calendar className="w-4 h-4 mr-1.5" />
-            <span>Book Site Visit</span>
+            <span>Schedule Site Tour</span>
           </Button>
         </div>
 
-        {/* Mobile Menu Hamburger */}
+        {/* Mobile Header Quick Actions */}
+        <div className="flex sm:hidden items-center gap-1.5">
+          <a
+            href={`tel:${BRAND.phoneIntl}`}
+            className="p-2 rounded-lg border border-slate-200 text-slate-700"
+            aria-label="Call KP Infra"
+          >
+            <Phone className="w-4 h-4 text-[#0B2545]" />
+          </a>
+          <a
+            href={`https://wa.me/${BRAND.whatsapp}?text=Hi%20KP%20Infra,%20I%20want%20to%20enquire%20about%20your%20projects.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-700"
+            aria-label="WhatsApp"
+          >
+            <MessageCircle className="w-4 h-4" />
+          </a>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg text-slate-800 hover:bg-slate-100"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+
+        {/* Tablet Hamburger (hidden on mobile and desktop) */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 rounded-xl text-slate-700 hover:text-[#0B2545] hover:bg-slate-100 transition-colors"
+          className="hidden sm:inline-flex lg:hidden p-2 rounded-xl text-slate-700 hover:text-[#0B2545] hover:bg-slate-100 transition-colors"
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
-      {/* Mobile Dropdown Menu */}
+      {/* Mobile Dropdown Menu (Clean, High Contrast, Non-Cluttered) */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -243,42 +297,56 @@ function MainNavbar({ onBook }) {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-3"
+            className="lg:hidden bg-white border-b border-slate-200 px-5 py-5 space-y-3.5 shadow-xl"
           >
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-medium text-slate-800 border-b border-slate-100 hover:text-[#B8860B]"
-              >
-                {link.label}
-              </a>
-            ))}
+            <div className="space-y-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 text-sm font-semibold text-slate-800 border-b border-slate-100 hover:text-[#B8860B]"
+                >
+                  <span>{link.label}</span>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </a>
+              ))}
+            </div>
+
             <Link
               href="/projects"
               onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-bold text-[#B8860B] border-b border-slate-100"
+              className="block p-3 rounded-xl bg-amber-50 border border-amber-300 text-sm font-bold text-[#9A7000] text-center"
             >
               Explore All 11 Projects Directory →
             </Link>
-            <div className="pt-2 flex flex-col gap-2">
+
+            <div className="pt-2 flex flex-col gap-2.5">
               <Button
                 onClick={() => { onBook(null); setMobileMenuOpen(false) }}
-                className="w-full bg-[#0B2545] hover:bg-[#132E4E] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl"
+                className="w-full bg-[#0B2545] hover:bg-[#132E4E] text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl shadow-md"
               >
                 <Calendar className="w-4 h-4 mr-2 text-[#D4AF37]" />
-                Book Free Site Visit
+                Book Free Chauffeured Site Tour
               </Button>
-              <a
-                href={`https://wa.me/${BRAND.whatsapp}?text=Hi%20KP%20Infra,%20I%20want%20to%20enquire%20about%20your%20projects.`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full text-center py-2.5 rounded-xl border border-emerald-500 text-emerald-700 font-semibold text-xs flex items-center justify-center gap-2 bg-emerald-50"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Chat on WhatsApp</span>
-              </a>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href={`tel:${BRAND.phoneIntl}`}
+                  className="w-full text-center py-2.5 rounded-xl border border-slate-300 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 bg-slate-50"
+                >
+                  <Phone className="w-4 h-4 text-[#B8860B]" />
+                  <span>Call Office</span>
+                </a>
+                <a
+                  href={`https://wa.me/${BRAND.whatsapp}?text=Hi%20KP%20Infra,%20I%20want%20to%20enquire%20about%20your%20projects.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full text-center py-2.5 rounded-xl border border-emerald-500 text-emerald-800 font-bold text-xs flex items-center justify-center gap-1.5 bg-emerald-50"
+                >
+                  <MessageCircle className="w-4 h-4 text-emerald-600" />
+                  <span>WhatsApp</span>
+                </a>
+              </div>
             </div>
           </motion.div>
         )}
@@ -287,7 +355,7 @@ function MainNavbar({ onBook }) {
   )
 }
 
-// ─── Hero Section with High-Converting Quick Enquiry (Googee Style) ───────────
+// ─── Hero Section with High-Converting Quick Enquiry (Googee Style Peak Detailing) ───
 function HeroSection({ onBook }) {
   const [slideIdx, setSlideIdx] = useState(0)
   const [form, setForm] = useState({ name: '', phone: '', project: 'Golden Palm City' })
@@ -322,7 +390,7 @@ function HeroSection({ onBook }) {
       })
       const data = await res.json()
       if (data.success) {
-        toast.success('Thank you! Our relationship manager will call you within 30 minutes with project brochures and price sheets.')
+        toast.success('Thank you! Our senior relationship manager will call you within 30 minutes with official brochures and arrange your complimentary site tour.')
         setForm({ name: '', phone: '', project: 'Golden Palm City' })
       } else {
         toast.error('Could not submit. Please call us directly.')
@@ -335,7 +403,7 @@ function HeroSection({ onBook }) {
   }
 
   return (
-    <section id="home" className="relative bg-[#071320] overflow-hidden text-white">
+    <section id="home" className="relative bg-[#061527] overflow-hidden text-white">
       {/* Background Photography with Smooth Crossfade */}
       <div className="absolute inset-0 z-0">
         {HERO_SLIDES.map((slide, i) => (
@@ -352,51 +420,76 @@ function HeroSection({ onBook }) {
             />
           </div>
         ))}
-        {/* Crisp Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#071320]/95 via-[#071320]/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#071320] via-transparent to-black/30" />
+        {/* Crisp Gradient Scrim Overlay for 100% Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#061527]/98 via-[#061527]/85 to-[#061527]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#061527] via-transparent to-black/40" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* Left Column: Bold Value Proposition */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-24">
+        {/* Interactive Project Switcher Tabs (Googee Style) */}
+        <div className="mb-8 flex overflow-x-auto no-scrollbar gap-2 pb-2">
+          {HERO_SLIDES.map((slide, i) => (
+            <button
+              key={slide.slug}
+              onClick={() => setSlideIdx(i)}
+              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                i === slideIdx
+                  ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 shadow-lg shadow-[#D4AF37]/30 scale-105'
+                  : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-white/10'
+              }`}
+            >
+              <span>{slide.name}</span>
+              <span className={`text-[10px] font-normal opacity-80 ${i === slideIdx ? 'text-slate-900' : 'text-slate-400'}`}>
+                ({slide.location.split(',')[0]})
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Column: Bold Value Proposition & Active Project Details */}
           <div className="lg:col-span-7 space-y-6">
             {/* Trust Pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-[#D4AF37]/40 text-[#F4D078] text-xs font-semibold uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-[#D4AF37]/40 text-[#F4D078] text-xs font-bold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span>Telangana&apos;s Trusted Land Developer Since 2003</span>
+              <span>Telangana&apos;s Trusted Land Developer Since 2003 • 12,000+ Happy Families</span>
             </div>
 
             {/* Main Headline */}
             <div>
-              <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.12]">
-                Building Trust &amp; Wealth Through{' '}
-                <span className="text-gradient-gold italic">Prime Plotted Ventures</span>
+              <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.12]">
+                Building Generational Wealth Through{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#D4AF37] italic">
+                  Prime Plotted Communities
+                </span>
               </h1>
               <p className="text-slate-300 text-sm sm:text-base lg:text-lg font-light mt-4 leading-relaxed max-w-xl">
-                22+ Years of Unblemished Real Estate Legacy. 12,000+ Happy Families. Explore DTCP, HMDA &amp; RERA approved gated layouts along the high-growth Hyderabad–Bengaluru NH-44 corridor.
+                22+ Years of Unblemished Real Estate Legacy. Explore TG RERA, DTCP &amp; HMDA approved gated layouts &amp; luxury farmlands across Hyderabad’s highest-growth infrastructure corridors.
               </p>
             </div>
 
-            {/* Active Slide Spotlight Pill */}
-            <div className="p-4 rounded-2xl bg-[#0B2545]/80 backdrop-blur-md border border-white/10 max-w-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            {/* Active Slide Spotlight Pill with High-Contrast Glassmorphic Card */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-white/20 max-w-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#D4AF37] text-slate-950">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#D4AF37] text-slate-950">
                     {currentSlide.badge}
                   </span>
-                  <span className="text-xs text-slate-300 font-medium">{currentSlide.location}</span>
+                  <span className="text-xs text-slate-300 font-semibold">{currentSlide.location}</span>
                 </div>
-                <div className="font-heading text-lg font-bold text-white mt-1">
+                <div className="font-heading text-xl sm:text-2xl font-bold text-white mt-1.5">
                   {currentSlide.name}
                 </div>
-                <div className="text-xs text-slate-400 mt-0.5">
-                  Plots: <span className="text-slate-200 font-semibold">{currentSlide.plots}</span> • <span className="text-[#F4D078] font-semibold">{currentSlide.price}</span>
+                <div className="text-xs text-slate-400 mt-1">
+                  Plots: <span className="text-slate-100 font-bold">{currentSlide.plots}</span> • <span className="text-[#F4D078] font-bold">{currentSlide.price}</span>
+                </div>
+                <div className="text-[11px] text-emerald-400 font-medium mt-0.5">
+                  ✓ {currentSlide.approval} • Clear Title Guarantee
                 </div>
               </div>
 
               <Link href={`/projects/${currentSlide.slug}`} className="shrink-0 w-full sm:w-auto">
-                <Button size="sm" className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-semibold">
+                <Button size="sm" className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/25 text-xs font-bold py-2 px-4 rounded-xl">
                   <span>Explore Project</span>
                   <ChevronRight className="w-3.5 h-3.5 ml-1 text-[#D4AF37]" />
                 </Button>
@@ -408,26 +501,26 @@ function HeroSection({ onBook }) {
               <Button
                 onClick={() => onBook(null)}
                 size="lg"
-                className="bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl shadow-lg shadow-[#D4AF37]/25 hover:brightness-105 active:scale-95 transition-all"
+                className="bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl shadow-lg shadow-[#D4AF37]/30 hover:brightness-105 active:scale-95 transition-all"
               >
                 <Calendar className="w-4 h-4 mr-2" />
-                <span>Schedule Free Site Visit</span>
+                <span>Schedule Free Site Tour</span>
               </Button>
 
               <a href="#projects">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="bg-white/5 backdrop-blur-md border-white/20 hover:bg-white/15 text-white font-semibold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl transition-all"
+                  className="bg-white/5 backdrop-blur-md border-white/20 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl transition-all"
                 >
-                  <span>Browse 11 Projects</span>
+                  <span>Browse All 11 Projects</span>
                   <ArrowRight className="w-4 h-4 ml-2 text-[#D4AF37]" />
                 </Button>
               </a>
             </div>
 
-            {/* Slide Pagination Dots */}
-            <div className="flex items-center gap-2 pt-2">
+            {/* Slide Pagination Indicators */}
+            <div className="flex items-center gap-2 pt-1">
               {HERO_SLIDES.map((slide, i) => (
                 <button
                   key={slide.slug}
@@ -435,7 +528,7 @@ function HeroSection({ onBook }) {
                   className={`h-2 rounded-full transition-all duration-300 ${
                     i === slideIdx ? 'w-8 bg-[#D4AF37]' : 'w-2 bg-white/30 hover:bg-white/60'
                   }`}
-                  aria-label={`Slide ${i + 1}`}
+                  aria-label={`Go to slide ${i + 1} (${slide.name})`}
                 />
               ))}
             </div>
@@ -443,24 +536,27 @@ function HeroSection({ onBook }) {
 
           {/* Right Column: Googee Style High-Converting Quick Lead Card */}
           <div className="lg:col-span-5">
-            <Card className="p-6 sm:p-8 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-100 relative">
-              <div className="space-y-1 mb-5">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#B8860B]">
-                  Instant Callback &amp; Site Visit
+            <Card className="p-6 sm:p-7 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-100 relative overflow-hidden">
+              {/* Gold Top Accent Bar */}
+              <div className="h-1.5 bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] absolute top-0 left-0 right-0" />
+
+              <div className="space-y-1 mb-4 pt-1">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#B8860B]">
+                  Instant Callback &amp; Free AC Cab Pickup
                 </span>
-                <h3 className="font-heading text-2xl font-bold text-[#0B2545]">
-                  Find Your Dream Plot
+                <h3 className="font-heading text-2xl sm:text-3xl font-extrabold text-[#0B2545]">
+                  Schedule a Free Site Tour
                 </h3>
-                <p className="text-xs text-slate-500">
-                  Fill in your details to receive official brochures, plot availability maps, and book a free chauffeured site visit.
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Receive official brochures, plot availability maps, and enjoy a complimentary chauffeured site visit with our advisors.
                 </p>
               </div>
 
               <form onSubmit={handleHeroSubmit} className="space-y-3.5">
                 <div>
-                  <Label className="text-xs font-semibold text-slate-700">Full Name *</Label>
+                  <Label className="text-xs font-bold text-slate-700">Full Name *</Label>
                   <Input
-                    className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm focus:border-[#B8860B] rounded-xl text-slate-900"
+                    className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm focus:border-[#B8860B] rounded-xl text-slate-900 font-medium"
                     placeholder="Enter your name"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -469,9 +565,9 @@ function HeroSection({ onBook }) {
                 </div>
 
                 <div>
-                  <Label className="text-xs font-semibold text-slate-700">Phone Number *</Label>
+                  <Label className="text-xs font-bold text-slate-700">Phone Number *</Label>
                   <Input
-                    className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm focus:border-[#B8860B] rounded-xl text-slate-900"
+                    className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm focus:border-[#B8860B] rounded-xl text-slate-900 font-medium"
                     placeholder="e.g. +91 98765 43210"
                     type="tel"
                     value={form.phone}
@@ -481,18 +577,18 @@ function HeroSection({ onBook }) {
                 </div>
 
                 <div>
-                  <Label className="text-xs font-semibold text-slate-700">Venture of Interest</Label>
+                  <Label className="text-xs font-bold text-slate-700">Venture of Interest</Label>
                   <Select value={form.project} onValueChange={(v) => setForm({ ...form, project: v })}>
-                    <SelectTrigger className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl">
+                    <SelectTrigger className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl font-medium">
                       <SelectValue placeholder="Choose a venture" />
                     </SelectTrigger>
                     <SelectContent>
-                      {PROJECTS.map((p) => (
-                        <SelectItem key={p.id} value={p.name}>
-                          {p.name} ({p.category})
-                        </SelectItem>
-                      ))}
-                      <SelectItem value="Open Consultation">Open Consultation / General Inquiry</SelectItem>
+                      <SelectItem value="Golden Palm City">Golden Palm City (NH-44 Jadcherla)</SelectItem>
+                      <SelectItem value="Vantage Farms">Vantage Farms (Shadnagar - ₹5,000/sq.yd)</SelectItem>
+                      <SelectItem value="Chandan Valley">Chandan Valley (Shamshabad / SEZ)</SelectItem>
+                      <SelectItem value="Doctor’s Colony">Doctor’s Colony (Balanagar Station)</SelectItem>
+                      <SelectItem value="Farm House ETB">Farm House ETB (Luxury Estate)</SelectItem>
+                      <SelectItem value="Open Consultation">All Projects / Investment Consultation</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -500,21 +596,25 @@ function HeroSection({ onBook }) {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="w-full h-12 bg-[#0B2545] hover:bg-[#132E4E] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all mt-2"
+                  className="w-full h-12 bg-[#0B2545] hover:bg-[#132E4E] text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all mt-2"
                 >
-                  {submitting ? 'Submitting…' : 'Get Price Sheet & Arrange Site Visit'}
+                  {submitting ? 'Submitting…' : 'Book My Free Chauffeured Site Tour'}
                 </Button>
 
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-600 font-semibold">
                   <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Free Cab Pickup
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Free Cab Pickup
                   </span>
                   <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> 100% Clear Titles
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> 100% Clear Titles
                   </span>
                   <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Spot Registration
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Spot Registration
                   </span>
+                </div>
+
+                <div className="text-[11px] text-center text-slate-500 pt-1">
+                  Prefer direct assistance? Call <a href="tel:040-23522339" className="text-[#0B2545] font-bold hover:underline">040-23522339</a> or WhatsApp <a href={`https://wa.me/${BRAND.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">+91 79977 00031</a>
                 </div>
               </form>
             </Card>
@@ -663,12 +763,12 @@ function AboutSection({ onBook }) {
   )
 }
 
-// ─── Googee Style Project Card ────────────────────────────────
+// ─── Googee Style Project Card (High Contrast, Razor Sharp Typography) ───────
 function CleanProjectCard({ p, onBook, onDetails }) {
   return (
-    <div className="group bg-white border border-slate-200 hover:border-[#D4AF37] rounded-2xl overflow-hidden transition-all duration-300 flex flex-col shadow-sm hover:shadow-xl">
+    <div className="group bg-white border border-slate-200 hover:border-[#D4AF37] rounded-3xl overflow-hidden transition-all duration-300 flex flex-col shadow-sm hover:shadow-2xl">
       {/* Visual Image Header */}
-      <div className="relative h-60 sm:h-64 overflow-hidden bg-slate-950">
+      <div className="relative h-64 sm:h-72 overflow-hidden bg-slate-950">
         <Link href={`/projects/${p.slug || p.id}`} className="block w-full h-full">
           <img
             src={p.image || p.coverImage}
@@ -681,100 +781,107 @@ function CleanProjectCard({ p, onBook, onDetails }) {
             }}
           />
         </Link>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+        {/* Multi-layer dark scrim to guarantee 100% badge & price readability on any bright/white image */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-black/50 pointer-events-none" />
 
         {/* Top Badges */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
+        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-2 pointer-events-none">
           <div className="flex items-center gap-1.5 flex-wrap">
             {p.isFlagship ? (
-              <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 shadow">
+              <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 shadow-md">
                 ★ Flagship
               </span>
             ) : (
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-black/60 text-white backdrop-blur-md border border-white/20">
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-950/85 text-white backdrop-blur-md border border-white/20">
                 {p.category}
               </span>
             )}
-            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold backdrop-blur-md ${
+            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-md ${
               p.status === 'Completed'
-                ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/30'
-                : 'bg-amber-950/80 text-amber-300 border border-amber-500/30'
+                ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-500/40'
+                : 'bg-amber-950/90 text-amber-300 border border-amber-500/40'
             }`}>
               {p.status}
             </span>
           </div>
 
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 backdrop-blur-md">
+          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/25 text-emerald-200 border border-emerald-400/40 backdrop-blur-md">
             {p.approval}
           </span>
         </div>
 
-        {/* Bottom Price Strip */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3 py-1.5 rounded-xl bg-[#0B2545]/85 backdrop-blur-md border border-white/10 text-xs">
-          <span className="text-[#F4D078] font-heading font-bold text-sm tracking-wide">
-            {p.price}
-          </span>
-          <span className="text-slate-200 text-[11px]">
-            {p.plotRange}
-          </span>
+        {/* Bottom Price & Plot Strip */}
+        <div className="absolute bottom-3.5 left-3.5 right-3.5 flex items-center justify-between px-3.5 py-2 rounded-2xl bg-[#0B2545]/90 backdrop-blur-md border border-white/15 text-xs shadow-lg">
+          <div>
+            <div className="text-[10px] uppercase font-bold text-slate-400">Value</div>
+            <div className="text-[#F4D078] font-heading font-extrabold text-sm tracking-wide">
+              {p.price}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-[10px] uppercase font-bold text-slate-400">Plot Sizes</div>
+            <div className="text-slate-100 font-bold text-xs">
+              {p.plotRange}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Card Content */}
-      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+      {/* Card Content (Deep Navy on Pure White — Never Disappears) */}
+      <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
         <div>
           {/* Category & Location */}
-          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#B8860B] mb-1">
+          <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-[#B8860B] mb-1.5">
             <span>{p.category} • {p.totalAreaShort || p.totalArea}</span>
-            <span className="flex items-center gap-1 text-slate-500 font-normal normal-case">
+            <span className="flex items-center gap-1 text-slate-500 font-medium normal-case">
               <MapPin className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-              <span className="truncate max-w-[130px]">{p.location}</span>
+              <span className="truncate max-w-[140px]">{p.location.split(',')[0]}</span>
             </span>
           </div>
 
-          {/* Project Title */}
+          {/* Project Title (Bold Royal Navy #0B2545) */}
           <Link href={`/projects/${p.slug || p.id}`} className="group/title block">
-            <h3 className="font-heading text-xl sm:text-2xl font-bold text-[#0B2545] group-hover/title:text-[#B8860B] transition-colors leading-tight">
+            <h3 className="font-heading text-xl sm:text-2xl font-extrabold text-[#0B2545] group-hover/title:text-[#B8860B] transition-colors leading-tight">
               {p.name}
             </h3>
           </Link>
 
           {/* Tagline */}
-          <p className="text-xs text-slate-500 italic mt-1 line-clamp-1 leading-relaxed">
+          <p className="text-xs text-slate-600 italic mt-1.5 line-clamp-1 leading-relaxed">
             &ldquo;{p.tagline}&rdquo;
           </p>
 
           {/* 3 Key Specs Row */}
-          <div className="grid grid-cols-3 gap-2 my-3 p-2 rounded-xl bg-slate-50 border border-slate-100 text-center">
+          <div className="grid grid-cols-3 gap-2 my-3.5 p-3 rounded-2xl bg-slate-50 border border-slate-200/90 text-center">
             <div>
-              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Plots</div>
-              <div className="text-xs font-bold text-slate-800 truncate mt-0.5">{p.plotRange}</div>
+              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Plots</div>
+              <div className="text-xs font-extrabold text-slate-900 truncate mt-0.5">{p.plotRange}</div>
             </div>
             <div>
-              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Approval</div>
-              <div className="text-xs font-bold text-emerald-700 truncate mt-0.5">{p.approval}</div>
+              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Approval</div>
+              <div className="text-xs font-extrabold text-emerald-700 truncate mt-0.5">{p.approval}</div>
             </div>
             <div>
-              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Possession</div>
-              <div className="text-xs font-bold text-slate-800 truncate mt-0.5">{p.possession}</div>
+              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Possession</div>
+              <div className="text-xs font-extrabold text-slate-900 truncate mt-0.5">{p.possession}</div>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons: Googee Style (View Details, Quick Preview, WhatsApp) */}
+        {/* Action Buttons: Googee Style */}
         <div className="pt-2 border-t border-slate-100 space-y-2">
           <Link href={`/projects/${p.slug || p.id}`} className="block w-full">
-            <Button className="w-full bg-[#0B2545] hover:bg-[#132E4E] text-white py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-sm">
-              <span>View Dedicated Page</span>
+            <Button className="w-full bg-[#0B2545] hover:bg-[#132E4E] text-white py-3 rounded-xl font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-sm">
+              <span>View Dedicated Page &amp; Layout</span>
               <ChevronRight className="w-4 h-4 text-[#D4AF37]" />
             </Button>
           </Link>
 
-          <div className="grid grid-cols-3 gap-1.5">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
             <Button
               onClick={() => onDetails(p)}
               variant="outline"
-              className="border-slate-200 text-slate-700 hover:bg-slate-50 h-9 px-0 rounded-lg text-[11px]"
+              className="border-slate-200 text-slate-700 hover:bg-slate-50 h-10 px-0 rounded-xl text-xs font-semibold"
               title="Quick Preview"
             >
               <Eye className="w-3.5 h-3.5 mr-1 text-slate-500" />
@@ -784,11 +891,11 @@ function CleanProjectCard({ p, onBook, onDetails }) {
             <Button
               onClick={() => onBook(p)}
               variant="outline"
-              className="border-amber-300 text-[#8B6508] hover:bg-amber-50/60 h-9 px-0 rounded-lg text-[11px]"
+              className="border-amber-300 text-[#8B6508] hover:bg-amber-50 h-10 px-0 rounded-xl text-xs font-bold"
               title="Book Site Visit"
             >
               <Calendar className="w-3.5 h-3.5 mr-1 text-[#D4AF37]" />
-              <span>Visit</span>
+              <span>Tour</span>
             </Button>
 
             <a
@@ -799,7 +906,7 @@ function CleanProjectCard({ p, onBook, onDetails }) {
             >
               <Button
                 variant="outline"
-                className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 h-9 px-0 rounded-lg text-[11px]"
+                className="w-full border-emerald-300 text-emerald-800 hover:bg-emerald-50 h-10 px-0 rounded-xl text-xs font-bold"
                 title="Chat on WhatsApp"
               >
                 <MessageCircle className="w-3.5 h-3.5 mr-1 text-emerald-600" />
@@ -819,9 +926,9 @@ function ProjectsPortfolio({ onBook, onDetails }) {
 
   const filterTabs = [
     { label: 'All Ventures (11)', val: 'All' },
-    { label: 'Ongoing Layouts', val: 'Ongoing' },
-    { label: 'Completed Landmarks', val: 'Completed' },
-    { label: 'Farm Land Estates', val: 'Farm Land' },
+    { label: 'Ongoing Layouts (5)', val: 'Ongoing' },
+    { label: 'Completed Landmarks (6)', val: 'Completed' },
+    { label: 'Farmland Estates', val: 'Farm Land' },
     { label: 'DTCP Approved', val: 'DTCP' },
     { label: 'HMDA Approved', val: 'HMDA' },
   ]
@@ -830,9 +937,9 @@ function ProjectsPortfolio({ onBook, onDetails }) {
     if (activeFilter === 'All') return PROJECTS
     if (activeFilter === 'Ongoing') return PROJECTS.filter(p => p.status === 'Ongoing')
     if (activeFilter === 'Completed') return PROJECTS.filter(p => p.status === 'Completed')
-    if (activeFilter === 'Farm Land') return PROJECTS.filter(p => p.category === 'Farm Land')
-    if (activeFilter === 'DTCP') return PROJECTS.filter(p => p.category === 'DTCP')
-    if (activeFilter === 'HMDA') return PROJECTS.filter(p => p.category === 'HMDA')
+    if (activeFilter === 'Farm Land') return PROJECTS.filter(p => p.category === 'Farm Land' || (p.type || '').includes('Farm'))
+    if (activeFilter === 'DTCP') return PROJECTS.filter(p => p.category === 'DTCP' || (p.approval || '').includes('DTCP'))
+    if (activeFilter === 'HMDA') return PROJECTS.filter(p => p.category === 'HMDA' || (p.approval || '').includes('HMDA'))
     return PROJECTS
   }, [activeFilter])
 
@@ -1562,47 +1669,51 @@ function ProjectPreviewDialog({ open, onOpenChange, project, onBook }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl w-full bg-white text-slate-900 rounded-3xl p-0 overflow-hidden shadow-2xl">
-        <div className="relative h-60 bg-slate-950">
+        <div className="relative h-64 bg-slate-950">
           <img
             src={p.image || p.coverImage}
             alt={p.name}
             className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.onerror = null
+              e.currentTarget.src = HERO_RENDERS.goldenPalmTower
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-          <div className="absolute bottom-4 left-4 right-4 text-white">
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-[#D4AF37] text-slate-950">
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+          <div className="absolute bottom-4 left-5 right-5 text-white">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#D4AF37] text-slate-950">
               {p.approval}
             </span>
-            <DialogTitle className="font-heading text-2xl sm:text-3xl font-bold mt-1 text-white">
+            <DialogTitle className="font-heading text-2xl sm:text-3xl font-extrabold mt-1 text-white">
               {p.name}
             </DialogTitle>
-            <div className="text-xs text-slate-300 flex items-center gap-1.5 mt-0.5">
+            <DialogDescription className="text-xs text-slate-300 flex items-center gap-1.5 mt-0.5">
               <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" /> {p.location}
-            </div>
+            </DialogDescription>
           </div>
         </div>
 
         <div className="p-6 space-y-4">
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            {p.shortDescription || p.fullDescription?.slice(0, 200) + '...'}
+          <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+            {p.shortDescription || (p.fullDescription ? p.fullDescription.slice(0, 200) + '...' : '')}
           </p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
             <div>
-              <div className="text-[10px] uppercase text-slate-400 font-semibold">Plots</div>
-              <div className="font-bold text-slate-800 mt-0.5">{p.plotRange}</div>
+              <div className="text-[10px] uppercase text-slate-400 font-bold">Plots</div>
+              <div className="font-extrabold text-slate-900 mt-0.5">{p.plotRange}</div>
             </div>
             <div>
-              <div className="text-[10px] uppercase text-slate-400 font-semibold">Price</div>
-              <div className="font-bold text-[#B8860B] mt-0.5">{p.price}</div>
+              <div className="text-[10px] uppercase text-slate-400 font-bold">Price</div>
+              <div className="font-extrabold text-[#B8860B] mt-0.5">{p.price}</div>
             </div>
             <div>
-              <div className="text-[10px] uppercase text-slate-400 font-semibold">Status</div>
-              <div className="font-bold text-slate-800 mt-0.5">{p.status}</div>
+              <div className="text-[10px] uppercase text-slate-400 font-bold">Status</div>
+              <div className="font-extrabold text-slate-900 mt-0.5">{p.status}</div>
             </div>
             <div>
-              <div className="text-[10px] uppercase text-slate-400 font-semibold">Possession</div>
-              <div className="font-bold text-slate-800 mt-0.5">{p.possession}</div>
+              <div className="text-[10px] uppercase text-slate-400 font-bold">Possession</div>
+              <div className="font-extrabold text-slate-900 mt-0.5">{p.possession}</div>
             </div>
           </div>
 

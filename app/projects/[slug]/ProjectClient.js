@@ -197,6 +197,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
             {project.brochureUrl && (
               <a
                 href={project.brochureUrl}
+                download
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 text-[#F4D078] border border-[#D4AF37]/30 text-xs font-semibold uppercase tracking-wider transition-all"
@@ -241,7 +242,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
               e.currentTarget.src = '/images/renders/goldenPalmTower.png'
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#071320] via-[#071320]/75 to-[#071320]/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071320] via-[#071320]/85 to-[#071320]/50" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(212,175,55,0.15),transparent_50%)]" />
         </div>
 
@@ -270,10 +271,10 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
 
               {/* Title & Tagline */}
               <div>
-                <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.1]">
+                <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1] drop-shadow-md">
                   {project.name}
                 </h1>
-                <p className="text-lg sm:text-xl text-[#F4D078] font-light mt-2 max-w-2xl">
+                <p className="text-lg sm:text-xl text-[#F4D078] font-light mt-2 max-w-2xl drop-shadow">
                   {project.tagline}
                 </p>
               </div>
@@ -329,6 +330,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                   {project.brochureUrl && (
                     <a
                       href={project.brochureUrl}
+                      download
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 border border-white/15 text-xs font-semibold uppercase tracking-wider text-center flex items-center justify-center gap-2 transition-all"
@@ -518,6 +520,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                     </p>
                     <a
                       href={project.brochureUrl}
+                      download
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg hover:brightness-110 transition-all"

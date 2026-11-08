@@ -207,7 +207,7 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
                       e.currentTarget.src = '/images/renders/goldenPalmTower.png'
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-black/50 pointer-events-none" />
 
                   {/* Top tags */}
                   <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2">
