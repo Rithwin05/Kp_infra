@@ -21,6 +21,7 @@ import {
   Layers,
   MapPin,
   Maximize2,
+  MessageCircle,
   Navigation,
   Phone,
   PhoneCall,
@@ -235,6 +236,10 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
             src={project.image || project.coverImage}
             alt={project.name}
             className="w-full h-full object-cover object-center scale-105 filter brightness-90 transform motion-safe:hover:scale-100 transition-transform duration-1000 ease-out"
+            onError={(e) => {
+              e.currentTarget.onerror = null
+              e.currentTarget.src = '/images/renders/goldenPalmTower.png'
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#071320] via-[#071320]/75 to-[#071320]/30" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(212,175,55,0.15),transparent_50%)]" />
@@ -781,6 +786,10 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                     alt={`${project.name} - Photo ${i + 1}`}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null
+                      e.currentTarget.src = project.image || '/images/renders/goldenPalmTower.png'
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                     <div className="flex items-center gap-2 text-xs text-[#F4D078] font-semibold">
@@ -1129,6 +1138,10 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                 src={project.gallery[lightboxIndex]}
                 alt={`${project.name} gallery image`}
                 className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl"
+                onError={(e) => {
+                  e.currentTarget.onerror = null
+                  e.currentTarget.src = project.image || '/images/renders/goldenPalmTower.png'
+                }}
               />
               <div className="mt-4 text-xs text-slate-400">
                 {project.name} — Image {lightboxIndex + 1} of {project.gallery.length}
@@ -1157,6 +1170,41 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
           </div>
         </div>
       </footer>
+      {/* ─── Mobile Sticky Action Bar for Project ───────────────── */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#071320]/95 backdrop-blur-xl border-t border-[#D4AF37]/30 px-3 py-2 flex items-center justify-between gap-2 shadow-[0_-4px_25px_rgba(0,0,0,0.6)]">
+        <a
+          href={`tel:${BRAND.mobile1}`}
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold"
+        >
+          <Phone className="w-4 h-4 text-[#D4AF37] mb-0.5" />
+          <span>Call Sales</span>
+        </a>
+        <a
+          href={`https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent(`Hi KP Infra team, I am interested in ${project.name} (${project.location}). Please share details and arrange a site visit.`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-emerald-500/15 active:bg-emerald-500/25 text-emerald-300 text-[10px] font-semibold"
+        >
+          <MessageCircle className="w-4 h-4 text-emerald-400 mb-0.5" />
+          <span>WhatsApp</span>
+        </a>
+        <a
+          href="#book-visit"
+          className="flex-[1.4] flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 font-bold text-[11px] uppercase tracking-wider shadow-md active:scale-95 transition-transform"
+        >
+          <Calendar className="w-3.5 h-3.5" />
+          <span>Book Visit</span>
+        </a>
+        <Link
+          href="/projects"
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold"
+        >
+          <Building2 className="w-4 h-4 text-[#D4AF37] mb-0.5" />
+          <span>Projects</span>
+        </Link>
+      </div>
+
+      <div className="md:hidden h-16" />
     </div>
   )
 }

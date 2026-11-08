@@ -10,7 +10,9 @@ import {
   ChevronRight,
   ExternalLink,
   Filter,
+  Home,
   MapPin,
+  MessageCircle,
   Phone,
   Search,
   Sparkles,
@@ -118,8 +120,8 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
               <div className="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Years Legacy</div>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
-              <div className="font-heading text-2xl font-bold text-[#F4D078]">{STATS.projectsDelivered}</div>
-              <div className="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Projects</div>
+              <div className="font-heading text-2xl font-bold text-[#F4D078]">{STATS.totalProjects || 11}</div>
+              <div className="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Ventures</div>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
               <div className="font-heading text-2xl font-bold text-[#F4D078]">{STATS.happyFamilies.toLocaleString()}+</div>
@@ -200,6 +202,10 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
                     alt={project.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null
+                      e.currentTarget.src = '/images/renders/goldenPalmTower.png'
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
 
@@ -289,6 +295,42 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
           </div>
         </div>
       </footer>
+
+      {/* ─── Mobile Sticky Action Bar ─────────────────────────────── */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#071320]/95 backdrop-blur-xl border-t border-[#D4AF37]/30 px-3 py-2 flex items-center justify-between gap-2 shadow-[0_-4px_25px_rgba(0,0,0,0.6)]">
+        <a
+          href={`tel:${BRAND.mobile1}`}
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold"
+        >
+          <Phone className="w-4 h-4 text-[#D4AF37] mb-0.5" />
+          <span>Call</span>
+        </a>
+        <a
+          href={`https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent("Hi KP Infra, I am browsing your portfolio of projects.")}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-emerald-500/15 active:bg-emerald-500/25 text-emerald-300 text-[10px] font-semibold"
+        >
+          <MessageCircle className="w-4 h-4 text-emerald-400 mb-0.5" />
+          <span>WhatsApp</span>
+        </a>
+        <Link
+          href="/#contact"
+          className="flex-[1.3] flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold text-[11px] uppercase tracking-wider shadow-md"
+        >
+          <Calendar className="w-3.5 h-3.5" />
+          <span>Book Visit</span>
+        </Link>
+        <Link
+          href="/"
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold"
+        >
+          <Home className="w-4 h-4 text-[#D4AF37] mb-0.5" />
+          <span>Home</span>
+        </Link>
+      </div>
+
+      <div className="md:hidden h-16" />
     </div>
   )
 }

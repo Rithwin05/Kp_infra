@@ -21,15 +21,58 @@ import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { toast } from 'sonner'
-import { BRAND, STATS, PROJECTS, TIMELINE, TESTIMONIALS, BLOGS, FILTERS, HERO_RENDERS } from '@/lib/projects'
+import { BRAND, STATS, PROJECTS, TIMELINE, TESTIMONIALS, BLOGS, FILTERS, HERO_RENDERS, driveImg } from '@/lib/projects'
 
 const FLAGSHIP = PROJECTS.find(p => p.isFlagship)
-const HERO_IMAGES = [
-  HERO_RENDERS.goldenPalmTower,
-  HERO_RENDERS.goldenPalmEntrance,
-  HERO_RENDERS.goldenPalmGate,
-  HERO_RENDERS.vantageFarms,
-  HERO_RENDERS.chandanValley,
+const HERO_SLIDES = [
+  {
+    src: HERO_RENDERS.goldenPalmTower,
+    name: 'Golden Palm City',
+    slug: 'golden-palm-city',
+    badge: '★ Flagship Highway Layout',
+    location: 'NH-44 Macharam, Jadcherla',
+    desc: '7.27-Acre DTCP & RERA Approved Community with Luxury Clubhouse',
+  },
+  {
+    src: driveImg('1G1PBjWeVf7EO9uQpQ8Wpt_vvJz9k8D2g'),
+    name: 'Vantage Farms',
+    slug: 'vantage-farms',
+    badge: 'Luxury Eco-Living',
+    location: 'Shadnagar (Rangareddyguda)',
+    desc: 'Mature 20+ Year Mango Groves starting at ₹5,000/sq.yd',
+  },
+  {
+    src: driveImg('1i2T6mgtawSKjXFpYE-2kRMaV-sofB-ZI'),
+    name: 'Magnetic City',
+    slug: 'magnetic-city',
+    badge: 'Southern Growth Hub',
+    location: 'Hyderabad – Bangalore Axis',
+    desc: 'DTCP Master-Planned Plotted Layout • 40ft & 33ft BT Roads',
+  },
+  {
+    src: driveImg('1iOaDRJhU1FwEioHBm2Envh3bTc6kI138'),
+    name: 'Chandan Valley',
+    slug: 'chandan-valley',
+    badge: 'Scenic Hill-View Farmland',
+    location: 'Shamshabad Corridor',
+    desc: 'Adjacent to 1,600-Acre SEZ, Amazon & Microsoft Cloud Hub',
+  },
+  {
+    src: driveImg('1MF9AiHc4GlV9jCq7syZWc0w_W7hn9570'),
+    name: 'Doctor’s Colony',
+    slug: 'doctors-colony',
+    badge: 'DTCP Approved Layout',
+    location: 'Balanagar Railway Station',
+    desc: '38 Boutique Plots • Full Underground Drainage • Spot Registration',
+  },
+  {
+    src: driveImg('1gK8tv9XR_wKSTrnZfya2sh17lkk5G0TG'),
+    name: 'Golden Spring',
+    slug: 'golden-spring',
+    badge: 'Delivered Milestone',
+    location: 'Hyderabad Growth Belt',
+    desc: 'HMDA Approved Gated Community with Wide Bitumen Roads',
+  },
 ]
 const APPROVALS = ['HMDA', 'DTCP', 'MUDA', 'TG RERA', 'ISO 9001:2015', 'Bank Approved']
 const NAV_SECTIONS = [
@@ -327,17 +370,28 @@ function Hero({ onCTA }) {
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
 
   useEffect(() => {
-    const t = setInterval(() => setIdx(i => (i + 1) % HERO_IMAGES.length), 6500)
+    const t = setInterval(() => setIdx(i => (i + 1) % HERO_SLIDES.length), 6000)
     return () => clearInterval(t)
   }, [])
+
+  const currentSlide = HERO_SLIDES[idx]
 
   return (
     <section ref={ref} id="home" className="relative h-screen min-h-[760px] w-full overflow-hidden">
       {/* Parallax background */}
       <motion.div className="absolute inset-0 will-change-transform" style={{ y: imgY, scale: 1.15 }}>
-        {HERO_IMAGES.map((src, i) => (
-          <div key={src} style={{ transitionDuration: '2000ms' }} className={`absolute inset-0 transition-opacity ease-in-out ${i === idx ? 'opacity-100' : 'opacity-0'}`}>
-            <img src={src} alt="" className="w-full h-full object-cover ken-burns" loading={i === 0 ? 'eager' : 'lazy'} />
+        {HERO_SLIDES.map((slide, i) => (
+          <div key={slide.slug + i} style={{ transitionDuration: '2000ms' }} className={`absolute inset-0 transition-opacity ease-in-out ${i === idx ? 'opacity-100' : 'opacity-0'}`}>
+            <img
+              src={slide.src}
+              alt={slide.name}
+              className="w-full h-full object-cover ken-burns"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              onError={(e) => {
+                e.currentTarget.onerror = null
+                e.currentTarget.src = HERO_RENDERS.goldenPalmTower
+              }}
+            />
           </div>
         ))}
       </motion.div>
@@ -346,7 +400,7 @@ function Hero({ onCTA }) {
       <div className="absolute inset-0 vignette" />
 
       {/* Content */}
-      <motion.div style={{ y: contentY, opacity }} className="relative h-full container mx-auto px-6 flex flex-col justify-center text-white">
+      <motion.div style={{ y: contentY, opacity }} className="relative h-full container mx-auto px-4 sm:px-6 flex flex-col justify-center text-white">
         <motion.div
           initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -355,15 +409,15 @@ function Hero({ onCTA }) {
           <motion.div
             initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex items-center gap-3 mb-6"
+            className="flex items-center gap-3 mb-4 sm:mb-6"
           >
-            <div className="h-px w-12 bg-gold" />
-            <span className="text-gold text-xs tracking-[0.4em] font-numbers uppercase">
+            <div className="h-px w-8 sm:w-12 bg-gold" />
+            <span className="text-gold text-[10px] sm:text-xs tracking-[0.3em] sm:tracking-[0.4em] font-numbers uppercase">
               {BRAND.displayName} • Since {BRAND.established}
             </span>
           </motion.div>
 
-          <h1 className="font-heading text-5xl md:text-7xl lg:text-[86px] leading-[1.04] font-medium mb-6">
+          <h1 className="font-heading text-4xl sm:text-6xl md:text-7xl lg:text-[84px] leading-[1.08] sm:leading-[1.04] font-medium mb-4 sm:mb-6">
             A Bridge to Your<br />
             <span className="text-gradient-gold italic">Dream Home</span>
           </h1>
@@ -371,43 +425,73 @@ function Hero({ onCTA }) {
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ duration: 0.9, delay: 0.7 }}
-            className="text-lg md:text-xl text-white/85 max-w-2xl mb-10 font-light leading-relaxed"
+            className="text-base sm:text-lg md:text-xl text-white/85 max-w-2xl mb-8 sm:mb-10 font-light leading-relaxed"
           >
-            Twenty-two years of crafting Telangana&apos;s most trusted addresses — from integrated
-            townships and managed farm lands to our flagship NH-44 highway city,{' '}
+            Twenty-two years of crafting Telangana&apos;s most trusted addresses — from HMDA & DTCP
+            gated layouts and high-yielding farm estates to our flagship NH-44 highway city,{' '}
             <span className="text-gold font-medium">Golden Palm City.</span>
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="flex flex-wrap gap-4"
+            className="flex flex-wrap gap-3 sm:gap-4"
           >
             <Button onClick={onCTA} size="lg"
-              className="bg-gold hover:bg-gold-dark text-navy font-semibold tracking-wide h-14 px-8 gold-shadow text-base transition-all duration-300 hover:scale-105">
-              <Calendar className="w-5 h-5 mr-2" /> Schedule Site Visit
+              className="bg-gold hover:bg-gold-dark text-navy font-semibold tracking-wide h-12 sm:h-14 px-6 sm:px-8 gold-shadow text-sm sm:text-base transition-all duration-300 hover:scale-105">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> Schedule Site Visit
             </Button>
-            <a href="#flagship">
+            <a href="#projects">
               <Button size="lg" variant="outline"
-                className="h-14 px-8 bg-white/5 backdrop-blur-md border-white/40 text-white hover:bg-white/15 hover:text-white text-base transition-all duration-300">
-                Discover Golden Palm City <ArrowRight className="w-5 h-5 ml-2" />
+                className="h-12 sm:h-14 px-6 sm:px-8 bg-white/5 backdrop-blur-md border-white/40 text-white hover:bg-white/15 hover:text-white text-sm sm:text-base transition-all duration-300">
+                Explore 11 Projects <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Button>
             </a>
             <a href={`https://wa.me/${BRAND.whatsapp}`} target="_blank" rel="noopener noreferrer">
-              <Button size="lg" variant="ghost" className="h-14 px-8 text-white hover:bg-white/10 text-base">
-                <MessageCircle className="w-5 h-5 mr-2 text-green-400" /> WhatsApp
+              <Button size="lg" variant="ghost" className="h-12 sm:h-14 px-5 sm:px-8 text-white hover:bg-white/10 text-sm sm:text-base">
+                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-400" /> WhatsApp
               </Button>
             </a>
           </motion.div>
 
-          <div className="mt-16 flex items-center gap-6 flex-wrap">
+          {/* Active project showcase badge */}
+          <motion.div
+            key={currentSlide.slug}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mt-6 sm:mt-8 inline-flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-xl bg-black/50 backdrop-blur-md border border-gold/30 max-w-xl shadow-2xl"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-gold animate-pulse shrink-0" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gold bg-gold/15 px-2 py-0.5 rounded-full border border-gold/30 shrink-0">
+                {currentSlide.badge}
+              </span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-xs sm:text-sm font-heading font-bold text-white flex items-center gap-2 truncate">
+                <span>{currentSlide.name}</span>
+                <span className="text-white/40 text-[11px] font-normal">• {currentSlide.location}</span>
+              </div>
+              <div className="text-[11px] text-white/75 truncate mt-0.5">
+                {currentSlide.desc}
+              </div>
+            </div>
+            <Link href={`/projects/${currentSlide.slug}`} className="shrink-0 self-end sm:self-auto">
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-gold hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-md border border-gold/40">
+                View Project <ChevronRight className="w-3 h-3" />
+              </span>
+            </Link>
+          </motion.div>
+
+          <div className="mt-8 sm:mt-12 flex items-center gap-4 sm:gap-6 flex-wrap">
             {APPROVALS.slice(0, 5).map((a, i) => (
               <motion.div key={a}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.1 + i * 0.08 }}
-                className="flex items-center gap-2 text-sm text-white/80"
+                className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-white/80"
               >
-                <BadgeCheck className="w-4 h-4 text-gold" /> {a}
+                <BadgeCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold shrink-0" /> {a}
               </motion.div>
             ))}
           </div>
@@ -416,19 +500,19 @@ function Hero({ onCTA }) {
 
       {/* Animated scroll cue */}
       <motion.div
-        animate={{ y: [0, 10, 0] }}
+        animate={{ y: [0, 8, 0] }}
         transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 flex flex-col items-center gap-2"
+        className="hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 flex-col items-center gap-1"
       >
-        <span className="text-[10px] tracking-[0.35em] uppercase font-numbers">Scroll</span>
-        <ChevronDown className="w-4 h-4" />
+        <span className="text-[9px] tracking-[0.35em] uppercase font-numbers">Scroll</span>
+        <ChevronDown className="w-3.5 h-3.5" />
       </motion.div>
 
       {/* Slide indicator dots */}
-      <div className="absolute right-6 bottom-10 flex flex-col gap-2 z-10">
-        {HERO_IMAGES.map((_, i) => (
-          <button key={i} onClick={() => setIdx(i)} aria-label={`slide ${i + 1}`}
-            className={`w-1 rounded-full transition-all duration-500 ${i === idx ? 'bg-gold h-12' : 'bg-white/40 h-8'}`} />
+      <div className="absolute right-4 sm:right-6 bottom-8 sm:bottom-10 flex flex-col gap-2 z-10">
+        {HERO_SLIDES.map((slide, i) => (
+          <button key={slide.slug + i} onClick={() => setIdx(i)} aria-label={`slide ${i + 1}`}
+            className={`w-1 rounded-full transition-all duration-500 ${i === idx ? 'bg-gold h-10 sm:h-12' : 'bg-white/40 h-6 sm:h-8'}`} />
         ))}
       </div>
     </section>
@@ -514,13 +598,17 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
         transition-all duration-500 flex flex-col
         shadow-[0_4px_20px_rgba(11,31,53,0.08)] hover:shadow-[0_20px_60px_rgba(11,31,53,0.18)]"
     >
-      <div className="relative h-72 overflow-hidden">
+      <div className="relative h-72 overflow-hidden bg-slate-900">
         <Link href={`/projects/${p.slug || p.id}`} className="block w-full h-full">
           <motion.img
-            src={p.image} alt={p.name} className="w-full h-full object-cover"
+            src={p.image || p.coverImage} alt={p.name} className="w-full h-full object-cover"
             loading="lazy"
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.08 }}
             transition={{ duration: 1.5, ease: 'easeOut' }}
+            onError={(e) => {
+              e.currentTarget.onerror = null
+              e.currentTarget.src = HERO_RENDERS.goldenPalmTower
+            }}
           />
         </Link>
         <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/20 to-transparent pointer-events-none" />
@@ -538,7 +626,7 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
             <h3 className="font-heading text-2xl mt-1">{p.name}</h3>
           </Link>
           <div className="flex items-center gap-2 text-sm text-white/85 mt-1">
-            <MapPin className="w-3.5 h-3.5 text-gold" /> {p.location}
+            <MapPin className="w-3.5 h-3.5 text-gold shrink-0" /> <span className="truncate">{p.location}</span>
           </div>
         </div>
       </div>
@@ -615,10 +703,10 @@ function FeaturedProjects({ onBook, onDetails }) {
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
             <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Signature Portfolio</div>
             <h2 className="font-heading text-4xl md:text-5xl text-navy max-w-2xl leading-tight">
-              Ten Ventures, <span className="italic text-gradient-gold">One Promise</span>
+              Eleven Ventures, <span className="italic text-gradient-gold">One Promise</span>
             </h2>
             <p className="text-muted-foreground mt-4 max-w-2xl">
-              From early townships to our flagship NH-44 city, every project carries the same commitment to clean titles and on-time delivery.
+              From early townships to our flagship NH-44 highway city, every project carries the same commitment to clean titles and on-time delivery.
             </p>
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="flex flex-wrap gap-2">
@@ -642,7 +730,7 @@ function FeaturedProjects({ onBook, onDetails }) {
         <div className="mt-14 text-center">
           <Link href="/projects">
             <Button size="lg" className="bg-navy hover:bg-navy-deep text-white border border-gold/40 hover:border-gold px-8 py-6 rounded-xl font-bold tracking-wider text-xs uppercase shadow-xl hover:scale-105 transition-all duration-300">
-              <span>Explore All 10 Projects in Dedicated Directory</span>
+              <span>Explore All 11 Projects in Dedicated Directory</span>
               <ArrowRight className="w-4 h-4 ml-2 text-gold" />
             </Button>
           </Link>
@@ -1452,7 +1540,7 @@ function FloatingActions({ onCTA }) {
   return (
     <>
       <a href={`https://wa.me/${BRAND.whatsapp}?text=Hi%20Kings%20Pride%20Infra`} target="_blank" rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 group">
+        className="hidden md:flex fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 group">
         <MessageCircle className="w-6 h-6 text-white" />
         <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping" />
         <span className="absolute right-16 bg-white text-navy text-xs px-3 py-1.5 rounded shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-medium">
@@ -1460,17 +1548,25 @@ function FloatingActions({ onCTA }) {
         </span>
       </a>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-navy text-white border-t border-gold/20 grid grid-cols-3">
-        <a href={`tel:${BRAND.phone}`} className="py-3 text-center text-xs flex flex-col items-center gap-1 hover:bg-navy-deep transition-colors">
-          <Phone className="w-4 h-4 text-gold" /> Call
+      {/* Mobile-focused responsive bottom quick-action bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0B1F35]/95 backdrop-blur-xl border-t border-[#D4AF37]/30 px-2 py-2 flex items-center justify-between gap-1.5 shadow-[0_-4px_25px_rgba(0,0,0,0.6)]">
+        <a href={`tel:${BRAND.mobile1}`} className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold transition-colors">
+          <Phone className="w-4 h-4 text-[#D4AF37] mb-0.5" />
+          <span>Call</span>
         </a>
-        <a href={`https://wa.me/${BRAND.whatsapp}`} target="_blank" rel="noopener noreferrer"
-          className="py-3 text-center text-xs flex flex-col items-center gap-1 bg-green-600">
-          <MessageCircle className="w-4 h-4" /> WhatsApp
+        <a href={`https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent("Hi KP Infra, I would like to inquire about your plotted communities & farmlands.")}`} target="_blank" rel="noopener noreferrer"
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-emerald-500/15 active:bg-emerald-500/25 text-emerald-300 text-[10px] font-semibold transition-colors">
+          <MessageCircle className="w-4 h-4 text-emerald-400 mb-0.5" />
+          <span>WhatsApp</span>
         </a>
-        <button onClick={onCTA} className="py-3 text-center text-xs flex flex-col items-center gap-1 bg-gold text-navy font-semibold">
-          <Calendar className="w-4 h-4" /> Visit
+        <button onClick={onCTA} className="flex-[1.3] flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-[#0B1F35] font-bold text-[11px] uppercase tracking-wider shadow-md active:scale-95 transition-transform">
+          <Calendar className="w-3.5 h-3.5" />
+          <span>Book Visit</span>
         </button>
+        <Link href="/projects" className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold transition-colors">
+          <Building2 className="w-4 h-4 text-[#D4AF37] mb-0.5" />
+          <span>Projects</span>
+        </Link>
       </div>
     </>
   )
@@ -1541,108 +1637,206 @@ function LeadDialog({ open, onOpenChange, project }) {
 
 // ─── Project Detail Dialog ────────────────────────────────────
 function ProjectDetailDialog({ open, onOpenChange, project, onBook }) {
+  const [activeImgIndex, setActiveImgIndex] = useState(0)
+
+  useEffect(() => {
+    setActiveImgIndex(0)
+  }, [project])
+
   if (!project) return null
   const p = project
+
+  // Merge cover and gallery without duplicates
+  const allImages = [p.image || p.coverImage, ...(p.gallery || [])].filter(
+    (img, idx, arr) => img && arr.indexOf(img) === idx
+  )
+  const currentImg = allImages[activeImgIndex] || p.image || '/images/renders/goldenPalmTower.png'
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
-        <div className="relative h-72 overflow-hidden">
-          <img src={p.image} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/40 to-transparent" />
-          <div className="absolute bottom-4 left-6 right-6 text-white">
-            <div className="flex flex-wrap gap-2 mb-3">
-              {p.isFlagship && <Badge className="bg-gold text-navy">★ Flagship</Badge>}
-              <Badge className="bg-white/90 text-navy">{p.category}</Badge>
+      <DialogContent className="max-w-4xl w-[95vw] sm:w-full p-0 overflow-hidden max-h-[92vh] overflow-y-auto bg-[#0B1F35] text-white border border-[#D4AF37]/30 shadow-2xl rounded-2xl">
+        {/* Main hero image display with interactive switcher */}
+        <div className="relative h-64 sm:h-80 md:h-96 overflow-hidden bg-black/60">
+          <img
+            src={currentImg}
+            alt={p.name}
+            className="w-full h-full object-cover transition-all duration-500 ease-out"
+            onError={(e) => {
+              e.currentTarget.onerror = null
+              e.currentTarget.src = p.image || '/images/renders/goldenPalmTower.png'
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F35] via-[#0B1F35]/40 to-transparent" />
+
+          {/* Badges */}
+          <div className="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+            <div className="flex flex-wrap gap-2">
+              {p.isFlagship && <Badge className="bg-[#D4AF37] text-[#0B1F35] font-bold">★ Flagship</Badge>}
+              <Badge className="bg-white/90 text-[#0B1F35] font-semibold">{p.category}</Badge>
               <Badge variant="outline" className="bg-white/10 backdrop-blur-md text-white border-white/30">{p.status}</Badge>
             </div>
-            <DialogTitle className="font-heading text-3xl">{p.name}</DialogTitle>
-            <p className="text-sm italic text-gold/90 mt-1">&ldquo;{p.tagline}&rdquo;</p>
-            <p className="text-sm text-white/80 mt-1"><MapPin className="w-3.5 h-3.5 inline text-gold mr-1" /> {p.location}</p>
+            {p.approval && (
+              <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                {p.approval}
+              </Badge>
+            )}
+          </div>
+
+          {/* Title bar at bottom of hero */}
+          <div className="absolute bottom-4 left-4 sm:left-6 right-4 sm:right-6 text-white">
+            <DialogTitle className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight drop-shadow">
+              {p.name}
+            </DialogTitle>
+            <p className="text-xs sm:text-sm italic text-[#F4D078] mt-1 line-clamp-1">&ldquo;{p.tagline}&rdquo;</p>
+            <p className="text-xs sm:text-sm text-slate-300 mt-1 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+              <span className="truncate">{p.location}</span>
+            </p>
           </div>
         </div>
 
-        <div className="p-8 space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Thumbnail gallery preview strip */}
+        {allImages.length > 1 && (
+          <div className="px-4 sm:px-6 py-2.5 bg-[#071320] border-y border-[#D4AF37]/20 flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <span className="text-[11px] uppercase font-bold text-[#D4AF37] tracking-wider shrink-0 mr-1">
+              Photos ({allImages.length}):
+            </span>
+            {allImages.map((img, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setActiveImgIndex(i)}
+                className={`relative w-14 h-11 sm:w-16 sm:h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all ${
+                  activeImgIndex === i ? 'border-[#D4AF37] scale-105 shadow-md shadow-[#D4AF37]/30' : 'border-transparent opacity-60 hover:opacity-100'
+                }`}
+              >
+                <img
+                  src={img}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Modal body */}
+        <div className="p-4 sm:p-6 md:p-8 space-y-6">
+          {/* Dedicated Page Banner link */}
+          <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#D4AF37]/15 to-transparent border border-[#D4AF37]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <div className="text-xs font-bold text-[#F4D078] uppercase tracking-wider">Dedicated Project Experience</div>
+              <div className="text-xs text-slate-300 mt-0.5">Explore full master plan, zoning layout, high-res gallery & investment calculator.</div>
+            </div>
+            <Link href={`/projects/${p.slug || p.id}`} className="shrink-0 w-full sm:w-auto">
+              <Button size="sm" className="w-full bg-[#D4AF37] hover:bg-[#B8860B] text-[#0B1F35] font-bold text-xs uppercase tracking-wider">
+                <span>View Full Dedicated Page</span>
+                <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
+              </Button>
+            </Link>
+          </div>
+
+          {/* Key Specs Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {[
               { l: 'Type', v: p.type },
               { l: 'Plot Range', v: p.plotRange },
-              { l: 'Total Area', v: p.totalArea || '—' },
+              { l: 'Total Area', v: p.totalArea || p.totalAreaShort || '—' },
               { l: 'Possession', v: p.possession },
               { l: 'Approval', v: p.approval },
               { l: 'RERA', v: p.rera || '—' },
               { l: 'Distance', v: p.distance },
               { l: 'Price', v: p.price },
             ].map(x => (
-              <div key={x.l} className="border-l-2 border-gold pl-3">
-                <div className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">{x.l}</div>
-                <div className="text-sm text-navy font-medium mt-1">{x.v}</div>
+              <div key={x.l} className="border-l-2 border-[#D4AF37] pl-3 py-1 bg-white/[0.02] rounded-r-lg">
+                <div className="text-[10px] tracking-[0.2em] uppercase text-slate-400">{x.l}</div>
+                <div className="text-xs sm:text-sm text-white font-semibold mt-0.5 break-words">{x.v}</div>
               </div>
             ))}
           </div>
 
-          {p.usps.length > 0 && (
+          {/* Description */}
+          {p.shortDescription && (
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {p.shortDescription}
+            </p>
+          )}
+
+          {/* Highlights & USPs */}
+          {p.usps && p.usps.length > 0 && (
             <div>
-              <h4 className="font-heading text-xl text-navy mb-3">Why this project</h4>
-              <div className="space-y-2">
-                {p.usps.map(u => (
-                  <div key={u} className="flex items-start gap-2 text-sm">
-                    <CheckCircle2 className="w-4 h-4 text-gold mt-0.5 shrink-0" /> {u}
+              <h4 className="font-heading text-lg sm:text-xl text-[#F4D078] mb-2.5">Why Invest in {p.name}</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {p.usps.map((u, i) => (
+                  <div key={i} className="flex items-start gap-2 text-xs sm:text-sm text-slate-200">
+                    <CheckCircle2 className="w-4 h-4 text-[#D4AF37] mt-0.5 shrink-0" />
+                    <span>{u}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {p.amenities.length > 0 && (
+          {/* Amenities */}
+          {p.amenities && p.amenities.length > 0 && (
             <div>
-              <h4 className="font-heading text-xl text-navy mb-3">Amenities</h4>
-              <div className="flex flex-wrap gap-2">
+              <h4 className="font-heading text-lg sm:text-xl text-[#F4D078] mb-2.5">Key Amenities</h4>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {p.amenities.map(a => (
-                  <span key={a} className="text-xs px-3 py-1.5 bg-navy/5 text-navy border border-navy/10">{a}</span>
+                  <span key={a} className="text-xs px-2.5 py-1 bg-white/5 text-slate-200 border border-white/10 rounded-md">
+                    {a}
+                  </span>
                 ))}
               </div>
             </div>
           )}
 
+          {/* Nearby */}
           {p.nearby && p.nearby.length > 0 && (
             <div>
-              <h4 className="font-heading text-xl text-navy mb-3">Nearby</h4>
+              <h4 className="font-heading text-lg sm:text-xl text-[#F4D078] mb-2.5">Connectivity & Proximity</h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {p.nearby.map(n => (
-                  <div key={n.name} className="border border-border p-3">
-                    <div className="text-sm text-navy">{n.name}</div>
-                    <div className="text-xs text-gold-dark font-numbers mt-0.5">{n.dist}</div>
+                {p.nearby.slice(0, 6).map(n => (
+                  <div key={n.name} className="border border-white/10 rounded-lg p-2.5 bg-white/[0.02]">
+                    <div className="text-xs text-white line-clamp-1">{n.name}</div>
+                    <div className="text-[11px] text-[#F4D078] font-numbers mt-0.5">{n.dist}</div>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {p.gallery.length > 1 && (
-            <div>
-              <h4 className="font-heading text-xl text-navy mb-3">Gallery</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {p.gallery.map((g, i) => (
-                  <img key={i} src={g} alt="" className="w-full h-32 object-cover" loading="lazy" />
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-3 pt-4 border-t">
-            <Button onClick={() => { onBook(p); onOpenChange(false) }} className="flex-1 bg-gold hover:bg-gold-dark text-navy font-semibold transition-all duration-300">
+          {/* Action Footer */}
+          <div className="flex flex-wrap gap-2.5 sm:gap-3 pt-4 border-t border-white/10">
+            <Button
+              onClick={() => { onBook(p); onOpenChange(false) }}
+              className="flex-1 min-w-[140px] bg-[#D4AF37] hover:bg-[#B8860B] text-[#0B1F35] font-bold text-xs uppercase tracking-wider transition-all duration-300"
+            >
               <Calendar className="w-4 h-4 mr-2" /> Book Site Visit
             </Button>
+            <Link href={`/projects/${p.slug || p.id}`} className="flex-1 min-w-[140px]">
+              <Button variant="outline" className="w-full border-[#D4AF37]/50 text-[#F4D078] hover:bg-[#D4AF37]/10 text-xs uppercase tracking-wider">
+                <Eye className="w-4 h-4 mr-2" /> Dedicated Page
+              </Button>
+            </Link>
             {p.brochureUrl && (
               <a href={p.brochureUrl} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="border-navy text-navy hover:bg-navy hover:text-white">
-                  <FileText className="w-4 h-4 mr-2" /> Brochure
+                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 text-xs">
+                  <FileText className="w-4 h-4 mr-1.5" /> Brochure
                 </Button>
               </a>
             )}
-            <a href={`https://wa.me/${BRAND.whatsapp}?text=Interested%20in%20${encodeURIComponent(p.name)}`} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-600 hover:text-white">
-                <MessageCircle className="w-4 h-4 mr-2" /> WhatsApp
+            <a
+              href={`https://wa.me/${BRAND.whatsapp}?text=Interested%20in%20${encodeURIComponent(p.name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 text-xs">
+                <MessageCircle className="w-4 h-4 mr-1.5" /> WhatsApp
               </Button>
             </a>
           </div>
