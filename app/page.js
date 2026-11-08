@@ -377,7 +377,7 @@ function Hero({ onCTA }) {
   const currentSlide = HERO_SLIDES[idx]
 
   return (
-    <section ref={ref} id="home" className="relative h-screen min-h-[760px] w-full overflow-hidden">
+    <section ref={ref} id="home" className="relative min-h-[640px] sm:min-h-[720px] md:h-screen w-full overflow-hidden flex flex-col justify-center">
       {/* Parallax background */}
       <motion.div className="absolute inset-0 will-change-transform" style={{ y: imgY, scale: 1.15 }}>
         {HERO_SLIDES.map((slide, i) => (
@@ -400,7 +400,7 @@ function Hero({ onCTA }) {
       <div className="absolute inset-0 vignette" />
 
       {/* Content */}
-      <motion.div style={{ y: contentY, opacity }} className="relative h-full container mx-auto px-4 sm:px-6 flex flex-col justify-center text-white">
+      <motion.div style={{ y: contentY, opacity }} className="relative h-full container mx-auto px-4 sm:px-6 pt-24 pb-14 sm:py-20 md:py-0 flex flex-col justify-center text-white">
         <motion.div
           initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -409,15 +409,15 @@ function Hero({ onCTA }) {
           <motion.div
             initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex items-center gap-3 mb-4 sm:mb-6"
+            className="flex items-center gap-2.5 sm:gap-3 mb-3 sm:mb-6"
           >
-            <div className="h-px w-8 sm:w-12 bg-gold" />
-            <span className="text-gold text-[10px] sm:text-xs tracking-[0.3em] sm:tracking-[0.4em] font-numbers uppercase">
+            <div className="h-px w-6 sm:w-12 bg-gold" />
+            <span className="text-gold text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.4em] font-numbers uppercase font-semibold">
               {BRAND.displayName} • Since {BRAND.established}
             </span>
           </motion.div>
 
-          <h1 className="font-heading text-4xl sm:text-6xl md:text-7xl lg:text-[84px] leading-[1.08] sm:leading-[1.04] font-medium mb-4 sm:mb-6">
+          <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.12] sm:leading-[1.04] font-medium mb-3 sm:mb-6">
             A Bridge to Your<br />
             <span className="text-gradient-gold italic">Dream Home</span>
           </h1>
@@ -425,7 +425,7 @@ function Hero({ onCTA }) {
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ duration: 0.9, delay: 0.7 }}
-            className="text-base sm:text-lg md:text-xl text-white/85 max-w-2xl mb-8 sm:mb-10 font-light leading-relaxed"
+            className="text-xs sm:text-base md:text-lg text-white/90 max-w-2xl mb-6 sm:mb-8 font-light leading-relaxed"
           >
             Twenty-two years of crafting Telangana&apos;s most trusted addresses — from HMDA & DTCP
             gated layouts and high-yielding farm estates to our flagship NH-44 highway city,{' '}
@@ -435,21 +435,21 @@ function Hero({ onCTA }) {
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="flex flex-wrap gap-3 sm:gap-4"
+            className="flex flex-col sm:flex-row gap-2.5 sm:gap-4 w-full sm:w-auto"
           >
             <Button onClick={onCTA} size="lg"
-              className="bg-gold hover:bg-gold-dark text-navy font-semibold tracking-wide h-12 sm:h-14 px-6 sm:px-8 gold-shadow text-sm sm:text-base transition-all duration-300 hover:scale-105">
+              className="bg-gold hover:bg-gold-dark text-navy font-semibold tracking-wide h-11 sm:h-14 px-6 sm:px-8 gold-shadow text-xs sm:text-base transition-all duration-300 hover:scale-105 w-full sm:w-auto">
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> Schedule Site Visit
             </Button>
-            <a href="#projects">
+            <a href="#projects" className="w-full sm:w-auto">
               <Button size="lg" variant="outline"
-                className="h-12 sm:h-14 px-6 sm:px-8 bg-white/5 backdrop-blur-md border-white/40 text-white hover:bg-white/15 hover:text-white text-sm sm:text-base transition-all duration-300">
+                className="w-full sm:w-auto h-11 sm:h-14 px-6 sm:px-8 bg-white/5 backdrop-blur-md border-white/40 text-white hover:bg-white/15 hover:text-white text-xs sm:text-base transition-all duration-300">
                 Explore 11 Projects <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Button>
             </a>
-            <a href={`https://wa.me/${BRAND.whatsapp}`} target="_blank" rel="noopener noreferrer">
-              <Button size="lg" variant="ghost" className="h-12 sm:h-14 px-5 sm:px-8 text-white hover:bg-white/10 text-sm sm:text-base">
-                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-400" /> WhatsApp
+            <a href={`https://wa.me/${BRAND.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+              <Button size="lg" variant="ghost" className="w-full sm:w-auto h-11 sm:h-14 px-5 sm:px-8 text-white hover:bg-white/10 text-xs sm:text-base">
+                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-400" /> WhatsApp Direct
               </Button>
             </a>
           </motion.div>
@@ -460,31 +460,32 @@ function Hero({ onCTA }) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mt-6 sm:mt-8 inline-flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-xl bg-black/50 backdrop-blur-md border border-gold/30 max-w-xl shadow-2xl"
+            className="mt-5 sm:mt-8 p-3 sm:p-3.5 rounded-xl bg-black/60 backdrop-blur-md border border-gold/40 flex items-center justify-between gap-3 max-w-xl shadow-2xl"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
               <span className="w-2 h-2 rounded-full bg-gold animate-pulse shrink-0" />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gold bg-gold/15 px-2 py-0.5 rounded-full border border-gold/30 shrink-0">
-                {currentSlide.badge}
-              </span>
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-xs sm:text-sm font-heading font-bold text-white flex items-center gap-2 truncate">
-                <span>{currentSlide.name}</span>
-                <span className="text-white/40 text-[11px] font-normal">• {currentSlide.location}</span>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-gold bg-gold/15 px-2 py-0.5 rounded-full border border-gold/30 shrink-0">
+                    {currentSlide.badge}
+                  </span>
+                  <span className="text-xs sm:text-sm font-heading font-bold text-white truncate">
+                    {currentSlide.name}
+                  </span>
+                </div>
+                <div className="text-[10px] sm:text-[11px] text-white/70 truncate mt-0.5">
+                  {currentSlide.location} • {currentSlide.desc}
+                </div>
               </div>
-              <div className="text-[11px] text-white/75 truncate mt-0.5">
-                {currentSlide.desc}
-              </div>
             </div>
-            <Link href={`/projects/${currentSlide.slug}`} className="shrink-0 self-end sm:self-auto">
+            <Link href={`/projects/${currentSlide.slug}`} className="shrink-0">
               <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-gold hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-md border border-gold/40">
-                View Project <ChevronRight className="w-3 h-3" />
+                View <ChevronRight className="w-3 h-3" />
               </span>
             </Link>
           </motion.div>
 
-          <div className="mt-8 sm:mt-12 flex items-center gap-4 sm:gap-6 flex-wrap">
+          <div className="mt-6 sm:mt-10 flex items-center gap-3 sm:gap-6 flex-wrap">
             {APPROVALS.slice(0, 5).map((a, i) => (
               <motion.div key={a}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
@@ -498,21 +499,17 @@ function Hero({ onCTA }) {
         </motion.div>
       </motion.div>
 
-      {/* Animated scroll cue */}
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-        className="hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 flex-col items-center gap-1"
-      >
-        <span className="text-[9px] tracking-[0.35em] uppercase font-numbers">Scroll</span>
-        <ChevronDown className="w-3.5 h-3.5" />
-      </motion.div>
-
-      {/* Slide indicator dots */}
-      <div className="absolute right-4 sm:right-6 bottom-8 sm:bottom-10 flex flex-col gap-2 z-10">
+      {/* Centered mobile-friendly slide indicator pills */}
+      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 z-10">
         {HERO_SLIDES.map((slide, i) => (
-          <button key={slide.slug + i} onClick={() => setIdx(i)} aria-label={`slide ${i + 1}`}
-            className={`w-1 rounded-full transition-all duration-500 ${i === idx ? 'bg-gold h-10 sm:h-12' : 'bg-white/40 h-6 sm:h-8'}`} />
+          <button
+            key={slide.slug + i}
+            onClick={() => setIdx(i)}
+            aria-label={`slide ${i + 1}`}
+            className={`rounded-full transition-all duration-500 ${
+              i === idx ? 'w-8 h-2 bg-gold shadow-md' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+            }`}
+          />
         ))}
       </div>
     </section>
@@ -543,38 +540,38 @@ function StatCard({ value, suffix, label, icon: Icon, delay = 0 }) {
     <motion.div ref={ref}
       initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }} transition={{ duration: 0.7, delay }}
-      className="text-center group"
+      className="text-center group p-3 sm:p-4 rounded-xl bg-slate-50/60 lg:bg-transparent"
     >
       <motion.div
         whileHover={{ scale: 1.1, rotate: 5 }}
         transition={{ type: 'spring', stiffness: 300 }}
-        className="w-16 h-16 mx-auto mb-4 rounded-full border border-gold/40 flex items-center justify-center bg-navy/5 group-hover:bg-gold/10 group-hover:border-gold transition-all duration-500"
+        className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full border border-gold/40 flex items-center justify-center bg-navy/5 group-hover:bg-gold/10 group-hover:border-gold transition-all duration-500"
       >
-        <Icon className="w-7 h-7 text-gold" />
+        <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-gold" />
       </motion.div>
-      <div className="font-heading text-5xl md:text-6xl text-navy font-medium">
+      <div className="font-heading text-3xl sm:text-5xl md:text-6xl text-navy font-medium">
         <span className="font-numbers">{v.toLocaleString('en-IN')}</span>
         <span className="text-gold">{suffix}</span>
       </div>
-      <div className="mt-2 text-sm tracking-[0.25em] uppercase text-muted-foreground">{label}</div>
+      <div className="mt-1.5 sm:mt-2 text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.25em] uppercase text-muted-foreground">{label}</div>
     </motion.div>
   )
 }
 
 function TrustSection() {
   return (
-    <section className="py-24 bg-white overflow-hidden">
-      <div className="container mx-auto px-6">
+    <section className="py-16 sm:py-24 bg-white overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-10 sm:mb-16"
         >
           <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Trusted by Generations</div>
-          <h2 className="font-heading text-4xl md:text-5xl text-navy">A Legacy Carved in Numbers</h2>
-          <div className="gold-divider w-32 mx-auto mt-6" />
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-navy">A Legacy Carved in Numbers</h2>
+          <div className="gold-divider w-24 sm:w-32 mx-auto mt-4 sm:mt-6" />
         </motion.div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
           <StatCard value={STATS.yearsOfLegacy} suffix="+" label="Years of Legacy" icon={Award} delay={0} />
           <StatCard value={STATS.happyFamilies} suffix="+" label="Happy Families" icon={Users} delay={0.1} />
           <StatCard value={STATS.projectsDelivered} suffix="+" label="Ventures Delivered" icon={Building2} delay={0.2} />
@@ -593,92 +590,183 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -8, transition: { duration: 0.3 } }}
-      className="group bg-white border border-border hover:border-gold/40 rounded-sm overflow-hidden
+      whileHover={{ y: -6, transition: { duration: 0.3 } }}
+      className="group bg-white border border-slate-200/90 hover:border-gold/60 rounded-2xl overflow-hidden
         transition-all duration-500 flex flex-col
-        shadow-[0_4px_20px_rgba(11,31,53,0.08)] hover:shadow-[0_20px_60px_rgba(11,31,53,0.18)]"
+        shadow-[0_4px_24px_rgba(11,31,53,0.06)] hover:shadow-[0_20px_50px_rgba(11,31,53,0.16)]"
     >
-      <div className="relative h-72 overflow-hidden bg-slate-900">
+      {/* Visual Header / Image Container */}
+      <div className="relative h-64 sm:h-72 overflow-hidden bg-slate-950">
         <Link href={`/projects/${p.slug || p.id}`} className="block w-full h-full">
           <motion.img
-            src={p.image || p.coverImage} alt={p.name} className="w-full h-full object-cover"
+            src={p.image || p.coverImage}
+            alt={p.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             loading="lazy"
-            whileHover={{ scale: 1.08 }}
-            transition={{ duration: 1.5, ease: 'easeOut' }}
             onError={(e) => {
               e.currentTarget.onerror = null
               e.currentTarget.src = HERO_RENDERS.goldenPalmTower
             }}
           />
         </Link>
-        <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F35]/90 via-transparent to-black/30 pointer-events-none" />
 
-        {/* Badges */}
-        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-          {p.isFlagship && <Badge className="bg-gold text-navy hover:bg-gold border-0 font-semibold tracking-wide">★ Flagship</Badge>}
-          <Badge className="bg-white/90 text-navy hover:bg-white border-0 font-medium">{p.category}</Badge>
-          <Badge variant="outline" className="bg-white/10 backdrop-blur-md text-white border-white/30">{p.status}</Badge>
+        {/* Top Badges */}
+        <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {p.isFlagship ? (
+              <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-gold via-[#F4D078] to-[#B8860B] text-slate-950 shadow-md">
+                ★ Flagship
+              </span>
+            ) : (
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-black/60 text-white backdrop-blur-md border border-white/20">
+                {p.category}
+              </span>
+            )}
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium backdrop-blur-md ${
+              p.status === 'Completed'
+                ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/30'
+                : 'bg-amber-950/80 text-amber-300 border border-amber-500/30'
+            }`}>
+              {p.status}
+            </span>
+          </div>
+
+          <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 backdrop-blur-md">
+            {p.approval}
+          </span>
         </div>
 
-        <div className="absolute bottom-4 left-4 right-4 text-white">
-          <div className="text-xs tracking-[0.2em] uppercase text-gold/90">{p.type}</div>
-          <Link href={`/projects/${p.slug || p.id}`} className="hover:text-gold transition-colors">
-            <h3 className="font-heading text-2xl mt-1">{p.name}</h3>
-          </Link>
-          <div className="flex items-center gap-2 text-sm text-white/85 mt-1">
-            <MapPin className="w-3.5 h-3.5 text-gold shrink-0" /> <span className="truncate">{p.location}</span>
-          </div>
+        {/* Bottom Image Overlay Strip: Price & Plot Range with High-Contrast Dark Backdrop */}
+        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3 py-1.5 rounded-xl bg-[#0B1F35]/85 backdrop-blur-md border border-white/10 text-xs">
+          <span className="text-gold font-heading font-bold text-sm tracking-wide">
+            {p.price}
+          </span>
+          <span className="text-slate-200 text-[11px] font-numbers">
+            {p.plotRange}
+          </span>
         </div>
       </div>
 
-      <div className="p-6 flex-1 flex flex-col">
-        <p className="text-sm text-muted-foreground italic mb-4 line-clamp-2">&ldquo;{p.tagline}&rdquo;</p>
+      {/* Card Body - 100% High-Contrast Deep Navy Text on Clean White Background */}
+      <div className="p-5 sm:p-6 flex-1 flex flex-col">
+        {/* Category & Location */}
+        <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#B8860B] mb-1.5">
+          <span>{p.category} • {p.totalAreaShort || p.totalArea}</span>
+          <span className="flex items-center gap-1 text-slate-500 font-normal normal-case">
+            <MapPin className="w-3 h-3 text-gold shrink-0" />
+            <span className="truncate max-w-[130px]">{p.location}</span>
+          </span>
+        </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          {[
-            { l: 'Plot Range', v: p.plotRange },
-            { l: 'Possession', v: p.possession },
-            { l: 'Approval', v: p.approval },
-            { l: 'Distance', v: p.distance },
-          ].map(x => (
-            <div key={x.l}>
-              <div className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground">{x.l}</div>
-              <div className="text-xs font-semibold text-navy mt-1 font-numbers">{x.v}</div>
-            </div>
+        {/* Project Name Heading (ALWAYS VISIBLE & CONTRASTING) */}
+        <Link href={`/projects/${p.slug || p.id}`} className="group/title block">
+          <h3 className="font-heading text-xl sm:text-2xl font-bold text-[#0B1F35] group-hover/title:text-[#B8860B] transition-colors leading-tight">
+            {p.name}
+          </h3>
+        </Link>
+
+        {/* Tagline */}
+        <p className="text-xs text-slate-500 italic mt-1 line-clamp-1 leading-relaxed">
+          &ldquo;{p.tagline}&rdquo;
+        </p>
+
+        {/* 2x2 Specs Grid */}
+        <div className="grid grid-cols-2 gap-2 my-4 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+          <div>
+            <div className="text-[10px] tracking-wider uppercase text-slate-400 font-medium">Plots</div>
+            <div className="text-xs font-semibold text-[#0B1F35] font-numbers truncate">{p.plotRange}</div>
+          </div>
+          <div>
+            <div className="text-[10px] tracking-wider uppercase text-slate-400 font-medium">Possession</div>
+            <div className="text-xs font-semibold text-[#0B1F35] font-numbers truncate">{p.possession}</div>
+          </div>
+          <div>
+            <div className="text-[10px] tracking-wider uppercase text-slate-400 font-medium">Approval</div>
+            <div className="text-xs font-semibold text-emerald-700 font-numbers truncate">{p.approval}</div>
+          </div>
+          <div>
+            <div className="text-[10px] tracking-wider uppercase text-slate-400 font-medium">Highway / Dist</div>
+            <div className="text-xs font-semibold text-[#0B1F35] font-numbers truncate">{p.distance}</div>
+          </div>
+        </div>
+
+        {/* Highlights */}
+        <div className="flex flex-wrap gap-1.5 mb-5">
+          {p.highlights.slice(0, 3).map(h => (
+            <span key={h} className="text-[11px] px-2.5 py-1 bg-amber-50 text-[#8B6508] border border-amber-200/60 rounded-md font-medium">
+              {h}
+            </span>
           ))}
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-5">
-          {p.highlights.slice(0, 4).map(h => (
-            <span key={h} className="text-xs px-2.5 py-1 bg-navy/5 text-navy border border-navy/10 rounded-sm">{h}</span>
-          ))}
-        </div>
-
-        <div className="flex gap-2 mt-auto">
-          <Link href={`/projects/${p.slug || p.id}`} className="flex-1">
-            <Button className="w-full bg-navy hover:bg-navy-deep text-white transition-all duration-300 flex items-center justify-center gap-1.5 shadow-md">
-              <span>View Project</span>
+        {/* Actions - Mobile Optimized 2-Tier Layout */}
+        <div className="space-y-2 mt-auto pt-2 border-t border-slate-100">
+          <Link href={`/projects/${p.slug || p.id}`} className="block w-full">
+            <Button className="w-full bg-[#0B1F35] hover:bg-[#132E4E] text-white py-2.5 rounded-xl font-medium text-xs tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+              <span>Explore Dedicated Page</span>
               <ChevronRight className="w-3.5 h-3.5 text-gold" />
             </Button>
           </Link>
-          <Button onClick={() => onDetails(p)} variant="outline" className="border-navy/30 text-navy hover:bg-navy hover:text-white transition-all" title="Quick Preview">
-            <Eye className="w-4 h-4" />
-          </Button>
-          <Button onClick={() => onBook(p)} variant="outline" className="border-gold text-gold-dark hover:bg-gold hover:text-navy transition-all duration-300" title="Book Visit">
-            <Calendar className="w-4 h-4" />
-          </Button>
-          {p.brochureUrl && (
-            <a href={p.brochureUrl} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="border-navy/30 text-navy hover:bg-navy hover:text-white transition-all" title="Brochure">
-                <FileText className="w-4 h-4" />
+
+          <div className="grid grid-cols-4 gap-1.5">
+            <Button
+              onClick={() => onDetails(p)}
+              variant="outline"
+              className="border-slate-200 hover:border-[#0B1F35] text-[#0B1F35] hover:bg-slate-50 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
+              title="Quick Preview"
+            >
+              <Eye className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
+              <span className="text-[11px]">Preview</span>
+            </Button>
+
+            <Button
+              onClick={() => onBook(p)}
+              variant="outline"
+              className="border-amber-300 hover:border-[#B8860B] text-[#8B6508] hover:bg-amber-50/60 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
+              title="Schedule Visit"
+            >
+              <Calendar className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
+              <span className="text-[11px]">Visit</span>
+            </Button>
+
+            {p.brochureUrl ? (
+              <a href={p.brochureUrl} target="_blank" rel="noopener noreferrer" className="block">
+                <Button
+                  variant="outline"
+                  className="w-full border-slate-200 hover:border-[#0B1F35] text-[#0B1F35] hover:bg-slate-50 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
+                  title="Download Brochure"
+                >
+                  <FileText className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
+                  <span className="text-[11px]">Brochure</span>
+                </Button>
+              </a>
+            ) : (
+              <Button
+                variant="outline"
+                disabled
+                className="w-full border-slate-100 text-slate-300 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
+              >
+                <span className="text-[11px]">Brochure</span>
+              </Button>
+            )}
+
+            <a
+              href={`https://wa.me/${BRAND.whatsapp}?text=Interested%20in%20${encodeURIComponent(p.name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <Button
+                variant="outline"
+                className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
+                title="Chat on WhatsApp"
+              >
+                <MessageCircle className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
+                <span className="text-[11px]">Chat</span>
               </Button>
             </a>
-          )}
-          <a href={`https://wa.me/${BRAND.whatsapp}?text=Interested%20in%20${encodeURIComponent(p.name)}`} target="_blank" rel="noopener noreferrer">
-            <Button variant="outline" className="border-green-600 text-green-700 hover:bg-green-600 hover:text-white transition-all" title="WhatsApp">
-              <MessageCircle className="w-4 h-4" />
-            </Button>
-          </a>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -697,39 +785,53 @@ function FeaturedProjects({ onBook, onDetails }) {
   }, [filter])
 
   return (
-    <section id="projects" className="py-24 bg-muted/40">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
+    <section id="projects" className="py-20 sm:py-24 bg-[#F8F9FA] border-y border-slate-200/80">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 sm:gap-8 mb-10 sm:mb-12">
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
             <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Signature Portfolio</div>
-            <h2 className="font-heading text-4xl md:text-5xl text-navy max-w-2xl leading-tight">
-              Eleven Ventures, <span className="italic text-gradient-gold">One Promise</span>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[#0B1F35] max-w-2xl leading-tight">
+              Eleven Ventures, <span className="italic text-gradient-gold">One Proven Promise</span>
             </h2>
-            <p className="text-muted-foreground mt-4 max-w-2xl">
-              From early townships to our flagship NH-44 highway city, every project carries the same commitment to clean titles and on-time delivery.
+            <p className="text-slate-600 mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base leading-relaxed">
+              From historic townships to our flagship NH-44 highway city, every project carries the same commitment to 100% crystal-clear titles, DTCP approvals, and on-time delivery.
             </p>
           </motion.div>
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="flex flex-wrap gap-2">
+
+          {/* Smooth Horizontal Scrolling Category Filter Strip */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="flex overflow-x-auto no-scrollbar gap-2 pb-2 w-full lg:w-auto"
+          >
             {FILTERS.map(f => (
-              <motion.button key={f} onClick={() => setFilter(f)}
-                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                className={`px-5 py-2.5 text-xs tracking-[0.2em] uppercase border transition-all duration-300
-                  ${filter === f ? 'bg-navy text-white border-navy shadow-lg' : 'bg-white text-navy border-border hover:border-gold hover:text-gold-dark'}`}>
+              <motion.button
+                key={f}
+                onClick={() => setFilter(f)}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs tracking-wider uppercase font-semibold whitespace-nowrap transition-all duration-300
+                  ${filter === f
+                    ? 'bg-[#0B1F35] text-gold border border-gold/40 shadow-lg shadow-[#0B1F35]/20 font-bold'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:border-gold hover:text-gold-dark shadow-sm'}`}
+              >
                 {f}
               </motion.button>
             ))}
           </motion.div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filtered.map((p, i) => (
             <ProjectCard key={p.id} p={p} onBook={onBook} onDetails={onDetails} delay={i * 0.05} />
           ))}
         </div>
 
-        <div className="mt-14 text-center">
-          <Link href="/projects">
-            <Button size="lg" className="bg-navy hover:bg-navy-deep text-white border border-gold/40 hover:border-gold px-8 py-6 rounded-xl font-bold tracking-wider text-xs uppercase shadow-xl hover:scale-105 transition-all duration-300">
+        <div className="mt-12 sm:mt-16 text-center">
+          <Link href="/projects" className="inline-block w-full sm:w-auto">
+            <Button size="lg" className="w-full sm:w-auto bg-[#0B1F35] hover:bg-[#132E4E] text-white border border-gold/40 hover:border-gold px-8 py-6 rounded-2xl font-bold tracking-wider text-xs uppercase shadow-xl hover:scale-105 transition-all duration-300">
               <span>Explore All 11 Projects in Dedicated Directory</span>
               <ArrowRight className="w-4 h-4 ml-2 text-gold" />
             </Button>
@@ -1153,24 +1255,24 @@ function InvestmentCalculator() {
   }
 
   return (
-    <section id="investor" className="py-24 bg-gradient-to-b from-muted/40 to-white">
-      <div className="container mx-auto px-6">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+    <section id="investor" className="py-16 sm:py-24 bg-gradient-to-b from-muted/40 to-white">
+      <div className="container mx-auto px-4 sm:px-6">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 sm:mb-12">
           <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Investor Intelligence</div>
-          <h2 className="font-heading text-4xl md:text-5xl text-navy">
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-navy">
             Visualise Your <span className="italic text-gradient-gold">Wealth Growth</span>
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto mt-4">
+          <p className="text-muted-foreground max-w-xl mx-auto mt-4 text-sm sm:text-base">
             Calibrated against historic Telangana plot appreciation across our delivered portfolio.
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-5 gap-8 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-5 gap-6 sm:gap-8 max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="lg:col-span-2">
-            <Card className="p-8 border-navy/10 luxe-shadow">
-              <div className="space-y-8">
+            <Card className="p-5 sm:p-8 rounded-2xl border-navy/10 luxe-shadow bg-white">
+              <div className="space-y-6 sm:space-y-8">
                 <div>
-                  <div className="flex justify-between mb-3">
+                  <div className="flex justify-between mb-3 text-sm">
                     <Label className="text-navy font-medium">Investment Amount</Label>
                     <span className="font-numbers font-bold text-gold-dark">{formatINR(investment)}</span>
                   </div>
@@ -1181,20 +1283,20 @@ function InvestmentCalculator() {
                   </div>
                 </div>
                 <div>
-                  <div className="flex justify-between mb-3">
+                  <div className="flex justify-between mb-3 text-sm">
                     <Label className="text-navy font-medium">Expected Appreciation</Label>
                     <span className="font-numbers font-bold text-gold-dark">{appreciation}% / yr</span>
                   </div>
                   <Slider value={[appreciation]} min={5} max={28} step={1} onValueChange={v => setAppreciation(v[0])} />
                 </div>
                 <div>
-                  <div className="flex justify-between mb-3">
+                  <div className="flex justify-between mb-3 text-sm">
                     <Label className="text-navy font-medium">Holding Period</Label>
                     <span className="font-numbers font-bold text-gold-dark">{years} years</span>
                   </div>
                   <Slider value={[years]} min={1} max={15} step={1} onValueChange={v => setYears(v[0])} />
                 </div>
-                <Button onClick={submit} className="w-full bg-navy hover:bg-navy-deep text-white h-12 transition-all duration-300 hover:scale-[1.02]">
+                <Button onClick={submit} className="w-full bg-navy hover:bg-navy-deep text-white h-12 rounded-xl transition-all duration-300 hover:scale-[1.02]">
                   Get Personalised Report <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -1202,20 +1304,20 @@ function InvestmentCalculator() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.1 }} className="lg:col-span-3">
-            <Card className="p-8 border-navy/10 luxe-shadow bg-navy text-white h-full">
-              <div className="grid grid-cols-3 gap-4 mb-6">
+            <Card className="p-5 sm:p-8 rounded-2xl border-navy/10 luxe-shadow bg-navy text-white h-full flex flex-col justify-between">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
                 {[
                   { label: 'Future Value', val: formatINR(future), color: 'text-white' },
                   { label: 'Net Gain', val: formatINR(gain), color: 'text-emerald-300' },
                   { label: 'Multiple', val: `${multiple}x`, color: 'text-white' },
                 ].map(x => (
-                  <div key={x.label}>
-                    <div className="text-[10px] tracking-[0.25em] uppercase text-gold">{x.label}</div>
-                    <div className={`font-numbers text-2xl md:text-3xl font-bold mt-1 ${x.color}`}>{x.val}</div>
+                  <div key={x.label} className="p-2 sm:p-3 rounded-lg bg-white/5 border border-white/5">
+                    <div className="text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] uppercase text-gold truncate">{x.label}</div>
+                    <div className={`font-numbers text-lg sm:text-2xl md:text-3xl font-bold mt-1 truncate ${x.color}`}>{x.val}</div>
                   </div>
                 ))}
               </div>
-              <div className="h-72">
+              <div className="h-64 sm:h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data}>
                     <defs>
@@ -1266,15 +1368,15 @@ function ScheduleVisitForm() {
   }
 
   return (
-    <section id="contact" className="py-24 bg-white">
-      <div className="container mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto items-center">
+    <section id="contact" className="py-16 sm:py-24 bg-white">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 max-w-6xl mx-auto items-center">
           <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
             <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Concierge Visit</div>
-            <h2 className="font-heading text-4xl md:text-5xl text-navy leading-tight">
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-navy leading-tight">
               Walk the Land. <span className="italic text-gradient-gold">Feel the Vision.</span>
             </h2>
-            <p className="text-muted-foreground mt-5 font-light leading-relaxed">
+            <p className="text-muted-foreground mt-4 sm:mt-5 font-light leading-relaxed text-sm sm:text-base">
               Schedule a curated site visit with our senior advisor. We arrange transportation from
               Hyderabad city centre, a private walkthrough of your chosen project, and a no-pressure consultation.
             </p>
@@ -1289,21 +1391,21 @@ function ScheduleVisitForm() {
                   viewport={{ once: true }} transition={{ delay: i * 0.12 }}
                   className="flex gap-4"
                 >
-                  <div className="w-12 h-12 rounded-sm bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
                     <b.icon className="w-5 h-5 text-gold-dark" />
                   </div>
                   <div>
-                    <div className="font-semibold text-navy">{b.t}</div>
-                    <div className="text-sm text-muted-foreground">{b.d}</div>
+                    <div className="font-semibold text-navy text-sm sm:text-base">{b.t}</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">{b.d}</div>
                   </div>
                 </motion.div>
               ))}
             </div>
-            <div className="mt-8 p-5 bg-navy text-white">
+            <div className="mt-8 p-5 bg-navy text-white rounded-2xl">
               <div className="text-gold text-[10px] tracking-[0.4em] uppercase font-numbers mb-2">Head Office</div>
-              <div className="text-sm font-light">{BRAND.office.line1}, {BRAND.office.line2}</div>
-              <div className="text-sm font-light">{BRAND.office.area}, {BRAND.office.city} – {BRAND.office.pincode}</div>
-              <div className="flex gap-4 mt-3 text-xs">
+              <div className="text-xs sm:text-sm font-light">{BRAND.office.line1}, {BRAND.office.line2}</div>
+              <div className="text-xs sm:text-sm font-light">{BRAND.office.area}, {BRAND.office.city} – {BRAND.office.pincode}</div>
+              <div className="flex flex-wrap gap-4 mt-3 text-xs">
                 <a href={`tel:${BRAND.phone}`} className="text-gold hover:text-white transition-colors">
                   <Phone className="w-3 h-3 inline mr-1" /> {BRAND.phoneIntl}
                 </a>
@@ -1315,8 +1417,8 @@ function ScheduleVisitForm() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}>
-            <Card className="p-8 luxe-shadow border-navy/10">
-              <h3 className="font-heading text-2xl text-navy mb-6">Book Your Private Visit</h3>
+            <Card className="p-5 sm:p-8 luxe-shadow border-navy/10 rounded-2xl bg-white">
+              <h3 className="font-heading text-2xl text-navy mb-5 sm:mb-6">Book Your Private Visit</h3>
               <form onSubmit={submit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
@@ -1366,7 +1468,7 @@ function ScheduleVisitForm() {
                     onChange={e => setForm({ ...form, notes: e.target.value })}
                     placeholder="Anything specific you'd like us to prepare?" />
                 </div>
-                <Button type="submit" disabled={loading} className="w-full h-12 bg-gold hover:bg-gold-dark text-navy font-semibold text-base transition-all duration-300 hover:scale-[1.02]">
+                <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-gold hover:bg-gold-dark text-navy font-semibold text-base transition-all duration-300 hover:scale-[1.02]">
                   {loading ? 'Booking…' : <><span>Confirm Site Visit</span> <ArrowRight className="w-4 h-4 ml-2" /></>}
                 </Button>
                 <p className="text-xs text-center text-muted-foreground">Your details are confidential and used only by our sales team.</p>
