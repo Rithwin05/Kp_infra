@@ -2,91 +2,93 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
-import { motion, useInView, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Phone, MessageCircle, Calendar, MapPin, ArrowRight, ArrowUpRight,
   Award, Building2, Trees, Home, Shield, Sparkles, Star, ChevronRight,
   Menu, X, Users, Clock, BadgeCheck, Mail, ChevronDown, Quote,
-  Compass, FileText, Layers, Ruler, CheckCircle2, Globe, Eye
+  Compass, FileText, Layers, Ruler, CheckCircle2, Globe, Eye, Check,
+  Download, Navigation
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Slider } from '@/components/ui/slider'
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { toast } from 'sonner'
-import { BRAND, STATS, PROJECTS, TIMELINE, TESTIMONIALS, BLOGS, FILTERS, HERO_RENDERS, driveImg } from '@/lib/projects'
+import { BRAND, STATS, PROJECTS, TESTIMONIALS, HERO_RENDERS, driveImg, driveFile } from '@/lib/projects'
 
-const FLAGSHIP = PROJECTS.find(p => p.isFlagship)
+const FLAGSHIP = PROJECTS.find(p => p.isFlagship) || PROJECTS[0]
+
 const HERO_SLIDES = [
   {
     src: HERO_RENDERS.goldenPalmTower,
     name: 'Golden Palm City',
     slug: 'golden-palm-city',
-    badge: '★ Flagship Highway Layout',
+    badge: '★ Flagship Highway Township',
     location: 'NH-44 Macharam, Jadcherla',
-    desc: '7.27-Acre DTCP & RERA Approved Community with Luxury Clubhouse',
+    desc: '7.27-Acre DTCP & RERA Approved Layout with Luxury Clubhouse & Swimming Pool',
+    price: 'Price On Request',
+    plots: '161 – 2,950 sq.yds',
   },
   {
     src: driveImg('1G1PBjWeVf7EO9uQpQ8Wpt_vvJz9k8D2g'),
     name: 'Vantage Farms',
     slug: 'vantage-farms',
-    badge: 'Luxury Eco-Living',
-    location: 'Shadnagar (Rangareddyguda)',
-    desc: 'Mature 20+ Year Mango Groves starting at ₹5,000/sq.yd',
+    badge: 'Luxury Eco-Living Farmland',
+    location: 'Rangareddyguda, Shadnagar (NH-44)',
+    desc: 'Mature 20+ Year Fruit Groves with Pre-Cast Compound & 24/7 Gated Security',
+    price: '₹ 5,000 / sq.yd',
+    plots: '605 – 1,001 sq.yds',
   },
   {
     src: driveImg('1i2T6mgtawSKjXFpYE-2kRMaV-sofB-ZI'),
     name: 'Magnetic City',
     slug: 'magnetic-city',
-    badge: 'Southern Growth Hub',
+    badge: 'Southern Growth Corridor',
     location: 'Hyderabad – Bangalore Axis',
-    desc: 'DTCP Master-Planned Plotted Layout • 40ft & 33ft BT Roads',
+    desc: 'Master-Planned DTCP Plotted Township • 40ft & 33ft Wide Black-Top Roads',
+    price: 'Spot Registration Ready',
+    plots: '150 – 500 sq.yds',
   },
   {
     src: driveImg('1iOaDRJhU1FwEioHBm2Envh3bTc6kI138'),
     name: 'Chandan Valley',
     slug: 'chandan-valley',
     badge: 'Scenic Hill-View Farmland',
-    location: 'Shamshabad Corridor',
-    desc: 'Adjacent to 1,600-Acre SEZ, Amazon & Microsoft Cloud Hub',
+    location: 'Shamshabad Corridor (Chandanvelly)',
+    desc: 'Directly Adjacent to 1,600-Acre SEZ, Amazon & Microsoft Cloud Hub',
+    price: 'Exclusive Holding',
+    plots: '1,210 – 1,702 sq.yds',
   },
   {
     src: driveImg('1MF9AiHc4GlV9jCq7syZWc0w_W7hn9570'),
     name: 'Doctor’s Colony',
     slug: 'doctors-colony',
-    badge: 'DTCP Approved Layout',
-    location: 'Balanagar Railway Station',
-    desc: '38 Boutique Plots • Full Underground Drainage • Spot Registration',
+    badge: 'Boutique DTCP Layout',
+    location: 'Balanagar Railway Station (NH-44)',
+    desc: '38 Exclusive Plots • Full Underground Drainage • 2 min to Railway Station',
+    price: 'Spot Registration Available',
+    plots: '183 – 329 sq.yds',
   },
-  {
-    src: driveImg('1gK8tv9XR_wKSTrnZfya2sh17lkk5G0TG'),
-    name: 'Golden Spring',
-    slug: 'golden-spring',
-    badge: 'Delivered Milestone',
-    location: 'Hyderabad Growth Belt',
-    desc: 'HMDA Approved Gated Community with Wide Bitumen Roads',
-  },
-]
-const APPROVALS = ['HMDA', 'DTCP', 'MUDA', 'TG RERA', 'ISO 9001:2015', 'Bank Approved']
-const NAV_SECTIONS = [
-  { id: 'home', label: 'Home' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'flagship', label: 'Flagship' },
-  { id: 'legacy', label: 'Legacy' },
-  { id: 'investor', label: 'Investor' },
-  { id: 'blogs', label: 'Blogs' },
-  { id: 'contact', label: 'Contact' },
 ]
 
-// ─── Hooks ───────────────────────────────────────────────────
-function useCountUp(target, inView, duration = 1800) {
+const APPROVALS_LIST = [
+  'TG RERA Approved',
+  'DTCP Approved',
+  'HMDA Approved',
+  'MUDA Approved',
+  '100% Vaastu Compliant',
+  'Bank Loan Approved',
+  'Clear Title Guarantee',
+  'Spot Registration',
+]
+
+// ─── Number Counting Hook ─────────────────────────────────────
+function useCountUp(target, inView, duration = 1600) {
   const [val, setVal] = useState(0)
   useEffect(() => {
     if (!inView) return
@@ -103,502 +105,572 @@ function useCountUp(target, inView, duration = 1800) {
   return val
 }
 
-function useActiveSection() {
-  const [active, setActive] = useState('home')
-  useEffect(() => {
-    const observers = []
-    NAV_SECTIONS.forEach(({ id }) => {
-      const el = document.getElementById(id)
-      if (!el) return
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActive(id) },
-        { threshold: 0.25, rootMargin: '-10% 0px -60% 0px' }
-      )
-      obs.observe(el)
-      observers.push(obs)
-    })
-    return () => observers.forEach(o => o.disconnect())
-  }, [])
-  return active
-}
-
-const formatINR = (n) => {
-  if (n >= 10000000) return `₹ ${(n / 10000000).toFixed(2)} Cr`
-  if (n >= 100000) return `₹ ${(n / 100000).toFixed(2)} L`
-  return `₹ ${n.toLocaleString('en-IN')}`
-}
-
-// ─── KP Diamond Logo ─────────────────────────────────────────
-function KPDiamond({ size = 48 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
-      style={{ filter: 'drop-shadow(0 4px 14px rgba(212,175,55,0.55))' }}>
-      <defs>
-        <linearGradient id="kpGold1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#F5E070" />
-          <stop offset="30%" stopColor="#D4AF37" />
-          <stop offset="70%" stopColor="#B8860B" />
-          <stop offset="100%" stopColor="#EDCA5C" />
-        </linearGradient>
-        <linearGradient id="kpShine" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#FFFDE7" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#D4AF37" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      {/* Diamond body */}
-      <rect x="14" y="14" width="72" height="72" rx="12" ry="12"
-        transform="rotate(45 50 50)" fill="url(#kpGold1)" />
-      {/* Shine */}
-      <rect x="20" y="20" width="60" height="35" rx="8" ry="8"
-        transform="rotate(45 50 50)" fill="url(#kpShine)" />
-      {/* Building column lines (left of K) */}
-      <line x1="27" y1="40" x2="27" y2="60" stroke="#0B1F35" strokeWidth="2.5" strokeLinecap="round" opacity="0.7" />
-      <line x1="31" y1="38" x2="31" y2="62" stroke="#0B1F35" strokeWidth="2" strokeLinecap="round" opacity="0.55" />
-      <line x1="35" y1="36" x2="35" y2="64" stroke="#0B1F35" strokeWidth="1.5" strokeLinecap="round" opacity="0.35" />
-      {/* KP lettermark */}
-      <text x="52" y="58" textAnchor="middle" fontFamily="Georgia,serif"
-        fontWeight="900" fontSize="29" fill="#0B1F35" letterSpacing="-1">KP</text>
-    </svg>
-  )
-}
-
-function KPLogo({ scrolled = false }) {
-  return (
-    <a href="#home" className="flex items-center gap-3 group select-none">
-      <motion.div animate={{ scale: scrolled ? 0.88 : 1 }} transition={{ duration: 0.35 }}>
-        <KPDiamond size={scrolled ? 42 : 50} />
-      </motion.div>
-      <div className="leading-none">
-        <div className="font-heading font-bold tracking-wider text-white text-base md:text-lg"
-          style={{ textShadow: '0 1px 8px rgba(212,175,55,0.25)' }}>
-          Kings Pride
-        </div>
-        <div className="text-gold font-numbers text-[9px] tracking-[0.3em] uppercase mt-0.5">
-          Infra Projects
-        </div>
-      </div>
-    </a>
-  )
-}
-
-// Full brand mark for footer
-function KPFullMark() {
-  return (
-    <div className="flex flex-col items-start gap-2">
-      <div className="flex items-center gap-3">
-        <KPDiamond size={56} />
-        <div>
-          <div className="font-heading text-xl text-white tracking-wide font-bold">Kings Pride</div>
-          <div className="text-gold font-numbers text-[9px] tracking-[0.3em] uppercase">Infra Projects Pvt. Ltd.</div>
-        </div>
-      </div>
-      <div className="text-gold/50 text-[10px] tracking-[0.25em] uppercase font-numbers italic pl-1">
-        — Your Gateway to Luxury —
-      </div>
-    </div>
-  )
-}
-
-// ─── Scroll Progress Bar ──────────────────────────────────────
-function ScrollProgress() {
-  const { scrollYProgress } = useScroll()
-  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 })
-  return (
-    <motion.div
-      className="fixed top-0 left-0 right-0 h-[2px] z-[200] origin-left"
-      style={{ scaleX, background: 'linear-gradient(90deg,#B8860B,#F5E070,#D4AF37,#F5E070,#B8860B)', transformOrigin: '0%' }}
-    />
-  )
-}
-
-// ─── Section Nav Dots ─────────────────────────────────────────
-function SectionNav() {
-  const active = useActiveSection()
-  const [hovered, setHovered] = useState(null)
-  return (
-    <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-3.5">
-      {NAV_SECTIONS.map(({ id, label }) => (
-        <a key={id} href={`#${id}`}
-          onMouseEnter={() => setHovered(id)}
-          onMouseLeave={() => setHovered(null)}
-          className="flex items-center justify-end gap-2.5 group"
-        >
-          <AnimatePresence>
-            {hovered === id && (
-              <motion.span
-                initial={{ opacity: 0, x: 8, scale: 0.9 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 8, scale: 0.9 }}
-                transition={{ duration: 0.18 }}
-                className="text-[11px] text-white bg-navy/80 backdrop-blur-md px-2.5 py-1 rounded-sm font-numbers tracking-widest whitespace-nowrap border border-gold/20"
-              >
-                {label}
-              </motion.span>
-            )}
-          </AnimatePresence>
-          <motion.div
-            animate={{
-              width: active === id ? 22 : 7,
-              height: active === id ? 7 : 7,
-              backgroundColor: active === id ? '#D4AF37' : 'rgba(255,255,255,0.35)',
-              boxShadow: active === id ? '0 0 8px rgba(212,175,55,0.7)' : 'none',
-            }}
-            transition={{ duration: 0.3 }}
-            className="rounded-full"
-          />
-        </a>
-      ))}
-    </div>
-  )
-}
-
-// ─── Top Bar ─────────────────────────────────────────────────
+// ─── Header & Top Bar (Googee Style) ──────────────────────────
 function TopBar() {
   return (
-    <div className="hidden md:block bg-navy-deep text-white/80 text-xs border-b border-gold/10">
-      <div className="container mx-auto flex items-center justify-between py-2 px-6">
+    <div className="bg-[#0B2545] text-slate-200 text-xs py-2 px-4 border-b border-white/10 hidden md:block">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <span className="flex items-center gap-1.5"><Phone className="w-3 h-3 text-gold" /> {BRAND.phoneIntl}</span>
-          <span className="flex items-center gap-1.5"><Mail className="w-3 h-3 text-gold" /> {BRAND.email}</span>
-          <span className="flex items-center gap-1.5"><MapPin className="w-3 h-3 text-gold" /> {BRAND.office.area}, {BRAND.office.city}</span>
+          <a href={`tel:${BRAND.phoneIntl}`} className="flex items-center gap-1.5 hover:text-[#D4AF37] transition-colors">
+            <Phone className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span>{BRAND.phone}</span>
+          </a>
+          <a href={`mailto:${BRAND.email}`} className="flex items-center gap-1.5 hover:text-[#D4AF37] transition-colors">
+            <Mail className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span>{BRAND.email}</span>
+          </a>
+          <span className="flex items-center gap-1.5 text-slate-300">
+            <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span>Mehdipatnam, Hyderabad</span>
+          </span>
         </div>
-        <div className="text-gold tracking-widest font-numbers text-[10px]">
-          TG RERA • DTCP • HMDA • MUDA APPROVED PROJECTS
+
+        <div className="flex items-center gap-5 text-[11px] tracking-wide">
+          <span className="text-[#F4D078] font-medium">TG RERA Registered • DTCP &amp; HMDA Approved</span>
+          <span className="text-slate-400">|</span>
+          <a
+            href={`https://wa.me/${BRAND.whatsapp}?text=Hello%20KP%20Infra,%20I%20am%20interested%20in%20your%20ventures.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-semibold transition-colors"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            <span>WhatsApp Connect</span>
+          </a>
         </div>
       </div>
     </div>
   )
 }
 
-// ─── Nav ─────────────────────────────────────────────────────
-function Nav({ onCTA }) {
+function MainNavbar({ onBook }) {
   const [scrolled, setScrolled] = useState(false)
-  const [open, setOpen] = useState(false)
-  const { scrollY } = useScroll()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    const unsub = scrollY.on('change', v => setScrolled(v > 50))
-    return unsub
-  }, [scrollY])
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
-  const links = [
-    { l: 'Home', h: '#home' },
-    { l: 'Projects', h: '#projects' },
-    { l: 'Portfolio', h: '/projects' },
-    { l: 'Flagship', h: '#flagship' },
-    { l: 'Legacy', h: '#legacy' },
-    { l: 'Investor', h: '#investor' },
-    { l: 'Blogs', h: '#blogs' },
-    { l: 'Contact', h: '#contact' },
+  const navLinks = [
+    { label: 'Home', href: '#home' },
+    { label: 'About Us', href: '#about' },
+    { label: 'Ventures', href: '#projects' },
+    { label: 'Flagship City', href: '#flagship' },
+    { label: 'Why Choose Us', href: '#why-choose-us' },
+    { label: 'Testimonials', href: '#testimonials' },
+    { label: 'Contact', href: '#contact' },
   ]
 
   return (
-    <motion.header
-      animate={{ backdropFilter: scrolled ? 'blur(16px)' : 'blur(0px)' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500
-        ${scrolled ? 'bg-navy/95 shadow-[0_4px_40px_rgba(0,0,0,0.4)]' : 'bg-transparent'}`}
-    >
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${
+      scrolled ? 'bg-white shadow-md border-b border-slate-200' : 'bg-white/95 backdrop-blur-md border-b border-slate-100'
+    }`}>
       <TopBar />
-      <div className="container mx-auto flex items-center justify-between px-6 py-3">
-        <KPLogo scrolled={scrolled} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        {/* Brand Logo */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-12 h-12 rounded-full border border-[#D4AF37]/50 overflow-hidden bg-[#0B2545] p-1 flex items-center justify-center shadow-md">
+            <img src={BRAND.logo} alt="KP Infra Logo" className="w-full h-full object-contain" />
+          </div>
+          <div>
+            <div className="font-heading text-lg sm:text-xl font-bold tracking-tight text-[#0B2545] group-hover:text-[#B8860B] transition-colors leading-none">
+              KINGS PRIDE <span className="text-[#B8860B]">INFRA</span>
+            </div>
+            <div className="text-[10px] tracking-wider uppercase text-slate-500 font-semibold mt-1">
+              A Bridge To Your Dream Home • Est. 2003
+            </div>
+          </div>
+        </Link>
 
-        <nav className="hidden xl:flex items-center gap-7">
-          {links.map(({ l, h }) => (
-            <a key={l} href={h} className="text-white/90 text-sm tracking-wide hover:text-gold transition-colors duration-200 relative group">
-              {l}
-              <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-gold group-hover:w-full transition-all duration-300" />
+        {/* Desktop Navigation Links */}
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-medium text-slate-700">
+          {navLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="hover:text-[#B8860B] transition-colors py-1 relative group"
+            >
+              {link.label}
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#B8860B] group-hover:w-full transition-all duration-200" />
             </a>
           ))}
+          <Link
+            href="/projects"
+            className="text-xs uppercase tracking-wider font-bold text-[#B8860B] bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg border border-amber-200/80 transition-colors"
+          >
+            All 11 Projects Directory
+          </Link>
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
-          <Button onClick={onCTA}
-            className="bg-gold hover:bg-gold-dark text-navy font-semibold tracking-wide gold-shadow transition-all duration-300 hover:scale-105">
-            <Calendar className="w-4 h-4 mr-2" /> Schedule Visit
+        {/* Header Action Buttons */}
+        <div className="hidden sm:flex items-center gap-3">
+          <a
+            href={`tel:${BRAND.phoneIntl}`}
+            className="p-2.5 rounded-xl border border-slate-200 text-slate-700 hover:text-[#0B2545] hover:border-[#0B2545] transition-colors"
+            title="Call Office"
+          >
+            <Phone className="w-4 h-4" />
+          </a>
+
+          <Button
+            onClick={() => onBook(null)}
+            className="bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 hover:brightness-105 font-bold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-md shadow-[#D4AF37]/20 transition-all"
+          >
+            <Calendar className="w-4 h-4 mr-1.5" />
+            <span>Book Site Visit</span>
           </Button>
         </div>
 
-        <button className="xl:hidden text-white p-1" onClick={() => setOpen(!open)}>
-          <AnimatePresence mode="wait">
-            {open
-              ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}><X /></motion.div>
-              : <motion.div key="m" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}><Menu /></motion.div>
-            }
-          </AnimatePresence>
+        {/* Mobile Menu Hamburger */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden p-2 rounded-xl text-slate-700 hover:text-[#0B2545] hover:bg-slate-100 transition-colors"
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
+      {/* Mobile Dropdown Menu */}
       <AnimatePresence>
-        {open && (
+        {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="xl:hidden bg-navy-deep border-t border-gold/20 overflow-hidden"
+            transition={{ duration: 0.2 }}
+            className="lg:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-3"
           >
-            <div className="px-6 py-4 space-y-2">
-              {links.map(({ l, h }, i) => (
-                <motion.a key={l} href={h}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  onClick={() => setOpen(false)}
-                  className="block text-white/90 hover:text-gold py-2.5 border-b border-white/5 last:border-0 transition-colors"
-                >
-                  {l}
-                </motion.a>
-              ))}
-              <Button onClick={() => { onCTA(); setOpen(false) }} className="w-full mt-3 bg-gold text-navy font-semibold">
-                <Calendar className="w-4 h-4 mr-2" /> Schedule Visit
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 text-sm font-medium text-slate-800 border-b border-slate-100 hover:text-[#B8860B]"
+              >
+                {link.label}
+              </a>
+            ))}
+            <Link
+              href="/projects"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-sm font-bold text-[#B8860B] border-b border-slate-100"
+            >
+              Explore All 11 Projects Directory →
+            </Link>
+            <div className="pt-2 flex flex-col gap-2">
+              <Button
+                onClick={() => { onBook(null); setMobileMenuOpen(false) }}
+                className="w-full bg-[#0B2545] hover:bg-[#132E4E] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-xl"
+              >
+                <Calendar className="w-4 h-4 mr-2 text-[#D4AF37]" />
+                Book Free Site Visit
               </Button>
+              <a
+                href={`https://wa.me/${BRAND.whatsapp}?text=Hi%20KP%20Infra,%20I%20want%20to%20enquire%20about%20your%20projects.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full text-center py-2.5 rounded-xl border border-emerald-500 text-emerald-700 font-semibold text-xs flex items-center justify-center gap-2 bg-emerald-50"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>Chat on WhatsApp</span>
+              </a>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   )
 }
 
-// ─── Hero ─────────────────────────────────────────────────────
-function Hero({ onCTA }) {
-  const [idx, setIdx] = useState(0)
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '35%'])
-  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+// ─── Hero Section with High-Converting Quick Enquiry (Googee Style) ───────────
+function HeroSection({ onBook }) {
+  const [slideIdx, setSlideIdx] = useState(0)
+  const [form, setForm] = useState({ name: '', phone: '', project: 'Golden Palm City' })
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    const t = setInterval(() => setIdx(i => (i + 1) % HERO_SLIDES.length), 6000)
-    return () => clearInterval(t)
+    const timer = setInterval(() => {
+      setSlideIdx((prev) => (prev + 1) % HERO_SLIDES.length)
+    }, 6000)
+    return () => clearInterval(timer)
   }, [])
 
-  const currentSlide = HERO_SLIDES[idx]
+  const currentSlide = HERO_SLIDES[slideIdx]
+
+  const handleHeroSubmit = async (e) => {
+    e.preventDefault()
+    if (!form.name || !form.phone) {
+      toast.error('Please enter your name and phone number.')
+      return
+    }
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/visits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          project: form.project,
+          notes: 'Instant inquiry from homepage hero quick form',
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        toast.success('Thank you! Our relationship manager will call you within 30 minutes with project brochures and price sheets.')
+        setForm({ name: '', phone: '', project: 'Golden Palm City' })
+      } else {
+        toast.error('Could not submit. Please call us directly.')
+      }
+    } catch {
+      toast.error('Network error. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
-    <section ref={ref} id="home" className="relative min-h-[640px] sm:min-h-[720px] md:h-screen w-full overflow-hidden flex flex-col justify-center">
-      {/* Parallax background */}
-      <motion.div className="absolute inset-0 will-change-transform" style={{ y: imgY, scale: 1.15 }}>
+    <section id="home" className="relative bg-[#071320] overflow-hidden text-white">
+      {/* Background Photography with Smooth Crossfade */}
+      <div className="absolute inset-0 z-0">
         {HERO_SLIDES.map((slide, i) => (
-          <div key={slide.slug + i} style={{ transitionDuration: '2000ms' }} className={`absolute inset-0 transition-opacity ease-in-out ${i === idx ? 'opacity-100' : 'opacity-0'}`}>
+          <div
+            key={slide.slug}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              i === slideIdx ? 'opacity-100 scale-100' : 'opacity-0 scale-105 pointer-events-none'
+            }`}
+          >
             <img
               src={slide.src}
               alt={slide.name}
-              className="w-full h-full object-cover ken-burns"
-              loading={i === 0 ? 'eager' : 'lazy'}
-              onError={(e) => {
-                e.currentTarget.onerror = null
-                e.currentTarget.src = HERO_RENDERS.goldenPalmTower
-              }}
+              className="w-full h-full object-cover object-center brightness-75 transition-transform duration-7000 ease-out"
             />
           </div>
         ))}
-      </motion.div>
+        {/* Crisp Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#071320]/95 via-[#071320]/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#071320] via-transparent to-black/30" />
+      </div>
 
-      <div className="absolute inset-0 hero-overlay" />
-      <div className="absolute inset-0 vignette" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          {/* Left Column: Bold Value Proposition */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Trust Pill */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-[#D4AF37]/40 text-[#F4D078] text-xs font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span>Telangana&apos;s Trusted Land Developer Since 2003</span>
+            </div>
 
-      {/* Content */}
-      <motion.div style={{ y: contentY, opacity }} className="relative h-full container mx-auto px-4 sm:px-6 pt-24 pb-14 sm:py-20 md:py-0 flex flex-col justify-center text-white">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-3xl"
-        >
-          <motion.div
-            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex items-center gap-2.5 sm:gap-3 mb-3 sm:mb-6"
-          >
-            <div className="h-px w-6 sm:w-12 bg-gold" />
-            <span className="text-gold text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.4em] font-numbers uppercase font-semibold">
-              {BRAND.displayName} • Since {BRAND.established}
-            </span>
-          </motion.div>
+            {/* Main Headline */}
+            <div>
+              <h1 className="font-heading text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.12]">
+                Building Trust &amp; Wealth Through{' '}
+                <span className="text-gradient-gold italic">Prime Plotted Ventures</span>
+              </h1>
+              <p className="text-slate-300 text-sm sm:text-base lg:text-lg font-light mt-4 leading-relaxed max-w-xl">
+                22+ Years of Unblemished Real Estate Legacy. 12,000+ Happy Families. Explore DTCP, HMDA &amp; RERA approved gated layouts along the high-growth Hyderabad–Bengaluru NH-44 corridor.
+              </p>
+            </div>
 
-          <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-[80px] leading-[1.12] sm:leading-[1.04] font-medium mb-3 sm:mb-6">
-            A Bridge to Your<br />
-            <span className="text-gradient-gold italic">Dream Home</span>
-          </h1>
-
-          <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            transition={{ duration: 0.9, delay: 0.7 }}
-            className="text-xs sm:text-base md:text-lg text-white/90 max-w-2xl mb-6 sm:mb-8 font-light leading-relaxed"
-          >
-            Twenty-two years of crafting Telangana&apos;s most trusted addresses — from HMDA & DTCP
-            gated layouts and high-yielding farm estates to our flagship NH-44 highway city,{' '}
-            <span className="text-gold font-medium">Golden Palm City.</span>
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-            className="flex flex-col sm:flex-row gap-2.5 sm:gap-4 w-full sm:w-auto"
-          >
-            <Button onClick={onCTA} size="lg"
-              className="bg-gold hover:bg-gold-dark text-navy font-semibold tracking-wide h-11 sm:h-14 px-6 sm:px-8 gold-shadow text-xs sm:text-base transition-all duration-300 hover:scale-105 w-full sm:w-auto">
-              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> Schedule Site Visit
-            </Button>
-            <a href="#projects" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline"
-                className="w-full sm:w-auto h-11 sm:h-14 px-6 sm:px-8 bg-white/5 backdrop-blur-md border-white/40 text-white hover:bg-white/15 hover:text-white text-xs sm:text-base transition-all duration-300">
-                Explore 11 Projects <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-              </Button>
-            </a>
-            <a href={`https://wa.me/${BRAND.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-              <Button size="lg" variant="ghost" className="w-full sm:w-auto h-11 sm:h-14 px-5 sm:px-8 text-white hover:bg-white/10 text-xs sm:text-base">
-                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-400" /> WhatsApp Direct
-              </Button>
-            </a>
-          </motion.div>
-
-          {/* Active project showcase badge */}
-          <motion.div
-            key={currentSlide.slug}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mt-5 sm:mt-8 p-3 sm:p-3.5 rounded-xl bg-black/60 backdrop-blur-md border border-gold/40 flex items-center justify-between gap-3 max-w-xl shadow-2xl"
-          >
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span className="w-2 h-2 rounded-full bg-gold animate-pulse shrink-0" />
-              <div className="min-w-0">
+            {/* Active Slide Spotlight Pill */}
+            <div className="p-4 rounded-2xl bg-[#0B2545]/80 backdrop-blur-md border border-white/10 max-w-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-gold bg-gold/15 px-2 py-0.5 rounded-full border border-gold/30 shrink-0">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#D4AF37] text-slate-950">
                     {currentSlide.badge}
                   </span>
-                  <span className="text-xs sm:text-sm font-heading font-bold text-white truncate">
-                    {currentSlide.name}
-                  </span>
+                  <span className="text-xs text-slate-300 font-medium">{currentSlide.location}</span>
                 </div>
-                <div className="text-[10px] sm:text-[11px] text-white/70 truncate mt-0.5">
-                  {currentSlide.location} • {currentSlide.desc}
+                <div className="font-heading text-lg font-bold text-white mt-1">
+                  {currentSlide.name}
+                </div>
+                <div className="text-xs text-slate-400 mt-0.5">
+                  Plots: <span className="text-slate-200 font-semibold">{currentSlide.plots}</span> • <span className="text-[#F4D078] font-semibold">{currentSlide.price}</span>
                 </div>
               </div>
+
+              <Link href={`/projects/${currentSlide.slug}`} className="shrink-0 w-full sm:w-auto">
+                <Button size="sm" className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-semibold">
+                  <span>Explore Project</span>
+                  <ChevronRight className="w-3.5 h-3.5 ml-1 text-[#D4AF37]" />
+                </Button>
+              </Link>
             </div>
-            <Link href={`/projects/${currentSlide.slug}`} className="shrink-0">
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-gold hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-md border border-gold/40">
-                View <ChevronRight className="w-3 h-3" />
-              </span>
-            </Link>
-          </motion.div>
 
-          <div className="mt-6 sm:mt-10 flex items-center gap-3 sm:gap-6 flex-wrap">
-            {APPROVALS.slice(0, 5).map((a, i) => (
-              <motion.div key={a}
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1 + i * 0.08 }}
-                className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-white/80"
+            {/* Direct Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Button
+                onClick={() => onBook(null)}
+                size="lg"
+                className="bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl shadow-lg shadow-[#D4AF37]/25 hover:brightness-105 active:scale-95 transition-all"
               >
-                <BadgeCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold shrink-0" /> {a}
-              </motion.div>
-            ))}
+                <Calendar className="w-4 h-4 mr-2" />
+                <span>Schedule Free Site Visit</span>
+              </Button>
+
+              <a href="#projects">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white/5 backdrop-blur-md border-white/20 hover:bg-white/15 text-white font-semibold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl transition-all"
+                >
+                  <span>Browse 11 Projects</span>
+                  <ArrowRight className="w-4 h-4 ml-2 text-[#D4AF37]" />
+                </Button>
+              </a>
+            </div>
+
+            {/* Slide Pagination Dots */}
+            <div className="flex items-center gap-2 pt-2">
+              {HERO_SLIDES.map((slide, i) => (
+                <button
+                  key={slide.slug}
+                  onClick={() => setSlideIdx(i)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === slideIdx ? 'w-8 bg-[#D4AF37]' : 'w-2 bg-white/30 hover:bg-white/60'
+                  }`}
+                  aria-label={`Slide ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
-        </motion.div>
-      </motion.div>
 
-      {/* Centered mobile-friendly slide indicator pills */}
-      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 z-10">
-        {HERO_SLIDES.map((slide, i) => (
-          <button
-            key={slide.slug + i}
-            onClick={() => setIdx(i)}
-            aria-label={`slide ${i + 1}`}
-            className={`rounded-full transition-all duration-500 ${
-              i === idx ? 'w-8 h-2 bg-gold shadow-md' : 'w-2 h-2 bg-white/40 hover:bg-white/70'
-            }`}
-          />
-        ))}
-      </div>
-    </section>
-  )
-}
+          {/* Right Column: Googee Style High-Converting Quick Lead Card */}
+          <div className="lg:col-span-5">
+            <Card className="p-6 sm:p-8 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-100 relative">
+              <div className="space-y-1 mb-5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#B8860B]">
+                  Instant Callback &amp; Site Visit
+                </span>
+                <h3 className="font-heading text-2xl font-bold text-[#0B2545]">
+                  Find Your Dream Plot
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Fill in your details to receive official brochures, plot availability maps, and book a free chauffeured site visit.
+                </p>
+              </div>
 
-// ─── Marquee ─────────────────────────────────────────────────
-function MarqueeApprovals() {
-  return (
-    <div className="bg-navy-deep border-y border-gold/20 overflow-hidden py-4">
-      <div className="flex whitespace-nowrap marquee">
-        {[...APPROVALS, ...APPROVALS, ...APPROVALS].map((a, i) => (
-          <div key={i} className="flex items-center gap-3 mx-8 text-gold/80 font-numbers tracking-[0.3em] text-sm uppercase">
-            <Sparkles className="w-4 h-4 shrink-0" /> {a}
+              <form onSubmit={handleHeroSubmit} className="space-y-3.5">
+                <div>
+                  <Label className="text-xs font-semibold text-slate-700">Full Name *</Label>
+                  <Input
+                    className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm focus:border-[#B8860B] rounded-xl text-slate-900"
+                    placeholder="Enter your name"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-xs font-semibold text-slate-700">Phone Number *</Label>
+                  <Input
+                    className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm focus:border-[#B8860B] rounded-xl text-slate-900"
+                    placeholder="e.g. +91 98765 43210"
+                    type="tel"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-xs font-semibold text-slate-700">Venture of Interest</Label>
+                  <Select value={form.project} onValueChange={(v) => setForm({ ...form, project: v })}>
+                    <SelectTrigger className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl">
+                      <SelectValue placeholder="Choose a venture" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROJECTS.map((p) => (
+                        <SelectItem key={p.id} value={p.name}>
+                          {p.name} ({p.category})
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="Open Consultation">Open Consultation / General Inquiry</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full h-12 bg-[#0B2545] hover:bg-[#132E4E] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all mt-2"
+                >
+                  {submitting ? 'Submitting…' : 'Get Price Sheet & Arrange Site Visit'}
+                </Button>
+
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Free Cab Pickup
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> 100% Clear Titles
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Spot Registration
+                  </span>
+                </div>
+              </form>
+            </Card>
           </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// ─── Trust / Stats ────────────────────────────────────────────
-function StatCard({ value, suffix, label, icon: Icon, delay = 0 }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-50px' })
-  const v = useCountUp(value, inView)
-  return (
-    <motion.div ref={ref}
-      initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }} transition={{ duration: 0.7, delay }}
-      className="text-center group p-3 sm:p-4 rounded-xl bg-slate-50/60 lg:bg-transparent"
-    >
-      <motion.div
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        transition={{ type: 'spring', stiffness: 300 }}
-        className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full border border-gold/40 flex items-center justify-center bg-navy/5 group-hover:bg-gold/10 group-hover:border-gold transition-all duration-500"
-      >
-        <Icon className="w-5 h-5 sm:w-7 sm:h-7 text-gold" />
-      </motion.div>
-      <div className="font-heading text-3xl sm:text-5xl md:text-6xl text-navy font-medium">
-        <span className="font-numbers">{v.toLocaleString('en-IN')}</span>
-        <span className="text-gold">{suffix}</span>
-      </div>
-      <div className="mt-1.5 sm:mt-2 text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.25em] uppercase text-muted-foreground">{label}</div>
-    </motion.div>
-  )
-}
-
-function TrustSection() {
-  return (
-    <section className="py-16 sm:py-24 bg-white overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.8 }}
-          className="text-center mb-10 sm:mb-16"
-        >
-          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Trusted by Generations</div>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-navy">A Legacy Carved in Numbers</h2>
-          <div className="gold-divider w-24 sm:w-32 mx-auto mt-4 sm:mt-6" />
-        </motion.div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
-          <StatCard value={STATS.yearsOfLegacy} suffix="+" label="Years of Legacy" icon={Award} delay={0} />
-          <StatCard value={STATS.happyFamilies} suffix="+" label="Happy Families" icon={Users} delay={0.1} />
-          <StatCard value={STATS.projectsDelivered} suffix="+" label="Ventures Delivered" icon={Building2} delay={0.2} />
-          <StatCard value={STATS.acresDeveloped} suffix="+" label="Acres Developed" icon={Trees} delay={0.3} />
         </div>
       </div>
     </section>
   )
 }
 
-// ─── Project Card ─────────────────────────────────────────────
-function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
+// ─── Trust Numbers Banner (Googee Style) ───────────────────────
+function TrustNumbers() {
+  const ref = useRef(null)
+  const inView = true // clean immediate render
+  const legacyYears = useCountUp(STATS.yearsOfLegacy, inView)
+  const families = useCountUp(STATS.happyFamilies, inView)
+  const projectsCount = useCountUp(STATS.totalProjects, inView)
+  const acres = useCountUp(STATS.acresDeveloped, inView)
+
+  const stats = [
+    { num: `${legacyYears}+`, label: 'Years of Legacy', desc: 'Serving investors since 2003', icon: Award },
+    { num: `${families.toLocaleString('en-IN')}+`, label: 'Happy Families', desc: 'Proud plot & villa owners', icon: Users },
+    { num: `${projectsCount}`, label: 'Signature Ventures', desc: 'Delivered & active projects', icon: Building2 },
+    { num: `${acres}+`, label: 'Acres Developed', desc: 'Across prime Telangana corridors', icon: Trees },
+  ]
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -6, transition: { duration: 0.3 } }}
-      className="group bg-white border border-slate-200/90 hover:border-gold/60 rounded-2xl overflow-hidden
-        transition-all duration-500 flex flex-col
-        shadow-[0_4px_24px_rgba(11,31,53,0.06)] hover:shadow-[0_20px_50px_rgba(11,31,53,0.16)]"
-    >
-      {/* Visual Header / Image Container */}
-      <div className="relative h-64 sm:h-72 overflow-hidden bg-slate-950">
+    <section className="bg-white border-b border-slate-200 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {stats.map((s) => {
+            const Icon = s.icon
+            return (
+              <div key={s.label} className="flex items-start gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0">
+                  <Icon className="w-6 h-6 text-[#B8860B]" />
+                </div>
+                <div>
+                  <div className="font-heading text-3xl sm:text-4xl font-bold text-[#0B2545]">
+                    {s.num}
+                  </div>
+                  <div className="text-sm font-semibold text-slate-800">{s.label}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">{s.desc}</div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── About KP Infra Section (Googee Style) ────────────────────
+function AboutSection({ onBook }) {
+  return (
+    <section id="about" className="py-20 sm:py-24 bg-[#F8FAFC]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Visual Side */}
+          <div className="lg:col-span-5 relative">
+            <div className="rounded-3xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
+              <img
+                src={HERO_RENDERS.goldenPalmEntrance}
+                alt="KP Infra Development Landmark"
+                className="w-full h-80 sm:h-96 object-cover"
+              />
+              <div className="p-6 bg-white space-y-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#B8860B]">
+                  Corporate Headquarters
+                </div>
+                <div className="font-heading text-xl font-bold text-[#0B2545]">
+                  Saleem Manzil, P.V.N.R Expressway, Mehdipatnam
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Easily accessible corporate office right opposite Pillar No. 56. Walk in for architectural consultations, master plan reviews, and legal title verifications.
+                </p>
+              </div>
+            </div>
+
+            {/* Floating Experience Badge */}
+            <div className="absolute -top-5 -right-5 bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 p-4 rounded-2xl shadow-xl hidden sm:block">
+              <div className="font-heading text-3xl font-extrabold leading-none">22+</div>
+              <div className="text-[11px] font-bold uppercase tracking-wider mt-1">Years of Trust</div>
+            </div>
+          </div>
+
+          {/* Story Side */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="space-y-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#B8860B] bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+                About Kings Pride Infra
+              </span>
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B2545] leading-tight">
+                Shaping Hyderabad&apos;s Growth Story with{' '}
+                <span className="text-[#B8860B]">Integrity &amp; Vision</span>
+              </h2>
+            </div>
+
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              Founded in 2003, K.P. Infra Projects Pvt. Ltd. has stood as a bastion of trust, legal transparency, and timely delivery in Telangana real estate. For over two decades, we have focused exclusively on high-growth corridors — from the early suburban townships like Adarsh Nagar to our signature 7.27-acre highway city, Golden Palm City, along the Hyderabad–Bengaluru National Highway 44.
+            </p>
+
+            {/* 4 Feature Value Pillars */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              {[
+                { title: '100% Legal Title Guarantee', desc: 'Clear titles, spot registration, and complete encumbrance-free records.' },
+                { title: 'Strategic Growth Corridors', desc: 'Located along NH-44, Upcoming RRR, and major Pharma/IT SEZs.' },
+                { title: 'Comprehensive Infrastructure', desc: 'Underground drainage, 40′ & 33′ BT roads, water tanks & street lights.' },
+                { title: '100% Vaastu Compliant Planning', desc: 'Scientifically planned plots ensuring positive energy and prosperity.' },
+              ].map((item) => (
+                <div key={item.title} className="flex items-start gap-3 p-3.5 rounded-xl bg-white border border-slate-200/80 shadow-sm">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-bold text-[#0B2545]">{item.title}</h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Call To Action Buttons */}
+            <div className="flex flex-wrap items-center gap-4 pt-4">
+              <Button
+                onClick={() => onBook(null)}
+                className="bg-[#0B2545] hover:bg-[#132E4E] text-white font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl shadow-md transition-all"
+              >
+                <Calendar className="w-4 h-4 mr-2 text-[#D4AF37]" />
+                <span>Schedule a Consultation</span>
+              </Button>
+
+              <Link href="/projects">
+                <Button
+                  variant="outline"
+                  className="border-slate-300 text-slate-800 hover:border-[#0B2545] hover:bg-slate-100 font-semibold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl"
+                >
+                  <span>Explore Projects Directory</span>
+                  <ArrowRight className="w-4 h-4 ml-2 text-[#B8860B]" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Googee Style Project Card ────────────────────────────────
+function CleanProjectCard({ p, onBook, onDetails }) {
+  return (
+    <div className="group bg-white border border-slate-200 hover:border-[#D4AF37] rounded-2xl overflow-hidden transition-all duration-300 flex flex-col shadow-sm hover:shadow-xl">
+      {/* Visual Image Header */}
+      <div className="relative h-60 sm:h-64 overflow-hidden bg-slate-950">
         <Link href={`/projects/${p.slug || p.id}`} className="block w-full h-full">
-          <motion.img
+          <img
             src={p.image || p.coverImage}
             alt={p.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -609,13 +681,13 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
             }}
           />
         </Link>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F35]/90 via-transparent to-black/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
 
         {/* Top Badges */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
           <div className="flex items-center gap-1.5 flex-wrap">
             {p.isFlagship ? (
-              <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-gold via-[#F4D078] to-[#B8860B] text-slate-950 shadow-md">
+              <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 shadow">
                 ★ Flagship
               </span>
             ) : (
@@ -623,7 +695,7 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
                 {p.category}
               </span>
             )}
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium backdrop-blur-md ${
+            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold backdrop-blur-md ${
               p.status === 'Completed'
                 ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/30'
                 : 'bg-amber-950/80 text-amber-300 border border-amber-500/30'
@@ -637,119 +709,87 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
           </span>
         </div>
 
-        {/* Bottom Image Overlay Strip: Price & Plot Range with High-Contrast Dark Backdrop */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3 py-1.5 rounded-xl bg-[#0B1F35]/85 backdrop-blur-md border border-white/10 text-xs">
-          <span className="text-gold font-heading font-bold text-sm tracking-wide">
+        {/* Bottom Price Strip */}
+        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3 py-1.5 rounded-xl bg-[#0B2545]/85 backdrop-blur-md border border-white/10 text-xs">
+          <span className="text-[#F4D078] font-heading font-bold text-sm tracking-wide">
             {p.price}
           </span>
-          <span className="text-slate-200 text-[11px] font-numbers">
+          <span className="text-slate-200 text-[11px]">
             {p.plotRange}
           </span>
         </div>
       </div>
 
-      {/* Card Body - 100% High-Contrast Deep Navy Text on Clean White Background */}
-      <div className="p-5 sm:p-6 flex-1 flex flex-col">
-        {/* Category & Location */}
-        <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#B8860B] mb-1.5">
-          <span>{p.category} • {p.totalAreaShort || p.totalArea}</span>
-          <span className="flex items-center gap-1 text-slate-500 font-normal normal-case">
-            <MapPin className="w-3 h-3 text-gold shrink-0" />
-            <span className="truncate max-w-[130px]">{p.location}</span>
-          </span>
-        </div>
-
-        {/* Project Name Heading (ALWAYS VISIBLE & CONTRASTING) */}
-        <Link href={`/projects/${p.slug || p.id}`} className="group/title block">
-          <h3 className="font-heading text-xl sm:text-2xl font-bold text-[#0B1F35] group-hover/title:text-[#B8860B] transition-colors leading-tight">
-            {p.name}
-          </h3>
-        </Link>
-
-        {/* Tagline */}
-        <p className="text-xs text-slate-500 italic mt-1 line-clamp-1 leading-relaxed">
-          &ldquo;{p.tagline}&rdquo;
-        </p>
-
-        {/* 2x2 Specs Grid */}
-        <div className="grid grid-cols-2 gap-2 my-4 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-          <div>
-            <div className="text-[10px] tracking-wider uppercase text-slate-400 font-medium">Plots</div>
-            <div className="text-xs font-semibold text-[#0B1F35] font-numbers truncate">{p.plotRange}</div>
-          </div>
-          <div>
-            <div className="text-[10px] tracking-wider uppercase text-slate-400 font-medium">Possession</div>
-            <div className="text-xs font-semibold text-[#0B1F35] font-numbers truncate">{p.possession}</div>
-          </div>
-          <div>
-            <div className="text-[10px] tracking-wider uppercase text-slate-400 font-medium">Approval</div>
-            <div className="text-xs font-semibold text-emerald-700 font-numbers truncate">{p.approval}</div>
-          </div>
-          <div>
-            <div className="text-[10px] tracking-wider uppercase text-slate-400 font-medium">Highway / Dist</div>
-            <div className="text-xs font-semibold text-[#0B1F35] font-numbers truncate">{p.distance}</div>
-          </div>
-        </div>
-
-        {/* Highlights */}
-        <div className="flex flex-wrap gap-1.5 mb-5">
-          {p.highlights.slice(0, 3).map(h => (
-            <span key={h} className="text-[11px] px-2.5 py-1 bg-amber-50 text-[#8B6508] border border-amber-200/60 rounded-md font-medium">
-              {h}
+      {/* Card Content */}
+      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+        <div>
+          {/* Category & Location */}
+          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#B8860B] mb-1">
+            <span>{p.category} • {p.totalAreaShort || p.totalArea}</span>
+            <span className="flex items-center gap-1 text-slate-500 font-normal normal-case">
+              <MapPin className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+              <span className="truncate max-w-[130px]">{p.location}</span>
             </span>
-          ))}
+          </div>
+
+          {/* Project Title */}
+          <Link href={`/projects/${p.slug || p.id}`} className="group/title block">
+            <h3 className="font-heading text-xl sm:text-2xl font-bold text-[#0B2545] group-hover/title:text-[#B8860B] transition-colors leading-tight">
+              {p.name}
+            </h3>
+          </Link>
+
+          {/* Tagline */}
+          <p className="text-xs text-slate-500 italic mt-1 line-clamp-1 leading-relaxed">
+            &ldquo;{p.tagline}&rdquo;
+          </p>
+
+          {/* 3 Key Specs Row */}
+          <div className="grid grid-cols-3 gap-2 my-3 p-2 rounded-xl bg-slate-50 border border-slate-100 text-center">
+            <div>
+              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Plots</div>
+              <div className="text-xs font-bold text-slate-800 truncate mt-0.5">{p.plotRange}</div>
+            </div>
+            <div>
+              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Approval</div>
+              <div className="text-xs font-bold text-emerald-700 truncate mt-0.5">{p.approval}</div>
+            </div>
+            <div>
+              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Possession</div>
+              <div className="text-xs font-bold text-slate-800 truncate mt-0.5">{p.possession}</div>
+            </div>
+          </div>
         </div>
 
-        {/* Actions - Mobile Optimized 2-Tier Layout */}
-        <div className="space-y-2 mt-auto pt-2 border-t border-slate-100">
+        {/* Action Buttons: Googee Style (View Details, Quick Preview, WhatsApp) */}
+        <div className="pt-2 border-t border-slate-100 space-y-2">
           <Link href={`/projects/${p.slug || p.id}`} className="block w-full">
-            <Button className="w-full bg-[#0B1F35] hover:bg-[#132E4E] text-white py-2.5 rounded-xl font-medium text-xs tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
-              <span>Explore Dedicated Page</span>
-              <ChevronRight className="w-3.5 h-3.5 text-gold" />
+            <Button className="w-full bg-[#0B2545] hover:bg-[#132E4E] text-white py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-sm">
+              <span>View Dedicated Page</span>
+              <ChevronRight className="w-4 h-4 text-[#D4AF37]" />
             </Button>
           </Link>
 
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-3 gap-1.5">
             <Button
               onClick={() => onDetails(p)}
               variant="outline"
-              className="border-slate-200 hover:border-[#0B1F35] text-[#0B1F35] hover:bg-slate-50 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
+              className="border-slate-200 text-slate-700 hover:bg-slate-50 h-9 px-0 rounded-lg text-[11px]"
               title="Quick Preview"
             >
-              <Eye className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
-              <span className="text-[11px]">Preview</span>
+              <Eye className="w-3.5 h-3.5 mr-1 text-slate-500" />
+              <span>Preview</span>
             </Button>
 
             <Button
               onClick={() => onBook(p)}
               variant="outline"
-              className="border-amber-300 hover:border-[#B8860B] text-[#8B6508] hover:bg-amber-50/60 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
-              title="Schedule Visit"
+              className="border-amber-300 text-[#8B6508] hover:bg-amber-50/60 h-9 px-0 rounded-lg text-[11px]"
+              title="Book Site Visit"
             >
-              <Calendar className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
-              <span className="text-[11px]">Visit</span>
+              <Calendar className="w-3.5 h-3.5 mr-1 text-[#D4AF37]" />
+              <span>Visit</span>
             </Button>
-
-            {p.brochureUrl ? (
-              <a href={p.brochureUrl} target="_blank" rel="noopener noreferrer" className="block">
-                <Button
-                  variant="outline"
-                  className="w-full border-slate-200 hover:border-[#0B1F35] text-[#0B1F35] hover:bg-slate-50 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
-                  title="Download Brochure"
-                >
-                  <FileText className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
-                  <span className="text-[11px]">Brochure</span>
-                </Button>
-              </a>
-            ) : (
-              <Button
-                variant="outline"
-                disabled
-                className="w-full border-slate-100 text-slate-300 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
-              >
-                <span className="text-[11px]">Brochure</span>
-              </Button>
-            )}
 
             <a
               href={`https://wa.me/${BRAND.whatsapp}?text=Interested%20in%20${encodeURIComponent(p.name)}`}
@@ -759,877 +799,621 @@ function ProjectCard({ p, onBook, onDetails, delay = 0 }) {
             >
               <Button
                 variant="outline"
-                className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 h-9 px-0 rounded-lg flex items-center justify-center text-xs"
+                className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50 h-9 px-0 rounded-lg text-[11px]"
                 title="Chat on WhatsApp"
               >
-                <MessageCircle className="w-3.5 h-3.5 mr-1 hidden sm:inline" />
-                <span className="text-[11px]">Chat</span>
+                <MessageCircle className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+                <span>Chat</span>
               </Button>
             </a>
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
-function FeaturedProjects({ onBook, onDetails }) {
-  const [filter, setFilter] = useState('All')
+// ─── Ventures & Projects Showcase Section (Googee Style) ───────
+function ProjectsPortfolio({ onBook, onDetails }) {
+  const [activeFilter, setActiveFilter] = useState('All')
+
+  const filterTabs = [
+    { label: 'All Ventures (11)', val: 'All' },
+    { label: 'Ongoing Layouts', val: 'Ongoing' },
+    { label: 'Completed Landmarks', val: 'Completed' },
+    { label: 'Farm Land Estates', val: 'Farm Land' },
+    { label: 'DTCP Approved', val: 'DTCP' },
+    { label: 'HMDA Approved', val: 'HMDA' },
+  ]
 
   const filtered = useMemo(() => {
-    if (filter === 'All') return PROJECTS
-    if (filter === 'Flagship') return PROJECTS.filter(p => p.isFlagship)
-    if (filter === 'Ongoing') return PROJECTS.filter(p => p.status === 'Ongoing')
-    if (filter === 'Completed') return PROJECTS.filter(p => p.status === 'Completed')
-    return PROJECTS.filter(p => p.category === filter)
-  }, [filter])
+    if (activeFilter === 'All') return PROJECTS
+    if (activeFilter === 'Ongoing') return PROJECTS.filter(p => p.status === 'Ongoing')
+    if (activeFilter === 'Completed') return PROJECTS.filter(p => p.status === 'Completed')
+    if (activeFilter === 'Farm Land') return PROJECTS.filter(p => p.category === 'Farm Land')
+    if (activeFilter === 'DTCP') return PROJECTS.filter(p => p.category === 'DTCP')
+    if (activeFilter === 'HMDA') return PROJECTS.filter(p => p.category === 'HMDA')
+    return PROJECTS
+  }, [activeFilter])
 
   return (
-    <section id="projects" className="py-20 sm:py-24 bg-[#F8F9FA] border-y border-slate-200/80">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 sm:gap-8 mb-10 sm:mb-12">
-          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Signature Portfolio</div>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-[#0B1F35] max-w-2xl leading-tight">
-              Eleven Ventures, <span className="italic text-gradient-gold">One Proven Promise</span>
+    <section id="projects" className="py-20 sm:py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#B8860B] bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+              Our Signatures Portfolio
+            </span>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#0B2545] mt-3 leading-tight">
+              Explore Our Ventures Across Telangana
             </h2>
-            <p className="text-slate-600 mt-3 sm:mt-4 max-w-2xl text-sm sm:text-base leading-relaxed">
-              From historic townships to our flagship NH-44 highway city, every project carries the same commitment to 100% crystal-clear titles, DTCP approvals, and on-time delivery.
+            <p className="text-slate-600 text-sm sm:text-base mt-2 max-w-2xl">
+              From prime highway-facing townships to income-yielding mango farm retreats, discover your ideal real estate investment with 100% legal clarity.
             </p>
-          </motion.div>
+          </div>
 
-          {/* Smooth Horizontal Scrolling Category Filter Strip */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="flex overflow-x-auto no-scrollbar gap-2 pb-2 w-full lg:w-auto"
-          >
-            {FILTERS.map(f => (
-              <motion.button
-                key={f}
-                onClick={() => setFilter(f)}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs tracking-wider uppercase font-semibold whitespace-nowrap transition-all duration-300
-                  ${filter === f
-                    ? 'bg-[#0B1F35] text-gold border border-gold/40 shadow-lg shadow-[#0B1F35]/20 font-bold'
-                    : 'bg-white text-slate-700 border border-slate-200 hover:border-gold hover:text-gold-dark shadow-sm'}`}
-              >
-                {f}
-              </motion.button>
-            ))}
-          </motion.div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {filtered.map((p, i) => (
-            <ProjectCard key={p.id} p={p} onBook={onBook} onDetails={onDetails} delay={i * 0.05} />
-          ))}
-        </div>
-
-        <div className="mt-12 sm:mt-16 text-center">
-          <Link href="/projects" className="inline-block w-full sm:w-auto">
-            <Button size="lg" className="w-full sm:w-auto bg-[#0B1F35] hover:bg-[#132E4E] text-white border border-gold/40 hover:border-gold px-8 py-6 rounded-2xl font-bold tracking-wider text-xs uppercase shadow-xl hover:scale-105 transition-all duration-300">
-              <span>Explore All 11 Projects in Dedicated Directory</span>
-              <ArrowRight className="w-4 h-4 ml-2 text-gold" />
+          <Link href="/projects" className="shrink-0">
+            <Button variant="outline" className="border-[#0B2545] text-[#0B2545] hover:bg-[#0B2545] hover:text-white font-semibold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl">
+              <span>View Full Directory (11 Projects)</span>
+              <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </Link>
         </div>
-      </div>
-    </section>
-  )
-}
 
-// ─── Flagship Section ─────────────────────────────────────────
-function FlagshipSection({ onBook }) {
-  const p = FLAGSHIP
-  const [galleryIdx, setGalleryIdx] = useState(0)
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const bgY = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
-
-  useEffect(() => {
-    const t = setInterval(() => setGalleryIdx(i => (i + 1) % p.gallery.length), 4800)
-    return () => clearInterval(t)
-  }, [p.gallery.length])
-
-  return (
-    <section ref={ref} id="flagship" className="relative bg-navy-deep text-white overflow-hidden">
-      <motion.div style={{ y: bgY }} className="absolute inset-0 will-change-transform">
-        <img src={p.image} alt="" className="w-full h-full object-cover opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-deep via-navy-deep/85 to-navy" />
-      </motion.div>
-
-      <div className="relative container mx-auto px-6 py-24">
-
-        {/* Intro */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center gap-3 px-5 py-2 border border-gold/40 bg-gold/5 rounded-full mb-6">
-            <Sparkles className="w-4 h-4 text-gold" />
-            <span className="text-gold text-xs tracking-[0.4em] font-numbers uppercase">Our Flagship</span>
-          </div>
-          <h2 className="font-heading text-5xl md:text-7xl leading-tight">
-            <span className="text-gradient-gold italic">Golden Palm City</span>
-          </h2>
-          <p className="font-heading text-xl md:text-2xl text-white/80 mt-4 italic">&ldquo;{p.tagline}&rdquo;</p>
-          <div className="flex items-center justify-center gap-2 text-white/70 mt-4">
-            <MapPin className="w-4 h-4 text-gold" /> {p.location}
-          </div>
-        </motion.div>
-
-        {/* Metrics strip */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-          {[
-            { label: 'Total Area', value: '7.27', unit: 'Acres', icon: Ruler },
-            { label: 'Blocks', value: '9', unit: 'A → I', icon: Layers },
-            { label: 'Plot Range', value: '161 – 2,950', unit: 'sq.yds', icon: Home },
-            { label: 'Highway', value: '200', unit: 'm to NH-44', icon: Compass },
-          ].map((m, i) => (
-            <motion.div key={m.label}
-              initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.12 }}
-              whileHover={{ scale: 1.04, borderColor: '#D4AF37' }}
-              className="border border-gold/20 bg-navy/40 backdrop-blur-sm p-5 text-center hover:bg-gold/5 transition-all duration-400 group cursor-default"
+        {/* Googee Style Filter Tab Buttons */}
+        <div className="flex overflow-x-auto no-scrollbar gap-2 pb-4 mb-8 border-b border-slate-100">
+          {filterTabs.map((t) => (
+            <button
+              key={t.val}
+              onClick={() => setActiveFilter(t.val)}
+              className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider whitespace-nowrap transition-all ${
+                activeFilter === t.val
+                  ? 'bg-[#0B2545] text-white shadow-md'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
             >
-              <m.icon className="w-6 h-6 mx-auto text-gold mb-3 group-hover:scale-110 transition-transform duration-300" />
-              <div className="font-numbers text-3xl font-bold">{m.value}</div>
-              <div className="text-xs text-white/60 uppercase tracking-widest mt-1">{m.unit}</div>
-              <div className="text-[10px] text-gold/80 uppercase tracking-[0.3em] mt-2">{m.label}</div>
-            </motion.div>
+              {t.label}
+            </button>
           ))}
         </div>
 
-        {/* Two column */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-          {/* Gallery slider */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="relative h-[480px] rounded-sm overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.5)]"
-          >
-            {p.gallery.map((src, i) => (
-              <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ${i === galleryIdx ? 'opacity-100' : 'opacity-0'}`}>
-                <img src={src} alt="" className="w-full h-full object-cover" />
-              </div>
-            ))}
-            <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-              <div className="flex gap-2">
-                {p.gallery.map((_, i) => (
-                  <button key={i} onClick={() => setGalleryIdx(i)}
-                    className={`h-1 transition-all duration-300 rounded-full ${i === galleryIdx ? 'w-12 bg-gold' : 'w-6 bg-white/40'}`} />
-                ))}
-              </div>
-              <Badge className="bg-gold text-navy font-numbers">{galleryIdx + 1} / {p.gallery.length}</Badge>
-            </div>
-          </motion.div>
-
-          {/* Story */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="text-gold text-[10px] tracking-[0.4em] uppercase font-numbers mb-3">{p.approval}</div>
-            <h3 className="font-heading text-4xl mb-6">A premium highway-facing city, designed for legacy.</h3>
-            <p className="text-white/80 leading-relaxed font-light mb-6">
-              Spread across 7 acres 27 guntas along the Hyderabad–Bengaluru NH-44, Golden Palm City is more than a layout —
-              it is a meticulously planned residential and commercial community, just five minutes from the Jadcherla IT Park
-              and adjacent to the 1,000+ acre Pollepally SEZ.
-            </p>
-            <div className="space-y-3 mb-8">
-              {p.usps.map((u, i) => (
-                <motion.div key={u}
-                  initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }} transition={{ delay: 0.2 + i * 0.1 }}
-                  className="flex items-start gap-3"
-                >
-                  <CheckCircle2 className="w-5 h-5 text-gold mt-0.5 shrink-0" />
-                  <span className="text-white/85">{u}</span>
-                </motion.div>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button onClick={() => onBook(p)} size="lg" className="bg-gold hover:bg-gold-dark text-navy font-semibold gold-shadow transition-all duration-300 hover:scale-105">
-                <Calendar className="w-5 h-5 mr-2" /> Book Private Tour
-              </Button>
-              {p.brochureUrl && (
-                <a href={p.brochureUrl} target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/15 hover:text-white">
-                    <FileText className="w-5 h-5 mr-2" /> Brochure
-                  </Button>
-                </a>
-              )}
-              {p.layoutPdf && (
-                <a href={p.layoutPdf} target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/15 hover:text-white">
-                    <Layers className="w-5 h-5 mr-2" /> Master Plan
-                  </Button>
-                </a>
-              )}
-            </div>
-          </motion.div>
+        {/* Projects 3-Column Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {filtered.map((p) => (
+            <CleanProjectCard key={p.id} p={p} onBook={onBook} onDetails={onDetails} />
+          ))}
         </div>
-
-        {/* Composition cards */}
-        <div className="grid lg:grid-cols-2 gap-10 mb-20">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-            <Card className="bg-navy/50 border-gold/20 p-8 text-white backdrop-blur-sm h-full">
-              <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Land Composition</div>
-              <h4 className="font-heading text-3xl mb-6">37,147 sq.yds, thoughtfully planned</h4>
-              <div className="space-y-5">
-                {Object.entries(p.composition).map(([key, c], i) => (
-                  <div key={key}>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>{c.label}</span>
-                      <span className="font-numbers"><span className="text-gold">{c.pct}%</span> · {c.sqYds} sq.yds</span>
-                    </div>
-                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                      <motion.div className="h-full gradient-gold rounded-full"
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${c.pct}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1.2, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.15 }}>
-            <Card className="bg-navy/50 border-gold/20 p-8 text-white backdrop-blur-sm h-full">
-              <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Block Composition</div>
-              <h4 className="font-heading text-3xl mb-6">Nine premium blocks</h4>
-              <div className="grid grid-cols-3 gap-3">
-                {p.blocks.map((b, i) => (
-                  <motion.div key={b.name}
-                    initial={{ opacity: 0, scale: 0.7 }} whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }} transition={{ delay: i * 0.06, type: 'spring', stiffness: 200 }}
-                    whileHover={{ scale: 1.06, borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.06)' }}
-                    className="border border-gold/20 p-3 text-center transition-all duration-300 cursor-default"
-                  >
-                    <div className="font-heading text-gold text-2xl">{b.name}</div>
-                    <div className="font-numbers text-xs text-white/70 mt-1">{b.area}</div>
-                    <div className="text-[9px] uppercase tracking-widest text-white/40">sq.yds</div>
-                  </motion.div>
-                ))}
-              </div>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Amenities */}
-        <div className="mb-20">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
-            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Lifestyle Amenities</div>
-            <h3 className="font-heading text-4xl">Everything for High Class Living</h3>
-          </motion.div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {p.amenities.map((a, i) => (
-              <motion.div key={a}
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.035 }}
-                whileHover={{ scale: 1.03, borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.06)' }}
-                className="border border-gold/20 bg-navy/30 p-4 text-sm text-white/85 transition-all duration-300 cursor-default"
-              >
-                <CheckCircle2 className="w-4 h-4 text-gold mb-2" />
-                {a}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Connectivity */}
-        <div className="mb-20">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
-            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Strategic Connectivity</div>
-            <h3 className="font-heading text-4xl">At the Crossroads of Growth</h3>
-          </motion.div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {p.nearby.map((n, i) => (
-              <motion.div key={n.name}
-                initial={{ opacity: 0, scale: 0.85 }} whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                whileHover={{ scale: 1.04, borderColor: '#D4AF37' }}
-                className="border border-gold/20 bg-navy/30 p-5 hover:bg-gold/5 transition-all duration-300"
-              >
-                <Compass className="w-5 h-5 text-gold mb-3" />
-                <div className="text-sm text-white">{n.name}</div>
-                <div className="font-numbers text-xs text-gold mt-1">{n.dist}</div>
-              </motion.div>
-            ))}
-          </div>
-          <div className="mt-8 border border-gold/20 bg-navy/30 p-6">
-            <div className="text-gold text-[10px] tracking-[0.4em] uppercase font-numbers mb-3">Anchor Employers Nearby</div>
-            <div className="flex flex-wrap gap-2">
-              {p.neighbours.map(n => (
-                <motion.span key={n} whileHover={{ scale: 1.04, borderColor: 'rgba(212,175,55,0.6)', color: '#fff' }}
-                  className="text-xs px-3 py-1.5 border border-white/15 text-white/80 cursor-default transition-all duration-200">
-                  {n}
-                </motion.span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
-          <h3 className="font-heading text-3xl md:text-5xl mb-6">Inventory is moving fast.</h3>
-          <p className="text-white/70 max-w-2xl mx-auto mb-8">
-            Speak to a Golden Palm City advisor today. Site visits include a 15-minute architectural walkthrough,
-            access to the live master plan, and a no-pressure investment consultation.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/projects/golden-palm-city">
-              <Button size="lg" className="bg-gradient-to-r from-gold via-[#F4D078] to-[#B8860B] hover:brightness-110 text-navy font-bold gold-shadow h-14 px-8 transition-all duration-300 hover:scale-105">
-                <Sparkles className="w-5 h-5 mr-2" /> Explore Golden Palm City
-              </Button>
-            </Link>
-            <Button onClick={() => onBook(p)} size="lg" variant="outline" className="border-gold text-gold hover:bg-gold hover:text-navy h-14 px-8 transition-all duration-300">
-              <Calendar className="w-5 h-5 mr-2" /> Reserve Site Visit
-            </Button>
-            <a href={`https://wa.me/${BRAND.whatsapp}?text=I'm%20interested%20in%20Golden%20Palm%20City`} target="_blank" rel="noopener noreferrer">
-              <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/15 hover:text-white h-14 px-8">
-                <MessageCircle className="w-5 h-5 mr-2 text-green-400" /> Chat with Advisor
-              </Button>
-            </a>
-          </div>
-        </motion.div>
       </div>
     </section>
   )
 }
 
-// ─── Timeline / Legacy ────────────────────────────────────────
-function WhyKP() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const lineScaleY = useTransform(scrollYProgress, [0.05, 0.95], [0, 1])
+// ─── Flagship Spotlight: Golden Palm City (Googee Feature Spotlight) ───────────
+function FlagshipSpotlight({ onBook }) {
+  const p = FLAGSHIP
 
   return (
-    <section ref={ref} id="legacy" className="py-24 bg-navy text-white relative overflow-hidden">
+    <section id="flagship" className="py-20 sm:py-24 bg-[#0B2545] text-white overflow-hidden relative">
       <div className="absolute inset-0 opacity-10">
-        <img src={PROJECTS.find(p => p.id === 'moinabad-township')?.image || HERO_RENDERS.goldenPalmGate} alt="" className="w-full h-full object-cover" />
+        <img src={p.image} alt="" className="w-full h-full object-cover" />
       </div>
-      <div className="container mx-auto px-6 relative">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">The Legacy</div>
-          <h2 className="font-heading text-4xl md:text-5xl">
-            Two Decades. <span className="italic text-gradient-gold">One Promise.</span>
-          </h2>
-          <p className="text-white/70 max-w-2xl mx-auto mt-5 font-light">
-            From Adarsh Nagar in 2009 to Golden Palm City in 2026, our journey has been built on
-            transparency, design excellence, and an obsession with on-time delivery.
-          </p>
-        </motion.div>
 
-        <div className="relative max-w-5xl mx-auto">
-          {/* Scroll-driven animated center line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/5 hidden md:block overflow-hidden">
-            <motion.div
-              style={{ scaleY: lineScaleY, transformOrigin: 'top' }}
-              className="w-full h-full bg-gradient-to-b from-gold via-gold/60 to-gold/10"
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#F4D078] text-xs font-bold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span>The Crown Jewel Highway Development</span>
+          </div>
+          <h2 className="font-heading text-3xl sm:text-5xl font-bold tracking-tight text-white">
+            Golden Palm City, Jadcherla (NH-44)
+          </h2>
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+            7.27-Acre DTCP &amp; RERA Approved Gated Plotted Community directly on the Hyderabad–Bengaluru Highway, adjacent to the 1,000+ acre Pollepally Pharma SEZ.
+          </p>
+        </div>
+
+        {/* 4 Key Metrics Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          {[
+            { label: 'Total Land Area', val: '7.27 Acres', sub: '37,147 sq.yds' },
+            { label: 'Zoned Blocks', val: '9 Blocks', sub: 'Blocks A through I' },
+            { label: 'Plot Sizes', val: '161 – 2,950', sub: 'sq.yds range' },
+            { label: 'Highway Access', val: '200 Meters', sub: 'Directly from NH-44' },
+          ].map((m) => (
+            <div key={m.label} className="p-5 rounded-2xl bg-white/5 border border-white/10 text-center">
+              <div className="font-heading text-2xl sm:text-3xl font-bold text-[#F4D078]">{m.val}</div>
+              <div className="text-xs font-semibold text-white mt-1">{m.label}</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">{m.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* 2-Column Showcase */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <div className="lg:col-span-6 rounded-3xl overflow-hidden shadow-2xl border border-white/10 relative">
+            <img
+              src={HERO_RENDERS.goldenPalmTower}
+              alt="Golden Palm City Clubhouse"
+              className="w-full h-80 sm:h-[420px] object-cover"
             />
-          </div>
-
-          <div className="space-y-12">
-            {TIMELINE.map((t, i) => (
-              <motion.div key={t.year}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -60 : 60 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-                className={`flex flex-col md:flex-row items-center gap-6 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
-              >
-                <div className="md:w-1/2 md:px-10">
-                  <motion.div
-                    whileHover={{ borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.04)' }}
-                    className={`p-6 border border-gold/30 bg-navy-deep/60 backdrop-blur-sm transition-all duration-400 ${i % 2 === 0 ? 'md:text-right' : ''}`}
-                  >
-                    <div className="font-numbers text-gold text-3xl font-bold">{t.year}</div>
-                    <h3 className="font-heading text-xl mt-2">{t.title}</h3>
-                    <p className="text-white/70 text-sm mt-2 font-light">{t.desc}</p>
-                  </motion.div>
-                </div>
-                <motion.div
-                  initial={{ scale: 0 }} whileInView={{ scale: 1 }}
-                  viewport={{ once: true }} transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                  className="hidden md:flex w-5 h-5 rounded-full bg-gold ring-4 ring-gold/25 items-center justify-center relative z-10 shrink-0"
-                >
-                  <div className="w-2 h-2 bg-navy rounded-full" />
-                </motion.div>
-                <div className="md:w-1/2" />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─── Testimonials ─────────────────────────────────────────────
-function Testimonials() {
-  const [i, setI] = useState(0)
-  useEffect(() => {
-    const t = setInterval(() => setI(x => (x + 1) % TESTIMONIALS.length), 7000)
-    return () => clearInterval(t)
-  }, [])
-  const t = TESTIMONIALS[i]
-  return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Voices of Trust</div>
-          <h2 className="font-heading text-4xl md:text-5xl text-navy">Customer Stories</h2>
-          <div className="gold-divider w-32 mx-auto mt-6" />
-        </motion.div>
-
-        <div className="max-w-4xl mx-auto relative">
-          <Quote className="w-20 h-20 text-gold/20 absolute -top-6 -left-2" />
-          <AnimatePresence mode="wait">
-            <motion.div key={i}
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.6 }}
-              className="text-center px-6"
-            >
-              <div className="flex justify-center mb-6">
-                {Array.from({ length: t.rating }).map((_, k) => (
-                  <Star key={k} className="w-5 h-5 fill-gold text-gold" />
-                ))}
+            <div className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl bg-[#0B2545]/90 backdrop-blur-md border border-white/15 text-xs flex justify-between items-center">
+              <div>
+                <div className="text-[#F4D078] font-bold">Luxury Clubhouse &amp; Swimming Pool</div>
+                <div className="text-slate-300 text-[11px]">Underground drainage, avenue plantation &amp; sports court</div>
               </div>
-              <p className="font-heading text-2xl md:text-3xl text-navy leading-relaxed italic">&ldquo;{t.quote}&rdquo;</p>
-              <div className="mt-8">
-                <div className="font-semibold text-navy">{t.name}</div>
-                <div className="text-sm text-muted-foreground">{t.role}</div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-          <div className="flex justify-center gap-2 mt-10">
-            {TESTIMONIALS.map((_, k) => (
-              <button key={k} onClick={() => setI(k)} aria-label={`testimonial ${k + 1}`}
-                className={`h-1 rounded-full transition-all duration-300 ${k === i ? 'w-10 bg-gold' : 'w-5 bg-navy/20'}`} />
-            ))}
+              <Badge className="bg-[#D4AF37] text-slate-950 font-bold">Active Progress</Badge>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
-  )
-}
 
-// ─── Investment Calculator ─────────────────────────────────────
-function InvestmentCalculator() {
-  const [investment, setInvestment] = useState(2500000)
-  const [appreciation, setAppreciation] = useState(14)
-  const [years, setYears] = useState(7)
+          <div className="lg:col-span-6 space-y-6">
+            <div className="space-y-3">
+              <div className="text-xs uppercase font-bold tracking-wider text-[#F4D078]">
+                Why Golden Palm City is Telangana&apos;s #1 Realty Choice
+              </div>
+              <h3 className="font-heading text-2xl sm:text-3xl font-bold text-white leading-snug">
+                Where Highway Connectivity Meets Luxury Living
+              </h3>
+              <p className="text-slate-300 text-sm leading-relaxed">
+                Positioned 5 minutes from Jadcherla IT Park and adjacent to the Pollepally SEZ housing 50,000+ top engineering and pharma professionals, Golden Palm City delivers unmatched living comfort and steady capital appreciation.
+              </p>
+            </div>
 
-  const data = useMemo(() => {
-    const arr = []
-    let v = investment
-    for (let y = 0; y <= years; y++) {
-      arr.push({ year: `Y${y}`, value: Math.round(v) })
-      v *= 1 + appreciation / 100
-    }
-    return arr
-  }, [investment, appreciation, years])
-
-  const future = data[data.length - 1].value
-  const gain = future - investment
-  const multiple = (future / investment).toFixed(2)
-
-  const submit = async () => {
-    try {
-      await fetch('/api/calculator', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ investment, appreciation, years }),
-      })
-      toast.success('Personalised investment report saved. Our advisor will reach out.')
-    } catch { toast.error('Could not save. Try again.') }
-  }
-
-  return (
-    <section id="investor" className="py-16 sm:py-24 bg-gradient-to-b from-muted/40 to-white">
-      <div className="container mx-auto px-4 sm:px-6">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 sm:mb-12">
-          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Investor Intelligence</div>
-          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-navy">
-            Visualise Your <span className="italic text-gradient-gold">Wealth Growth</span>
-          </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto mt-4 text-sm sm:text-base">
-            Calibrated against historic Telangana plot appreciation across our delivered portfolio.
-          </p>
-        </motion.div>
-
-        <div className="grid lg:grid-cols-5 gap-6 sm:gap-8 max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="lg:col-span-2">
-            <Card className="p-5 sm:p-8 rounded-2xl border-navy/10 luxe-shadow bg-white">
-              <div className="space-y-6 sm:space-y-8">
-                <div>
-                  <div className="flex justify-between mb-3 text-sm">
-                    <Label className="text-navy font-medium">Investment Amount</Label>
-                    <span className="font-numbers font-bold text-gold-dark">{formatINR(investment)}</span>
-                  </div>
-                  <Slider value={[investment]} min={500000} max={50000000} step={100000}
-                    onValueChange={(v) => setInvestment(v[0])} />
-                  <div className="flex justify-between text-[10px] tracking-widest text-muted-foreground mt-2">
-                    <span>5 L</span><span>5 Cr</span>
-                  </div>
+            <div className="space-y-2.5">
+              {[
+                'Direct 200m access to Hyderabad – Bengaluru 6-Lane NH-44',
+                'Approved by DTCP, MUDA & TG RERA (LP No. 0032/GP/SWDL/2026)',
+                'Underground modern drainage network with overhead water storage tank',
+                '40ft & 33ft wide bitumen roads with footpaths and curbing stones',
+                'Grand entrance arch, 24/7 CCTV surveillance and security cabin',
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200">
+                  <CheckCircle2 className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
+                  <span>{item}</span>
                 </div>
-                <div>
-                  <div className="flex justify-between mb-3 text-sm">
-                    <Label className="text-navy font-medium">Expected Appreciation</Label>
-                    <span className="font-numbers font-bold text-gold-dark">{appreciation}% / yr</span>
-                  </div>
-                  <Slider value={[appreciation]} min={5} max={28} step={1} onValueChange={v => setAppreciation(v[0])} />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-3 text-sm">
-                    <Label className="text-navy font-medium">Holding Period</Label>
-                    <span className="font-numbers font-bold text-gold-dark">{years} years</span>
-                  </div>
-                  <Slider value={[years]} min={1} max={15} step={1} onValueChange={v => setYears(v[0])} />
-                </div>
-                <Button onClick={submit} className="w-full bg-navy hover:bg-navy-deep text-white h-12 rounded-xl transition-all duration-300 hover:scale-[1.02]">
-                  Get Personalised Report <ArrowRight className="w-4 h-4 ml-2" />
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 pt-4">
+              <Link href="/projects/golden-palm-city">
+                <Button className="bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl shadow-lg">
+                  <span>Explore Dedicated Page</span>
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-              </div>
-            </Card>
-          </motion.div>
+              </Link>
 
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.1 }} className="lg:col-span-3">
-            <Card className="p-5 sm:p-8 rounded-2xl border-navy/10 luxe-shadow bg-navy text-white h-full flex flex-col justify-between">
-              <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
-                {[
-                  { label: 'Future Value', val: formatINR(future), color: 'text-white' },
-                  { label: 'Net Gain', val: formatINR(gain), color: 'text-emerald-300' },
-                  { label: 'Multiple', val: `${multiple}x`, color: 'text-white' },
-                ].map(x => (
-                  <div key={x.label} className="p-2 sm:p-3 rounded-lg bg-white/5 border border-white/5">
-                    <div className="text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.25em] uppercase text-gold truncate">{x.label}</div>
-                    <div className={`font-numbers text-lg sm:text-2xl md:text-3xl font-bold mt-1 truncate ${x.color}`}>{x.val}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="h-64 sm:h-72 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data}>
-                    <defs>
-                      <linearGradient id="chartGold" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.6} />
-                        <stop offset="100%" stopColor="#D4AF37" stopOpacity={0.05} />
-                      </linearGradient>
-                    </defs>
-                    <XAxis dataKey="year" stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 11 }} />
-                    <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 11 }}
-                      tickFormatter={(v) => v >= 10000000 ? `${(v / 10000000).toFixed(1)}Cr` : `${(v / 100000).toFixed(0)}L`} />
-                    <Tooltip
-                      contentStyle={{ background: '#061425', border: '1px solid #D4AF37', borderRadius: 4 }}
-                      formatter={(v) => [formatINR(v), 'Value']} />
-                    <Area type="monotone" dataKey="value" stroke="#D4AF37" strokeWidth={2.5} fill="url(#chartGold)" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-          </motion.div>
+              <Button
+                onClick={() => onBook(p)}
+                variant="outline"
+                className="border-[#D4AF37] text-[#F4D078] hover:bg-[#D4AF37]/10 font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl"
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                <span>Book Site Tour</span>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   )
 }
 
-// ─── Schedule Visit Form ──────────────────────────────────────
-function ScheduleVisitForm() {
-  const [form, setForm] = useState({ name: '', phone: '', email: '', project: '', date: '', time: '', notes: '' })
+// ─── Why Choose Us (Googee Style 6-Card Grid) ─────────────────
+function WhyChooseSection() {
+  const reasons = [
+    {
+      title: '100% Clear Titles & Transparency',
+      desc: 'Zero legal ambiguity. Every plot has complete title clearance, DTCP/HMDA/RERA validation, and immediate spot registration.',
+      icon: Shield,
+    },
+    {
+      title: 'Strategic High-Growth Corridors',
+      desc: 'Selected along NH-44, Upcoming Regional Ring Road (RRR), and emerging pharma, data center, and aerospace SEZ clusters.',
+      icon: Compass,
+    },
+    {
+      title: '100% Vaastu Compliant Planning',
+      desc: 'Engineered in strict accordance with authentic Vaastu principles to foster positive energy, wellbeing, and financial prosperity.',
+      icon: Home,
+    },
+    {
+      title: 'Superior Quality Infrastructure',
+      desc: 'Built to last with full underground drainage, wide asphalt bitumen roads, avenue plantations, and modern street illumination.',
+      icon: Layers,
+    },
+    {
+      title: 'Proven High Appreciation & ROI',
+      desc: 'Our delivered communities like Adarsh Nagar and Golden Spring have delivered 300% to 600%+ capital appreciation to homeowners.',
+      icon: Award,
+    },
+    {
+      title: 'Complimentary Chauffeured Site Visits',
+      desc: 'We arrange door-to-door cab pickup from Hyderabad city centre for you and your family with zero-pressure architectural tours.',
+      icon: Calendar,
+    },
+  ]
+
+  return (
+    <section id="why-choose-us" className="py-20 sm:py-24 bg-[#F8FAFC]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#B8860B] bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+            The Kings Pride Advantage
+          </span>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#0B2545]">
+            Why Thousands of Investors Choose KP Infra
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Real estate is the most important financial commitment of a lifetime. Here is why discerning families have trusted us since 2003.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {reasons.map((r) => {
+            const Icon = r.icon
+            return (
+              <div
+                key={r.title}
+                className="p-6 sm:p-7 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-300 space-y-3"
+              >
+                <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center">
+                  <Icon className="w-6 h-6 text-[#B8860B]" />
+                </div>
+                <h3 className="font-heading text-lg font-bold text-[#0B2545]">
+                  {r.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  {r.desc}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Testimonials Section (Googee Style) ──────────────────────
+function TestimonialsSection() {
+  return (
+    <section id="testimonials" className="py-20 sm:py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#B8860B] bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+            Voices of Trust
+          </span>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#0B2545]">
+            What Our Homeowners &amp; Investors Say
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base">
+            Real experiences from families who placed their trust in Kings Pride Infra.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {TESTIMONIALS.slice(0, 3).map((t, idx) => (
+            <div
+              key={idx}
+              className="p-6 sm:p-8 rounded-2xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between space-y-4"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center gap-1">
+                  {[...Array(t.rating || 5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed italic">
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-slate-200/80">
+                <div className="font-heading text-sm font-bold text-[#0B2545]">{t.name}</div>
+                <div className="text-xs text-slate-500 mt-0.5">{t.role}</div>
+                <div className="text-[11px] font-semibold text-[#B8860B] mt-1">{t.location}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Schedule Visit / Contact Form (Googee Style Lead Form) ────
+function ContactVisitSection() {
+  const [form, setForm] = useState({ name: '', phone: '', email: '', project: 'Golden Palm City', date: '', time: 'Morning (10:00 AM - 1:00 PM)', notes: '' })
   const [loading, setLoading] = useState(false)
 
   const submit = async (e) => {
     e.preventDefault()
-    if (!form.name || !form.phone) { toast.error('Please share your name and phone.'); return }
+    if (!form.name || !form.phone) {
+      toast.error('Please share your name and contact phone.')
+      return
+    }
     setLoading(true)
     try {
-      const r = await fetch('/api/visits', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+      const res = await fetch('/api/visits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
-      const data = await r.json()
+      const data = await res.json()
       if (data.success) {
-        toast.success('Visit booked! Our relationship manager will call you within 30 minutes.')
-        setForm({ name: '', phone: '', email: '', project: '', date: '', time: '', notes: '' })
-      } else { toast.error('Could not book. Please try again.') }
-    } catch { toast.error('Network error.') }
-    setLoading(false)
+        toast.success('Site visit booked! Our relationship manager will call you within 30 minutes to confirm cab pickup.')
+        setForm({ name: '', phone: '', email: '', project: 'Golden Palm City', date: '', time: 'Morning (10:00 AM - 1:00 PM)', notes: '' })
+      } else {
+        toast.error('Could not book. Please reach us directly via phone.')
+      }
+    } catch {
+      toast.error('Network error. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <section id="contact" className="py-16 sm:py-24 bg-white">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 max-w-6xl mx-auto items-center">
-          <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
-            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Concierge Visit</div>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl text-navy leading-tight">
-              Walk the Land. <span className="italic text-gradient-gold">Feel the Vision.</span>
+    <section id="contact" className="py-20 sm:py-24 bg-[#0B2545] text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left Column: Office & Concierge Details */}
+          <div className="lg:col-span-5 space-y-6">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#F4D078] bg-white/10 px-3 py-1 rounded-full border border-white/20">
+              Personalized Site Visit
+            </span>
+
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+              Walk the Land. <span className="text-[#F4D078]">Feel the Future.</span>
             </h2>
-            <p className="text-muted-foreground mt-4 sm:mt-5 font-light leading-relaxed text-sm sm:text-base">
-              Schedule a curated site visit with our senior advisor. We arrange transportation from
-              Hyderabad city centre, a private walkthrough of your chosen project, and a no-pressure consultation.
+
+            <p className="text-slate-300 text-sm leading-relaxed">
+              Nothing compares to walking the boundary lines yourself. Schedule a complimentary chauffeur-driven weekend site tour with our senior property consultant.
             </p>
-            <div className="mt-8 space-y-4">
-              {[
-                { icon: Clock, t: 'Within 30 mins', d: 'Confirmation call from your relationship manager' },
-                { icon: Shield, t: 'Zero Pressure', d: 'Transparent property guidance — no aggressive tactics' },
-                { icon: Award, t: 'Premium Hospitality', d: 'Curated tour with refreshments and concierge' },
-              ].map((b, i) => (
-                <motion.div key={i}
-                  initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }} transition={{ delay: i * 0.12 }}
-                  className="flex gap-4"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-center shrink-0">
-                    <b.icon className="w-5 h-5 text-gold-dark" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-navy text-sm sm:text-base">{b.t}</div>
-                    <div className="text-xs sm:text-sm text-muted-foreground">{b.d}</div>
-                  </div>
-                </motion.div>
-              ))}
+
+            <div className="space-y-4 pt-2">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5 text-[#F4D078]" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-white">30-Minute Response</div>
+                  <div className="text-xs text-slate-400">Confirmation call from our senior advisor</div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                  <Shield className="w-5 h-5 text-[#F4D078]" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-white">Zero High-Pressure Sales</div>
+                  <div className="text-xs text-slate-400">Clear legal guidance and master plan walk-through</div>
+                </div>
+              </div>
             </div>
-            <div className="mt-8 p-5 bg-navy text-white rounded-2xl">
-              <div className="text-gold text-[10px] tracking-[0.4em] uppercase font-numbers mb-2">Head Office</div>
-              <div className="text-xs sm:text-sm font-light">{BRAND.office.line1}, {BRAND.office.line2}</div>
-              <div className="text-xs sm:text-sm font-light">{BRAND.office.area}, {BRAND.office.city} – {BRAND.office.pincode}</div>
-              <div className="flex flex-wrap gap-4 mt-3 text-xs">
-                <a href={`tel:${BRAND.phone}`} className="text-gold hover:text-white transition-colors">
-                  <Phone className="w-3 h-3 inline mr-1" /> {BRAND.phoneIntl}
+
+            {/* Corporate Office Card */}
+            <div className="p-5 rounded-2xl bg-[#061425] border border-white/10 space-y-2 text-xs">
+              <div className="text-[#F4D078] font-bold uppercase tracking-wider">Registered Corporate Office</div>
+              <div className="text-slate-300">{BRAND.office.line1}, {BRAND.office.line2}</div>
+              <div className="text-slate-300">{BRAND.office.area}, {BRAND.office.city} – {BRAND.office.pincode}</div>
+              <div className="pt-2 flex flex-wrap gap-4 text-xs font-semibold">
+                <a href={`tel:${BRAND.phone}`} className="text-[#D4AF37] hover:underline">
+                  <Phone className="w-3.5 h-3.5 inline mr-1" /> {BRAND.phoneIntl}
                 </a>
-                <a href={`mailto:${BRAND.email}`} className="text-gold hover:text-white transition-colors">
-                  <Mail className="w-3 h-3 inline mr-1" /> {BRAND.email}
+                <a href={`mailto:${BRAND.email}`} className="text-[#D4AF37] hover:underline">
+                  <Mail className="w-3.5 h-3.5 inline mr-1" /> {BRAND.email}
                 </a>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}>
-            <Card className="p-5 sm:p-8 luxe-shadow border-navy/10 rounded-2xl bg-white">
-              <h3 className="font-heading text-2xl text-navy mb-5 sm:mb-6">Book Your Private Visit</h3>
+          {/* Right Column: Clean White Lead Form */}
+          <div className="lg:col-span-7">
+            <Card className="p-6 sm:p-8 rounded-3xl bg-white text-slate-900 shadow-2xl">
+              <div className="mb-6 space-y-1">
+                <h3 className="font-heading text-2xl font-bold text-[#0B2545]">
+                  Book Your Complimentary Site Visit
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Choose your preferred project, date and pickup time. We arrange everything.
+                </p>
+              </div>
+
               <form onSubmit={submit} className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs uppercase tracking-widest text-navy">Full Name *</Label>
-                    <Input className="mt-1.5 h-11" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+                    <Label className="text-xs font-semibold text-slate-700">Full Name *</Label>
+                    <Input
+                      className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl text-slate-900"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      required
+                    />
                   </div>
                   <div>
-                    <Label className="text-xs uppercase tracking-widest text-navy">Phone *</Label>
-                    <Input className="mt-1.5 h-11" type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required />
+                    <Label className="text-xs font-semibold text-slate-700">Phone Number *</Label>
+                    <Input
+                      className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl text-slate-900"
+                      type="tel"
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      required
+                    />
                   </div>
                 </div>
-                <div>
-                  <Label className="text-xs uppercase tracking-widest text-navy">Email</Label>
-                  <Input className="mt-1.5 h-11" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-                </div>
-                <div>
-                  <Label className="text-xs uppercase tracking-widest text-navy">Project of Interest</Label>
-                  <Select value={form.project} onValueChange={v => setForm({ ...form, project: v })}>
-                    <SelectTrigger className="mt-1.5 h-11"><SelectValue placeholder="Choose a project" /></SelectTrigger>
-                    <SelectContent>
-                      {PROJECTS.map(p => <SelectItem key={p.id} value={p.name}>{p.name}{p.isFlagship ? ' ★ Flagship' : ''}</SelectItem>)}
-                      <SelectItem value="Open Consultation">Open Consultation</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid md:grid-cols-2 gap-4">
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs uppercase tracking-widest text-navy">Preferred Date</Label>
-                    <Input className="mt-1.5 h-11" type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+                    <Label className="text-xs font-semibold text-slate-700">Email Address</Label>
+                    <Input
+                      className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl text-slate-900"
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    />
                   </div>
                   <div>
-                    <Label className="text-xs uppercase tracking-widest text-navy">Time Slot</Label>
-                    <Select value={form.time} onValueChange={v => setForm({ ...form, time: v })}>
-                      <SelectTrigger className="mt-1.5 h-11"><SelectValue placeholder="Pick time" /></SelectTrigger>
+                    <Label className="text-xs font-semibold text-slate-700">Venture of Interest</Label>
+                    <Select value={form.project} onValueChange={(v) => setForm({ ...form, project: v })}>
+                      <SelectTrigger className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl">
+                        <SelectValue placeholder="Select project" />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="10:00 AM">10:00 AM</SelectItem>
-                        <SelectItem value="12:00 PM">12:00 PM</SelectItem>
-                        <SelectItem value="3:00 PM">3:00 PM</SelectItem>
-                        <SelectItem value="5:00 PM">5:00 PM</SelectItem>
+                        {PROJECTS.map((p) => (
+                          <SelectItem key={p.id} value={p.name}>
+                            {p.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
-                <div>
-                  <Label className="text-xs uppercase tracking-widest text-navy">Notes</Label>
-                  <Textarea className="mt-1.5" rows={3} value={form.notes}
-                    onChange={e => setForm({ ...form, notes: e.target.value })}
-                    placeholder="Anything specific you'd like us to prepare?" />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-semibold text-slate-700">Preferred Date</Label>
+                    <Input
+                      className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl text-slate-900"
+                      type="date"
+                      value={form.date}
+                      onChange={(e) => setForm({ ...form, date: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs font-semibold text-slate-700">Preferred Time Slot</Label>
+                    <Select value={form.time} onValueChange={(v) => setForm({ ...form, time: v })}>
+                      <SelectTrigger className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl">
+                        <SelectValue placeholder="Select time" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Morning (10:00 AM - 1:00 PM)">Morning (10:00 AM - 1:00 PM)</SelectItem>
+                        <SelectItem value="Afternoon (1:00 PM - 4:00 PM)">Afternoon (1:00 PM - 4:00 PM)</SelectItem>
+                        <SelectItem value="Evening (4:00 PM - 6:00 PM)">Evening (4:00 PM - 6:00 PM)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-                <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-gold hover:bg-gold-dark text-navy font-semibold text-base transition-all duration-300 hover:scale-[1.02]">
-                  {loading ? 'Booking…' : <><span>Confirm Site Visit</span> <ArrowRight className="w-4 h-4 ml-2" /></>}
+
+                <div>
+                  <Label className="text-xs font-semibold text-slate-700">Notes / Questions</Label>
+                  <Textarea
+                    className="mt-1 bg-slate-50 border-slate-200 text-sm rounded-xl text-slate-900"
+                    rows={2}
+                    placeholder="E.g., Pickup location in Hyderabad, specific plot size preference..."
+                    value={form.notes}
+                    onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-12 bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all hover:brightness-105"
+                >
+                  {loading ? 'Submitting Details…' : 'Confirm Site Visit Request'}
                 </Button>
-                <p className="text-xs text-center text-muted-foreground">Your details are confidential and used only by our sales team.</p>
+
+                <p className="text-[11px] text-center text-slate-500">
+                  Your privacy is fully protected. Our senior relationship manager will contact you directly.
+                </p>
               </form>
             </Card>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─── Blogs ────────────────────────────────────────────────────
-function Blogs() {
-  return (
-    <section id="blogs" className="py-24 bg-muted/40">
-      <div className="container mx-auto px-6">
-        <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Insights &amp; Intelligence</div>
-            <h2 className="font-heading text-4xl md:text-5xl text-navy">
-              Stories from the <span className="italic text-gradient-gold">Growth Corridor</span>
-            </h2>
-          </motion.div>
-          <Button variant="outline" className="border-navy text-navy hover:bg-navy hover:text-white transition-all">
-            All Articles <ArrowUpRight className="w-4 h-4 ml-2" />
-          </Button>
-        </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {BLOGS.map((b, i) => (
-            <motion.article key={i}
-              initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.7, delay: i * 0.12 }}
-              whileHover={{ y: -6 }}
-              className="bg-white group cursor-pointer border border-border hover:border-gold/40 transition-all duration-500
-                shadow-sm hover:shadow-[0_20px_50px_rgba(11,31,53,0.12)]"
-            >
-              <div className="h-56 overflow-hidden">
-                <motion.img src={b.img} alt={b.title} className="w-full h-full object-cover"
-                  whileHover={{ scale: 1.1 }} transition={{ duration: 1.4 }} loading="lazy" />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3">
-                  <span className="text-gold-dark">{b.tag}</span> • <span>{b.date}</span> • <span>{b.read}</span>
-                </div>
-                <h3 className="font-heading text-xl text-navy group-hover:text-gold-dark transition-colors duration-300 leading-snug">{b.title}</h3>
-                <p className="text-sm text-muted-foreground mt-3 line-clamp-2">{b.excerpt}</p>
-                <div className="mt-5 inline-flex items-center text-sm text-navy group-hover:text-gold-dark transition-colors">
-                  Read more <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1.5 transition-transform duration-300" />
-                </div>
-              </div>
-            </motion.article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─── CTA Band ─────────────────────────────────────────────────
-function CTABand({ onCTA }) {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const bgY = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
-
-  return (
-    <section ref={ref} className="py-20 relative overflow-hidden">
-      <motion.div style={{ y: bgY }} className="absolute inset-0 will-change-transform">
-        <img src={FLAGSHIP.image} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-navy/85" />
-      </motion.div>
-      <div className="relative container mx-auto px-6 text-center text-white">
-        <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="text-gold text-xs tracking-[0.4em] uppercase font-numbers mb-3">Limited Inventory at Golden Palm City</div>
-          <h2 className="font-heading text-4xl md:text-6xl max-w-3xl mx-auto leading-tight">
-            Your address of distinction <span className="italic text-gradient-gold">awaits.</span>
-          </h2>
-          <p className="text-white/80 max-w-2xl mx-auto mt-5 font-light">
-            Join 12,000+ families who trusted Kings Pride Infra with the most important decision of their lives.
-          </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <Button onClick={onCTA} size="lg" className="bg-gold hover:bg-gold-dark text-navy font-semibold h-14 px-10 gold-shadow transition-all duration-300 hover:scale-105">
-              Schedule Site Visit <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-            <a href={`tel:${BRAND.phone}`}>
-              <Button variant="outline" size="lg" className="h-14 px-10 bg-transparent border-white/40 text-white hover:bg-white/10 hover:text-white transition-all">
-                <Phone className="w-5 h-5 mr-2" /> {BRAND.phoneIntl}
-              </Button>
-            </a>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )
 }
 
-// ─── Footer ───────────────────────────────────────────────────
-function Footer() {
+// ─── Corporate Footer (Googee Style) ──────────────────────────
+function CorporateFooter() {
   return (
-    <footer className="bg-navy-deep text-white pt-20 pb-8">
-      <div className="container mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-10 mb-12">
-          <div>
-            <KPFullMark />
-            <p className="text-white/60 text-sm font-light leading-relaxed mt-5">
-              {BRAND.legalName}. {BRAND.tagline}.
+    <footer className="bg-[#050E17] text-slate-300 pt-16 pb-10 border-t border-white/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+          {/* Company Info */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full border border-[#D4AF37]/50 overflow-hidden bg-[#0B2545] p-1 flex items-center justify-center shadow-md">
+                <img src={BRAND.logo} alt="KP Infra Logo" className="w-full h-full object-contain" />
+              </div>
+              <div>
+                <div className="font-heading text-xl font-bold tracking-tight text-white leading-none">
+                  KINGS PRIDE <span className="text-[#D4AF37]">INFRA</span>
+                </div>
+                <div className="text-[10px] tracking-wider uppercase text-slate-400 mt-1">
+                  A Bridge To Your Dream Home
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+              K.P. Infra Projects Pvt. Ltd. has shaped over 300 acres of DTCP, HMDA, and RERA approved plotted communities across Telangana since 2003, built on 100% clean titles and complete customer satisfaction.
             </p>
-            <div className="mt-4 text-xs text-white/40 flex items-center gap-1">
-              <Globe className="w-3 h-3" /> {BRAND.website}
+
+            <div className="pt-2 text-xs text-slate-400 space-y-1">
+              <div><strong>Head Office:</strong> Saleem Manzil, Reti Bowli, Mehdipatnam, Hyderabad</div>
+              <div><strong>Helpline:</strong> {BRAND.phoneIntl} / +91 79977 00031</div>
+              <div><strong>Email:</strong> {BRAND.email}</div>
             </div>
           </div>
 
-          <div>
-            <h4 className="font-heading text-lg mb-5 text-gold">Projects</h4>
-            <ul className="space-y-2.5 text-sm text-white/70">
-              {PROJECTS.slice(0, 7).map(p => (
+          {/* Ongoing Ventures */}
+          <div className="space-y-3">
+            <h4 className="font-heading text-sm font-bold uppercase tracking-wider text-[#F4D078]">
+              Ongoing Ventures
+            </h4>
+            <ul className="space-y-2 text-xs">
+              {PROJECTS.filter(p => p.status === 'Ongoing').map(p => (
                 <li key={p.id}>
-                  <a href="#projects" className="hover:text-gold transition-colors duration-200">
-                    {p.name} {p.isFlagship && <span className="text-gold text-xs">★</span>}
-                  </a>
+                  <Link href={`/projects/${p.slug || p.id}`} className="hover:text-[#D4AF37] transition-colors">
+                    {p.name}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div>
-            <h4 className="font-heading text-lg mb-5 text-gold">Reach Us</h4>
-            <div className="space-y-3 text-sm text-white/70">
-              <div className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-                <span>{BRAND.office.line1}, {BRAND.office.area}, {BRAND.office.city} – {BRAND.office.pincode}</span>
-              </div>
-              <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gold" /> {BRAND.phoneIntl}</div>
-              <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-gold" /> {BRAND.email}</div>
-              <div className="flex items-center gap-2"><Globe className="w-4 h-4 text-gold" /> {BRAND.website}</div>
-            </div>
+          {/* Delivered Landmarks */}
+          <div className="space-y-3">
+            <h4 className="font-heading text-sm font-bold uppercase tracking-wider text-[#F4D078]">
+              Delivered Landmarks
+            </h4>
+            <ul className="space-y-2 text-xs">
+              {PROJECTS.filter(p => p.status === 'Completed').slice(0, 6).map(p => (
+                <li key={p.id}>
+                  <Link href={`/projects/${p.slug || p.id}`} className="hover:text-[#D4AF37] transition-colors">
+                    {p.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div>
-            <h4 className="font-heading text-lg mb-5 text-gold">Newsletter</h4>
-            <p className="text-white/60 text-sm mb-4">Get curated market insights and Golden Palm City launch updates.</p>
-            <div className="flex gap-2">
-              <Input placeholder="Email address" className="bg-navy border-white/20 text-white placeholder:text-white/40 focus:border-gold" />
-              <Button className="bg-gold hover:bg-gold-dark text-navy transition-all duration-300 hover:scale-105 shrink-0">
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="mt-6 text-xs text-white/40 leading-relaxed">
-              {APPROVALS.join(' • ')}
-            </div>
+          {/* Quick Links */}
+          <div className="space-y-3">
+            <h4 className="font-heading text-sm font-bold uppercase tracking-wider text-[#F4D078]">
+              Quick Navigation
+            </h4>
+            <ul className="space-y-2 text-xs">
+              <li><a href="#about" className="hover:text-[#D4AF37] transition-colors">About KP Infra</a></li>
+              <li><Link href="/projects" className="hover:text-[#D4AF37] transition-colors">Projects Directory</Link></li>
+              <li><a href="#flagship" className="hover:text-[#D4AF37] transition-colors">Golden Palm City</a></li>
+              <li><a href="#why-choose-us" className="hover:text-[#D4AF37] transition-colors">Why Choose Us</a></li>
+              <li><a href="#contact" className="hover:text-[#D4AF37] transition-colors">Book Site Visit</a></li>
+            </ul>
           </div>
         </div>
 
-        <Separator className="bg-white/10" />
-
-        <div className="pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/50">
-          <div>© {new Date().getFullYear()} {BRAND.legalName}. All Rights Reserved.</div>
-          <div className="flex gap-6">
-            <a className="hover:text-gold transition-colors" href="#">Privacy</a>
-            <a className="hover:text-gold transition-colors" href="#">Terms</a>
-            <a className="hover:text-gold transition-colors" href="#">RERA Disclosures</a>
+        {/* Bottom Disclaimer & Copyright */}
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+          <p>
+            © {new Date().getFullYear()} {BRAND.legalName}. All rights reserved.
+          </p>
+          <div className="text-center md:text-right text-[11px]">
+            Approval: TG RERA, DTCP &amp; HMDA approved layouts. Disclaimer: Visual renders are for illustrative purposes.
           </div>
         </div>
       </div>
@@ -1637,310 +1421,207 @@ function Footer() {
   )
 }
 
-// ─── Floating Actions ─────────────────────────────────────────
-function FloatingActions({ onCTA }) {
+// ─── Floating WhatsApp & Call Buttons (Googee Style Conversion) ────────────────
+function FloatingContactActions({ onBook }) {
   return (
-    <>
-      <a href={`https://wa.me/${BRAND.whatsapp}?text=Hi%20Kings%20Pride%20Infra`} target="_blank" rel="noopener noreferrer"
-        className="hidden md:flex fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 group">
-        <MessageCircle className="w-6 h-6 text-white" />
-        <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping" />
-        <span className="absolute right-16 bg-white text-navy text-xs px-3 py-1.5 rounded shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-medium">
-          Chat with us
-        </span>
+    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3">
+      <a
+        href={`https://wa.me/${BRAND.whatsapp}?text=Hi%20KP%20Infra,%20I%20am%20interested%20in%20your%20projects.`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-13 h-13 p-3.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/30 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+        title="Chat on WhatsApp"
+      >
+        <MessageCircle className="w-6 h-6" />
       </a>
 
-      {/* Mobile-focused responsive bottom quick-action bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0B1F35]/95 backdrop-blur-xl border-t border-[#D4AF37]/30 px-2 py-2 flex items-center justify-between gap-1.5 shadow-[0_-4px_25px_rgba(0,0,0,0.6)]">
-        <a href={`tel:${BRAND.mobile1}`} className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold transition-colors">
-          <Phone className="w-4 h-4 text-[#D4AF37] mb-0.5" />
-          <span>Call</span>
-        </a>
-        <a href={`https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent("Hi KP Infra, I would like to inquire about your plotted communities & farmlands.")}`} target="_blank" rel="noopener noreferrer"
-          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-emerald-500/15 active:bg-emerald-500/25 text-emerald-300 text-[10px] font-semibold transition-colors">
-          <MessageCircle className="w-4 h-4 text-emerald-400 mb-0.5" />
-          <span>WhatsApp</span>
-        </a>
-        <button onClick={onCTA} className="flex-[1.3] flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-[#0B1F35] font-bold text-[11px] uppercase tracking-wider shadow-md active:scale-95 transition-transform">
-          <Calendar className="w-3.5 h-3.5" />
-          <span>Book Visit</span>
-        </button>
-        <Link href="/projects" className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold transition-colors">
-          <Building2 className="w-4 h-4 text-[#D4AF37] mb-0.5" />
-          <span>Projects</span>
-        </Link>
-      </div>
-    </>
+      <button
+        onClick={() => onBook(null)}
+        className="px-4 py-2.5 rounded-full bg-[#0B2545] hover:bg-[#132E4E] text-[#F4D078] border border-[#D4AF37]/50 shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95"
+      >
+        <Calendar className="w-4 h-4 text-[#D4AF37]" />
+        <span className="hidden sm:inline">Book Site Visit</span>
+      </button>
+    </div>
   )
 }
 
-// ─── Lead Dialog ──────────────────────────────────────────────
-function LeadDialog({ open, onOpenChange, project }) {
-  const [form, setForm] = useState({ name: '', phone: '', email: '' })
-  const [loading, setLoading] = useState(false)
+// ─── Lead Dialog & Modal Quick Previews ────────────────────────
+function SiteVisitDialog({ open, onOpenChange, project }) {
+  const [form, setForm] = useState({ name: '', phone: '', email: '', project: project?.name || 'Golden Palm City', date: '', time: 'Morning' })
+  const [submitting, setSubmitting] = useState(false)
 
-  const submit = async () => {
-    if (!form.name || !form.phone) { toast.error('Please share your name and phone'); return }
-    setLoading(true)
+  useEffect(() => {
+    if (project) {
+      setForm((prev) => ({ ...prev, project: project.name }))
+    }
+  }, [project])
+
+  const submit = async (e) => {
+    e.preventDefault()
+    if (!form.name || !form.phone) {
+      toast.error('Please enter name and phone number.')
+      return
+    }
+    setSubmitting(true)
     try {
-      const r = await fetch('/api/leads', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, project: project?.name || '', interest: 'Site Visit', source: 'dialog' }),
+      const res = await fetch('/api/visits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
       })
-      const d = await r.json()
-      if (d.success) {
-        toast.success('Thank you! Our advisor will call you in the next 30 minutes.')
+      const data = await res.json()
+      if (data.success) {
+        toast.success('Site visit booked! Our advisor will call you within 30 minutes.')
         onOpenChange(false)
-        setForm({ name: '', phone: '', email: '' })
+      } else {
+        toast.error('Could not book. Please call us.')
       }
-    } catch { toast.error('Could not submit. Try again.') }
-    setLoading(false)
+    } catch {
+      toast.error('Network error.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg p-0 overflow-hidden">
-        <div className="bg-navy text-white p-8">
-          <div className="flex items-center gap-3 mb-4">
-            <KPDiamond size={36} />
-            <div>
-              <div className="text-gold text-[10px] tracking-[0.4em] uppercase font-numbers">Private Consultation</div>
-              <DialogTitle className="font-heading text-xl text-white">
-                {project ? `Enquire: ${project.name}` : 'Schedule Your Site Visit'}
-              </DialogTitle>
-            </div>
-          </div>
-          <DialogDescription className="text-white/70">
-            Share your details and our senior advisor will arrange a curated visit within 24 hours.
-          </DialogDescription>
-        </div>
-        <div className="p-8 space-y-4">
+      <DialogContent className="max-w-md w-full bg-white text-slate-900 rounded-3xl p-6 sm:p-8">
+        <DialogTitle className="font-heading text-2xl font-bold text-[#0B2545]">
+          Book a Free Site Tour
+        </DialogTitle>
+        <DialogDescription className="text-xs text-slate-500 mt-1">
+          {project ? `Arrange a private visit to ${project.name}.` : 'Schedule a curated visit with complimentary chauffeured cab pickup.'}
+        </DialogDescription>
+
+        <form onSubmit={submit} className="space-y-4 mt-4">
           <div>
-            <Label className="text-xs uppercase tracking-widest text-navy">Full Name *</Label>
-            <Input className="mt-1.5 h-11" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+            <Label className="text-xs font-semibold text-slate-700">Full Name *</Label>
+            <Input
+              className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl text-slate-900"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              required
+            />
           </div>
+
           <div>
-            <Label className="text-xs uppercase tracking-widest text-navy">Phone *</Label>
-            <Input className="mt-1.5 h-11" type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+            <Label className="text-xs font-semibold text-slate-700">Phone Number *</Label>
+            <Input
+              className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl text-slate-900"
+              type="tel"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              required
+            />
           </div>
+
           <div>
-            <Label className="text-xs uppercase tracking-widest text-navy">Email</Label>
-            <Input className="mt-1.5 h-11" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+            <Label className="text-xs font-semibold text-slate-700">Venture</Label>
+            <Select value={form.project} onValueChange={(v) => setForm({ ...form, project: v })}>
+              <SelectTrigger className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl">
+                <SelectValue placeholder="Select venture" />
+              </SelectTrigger>
+              <SelectContent>
+                {PROJECTS.map((p) => (
+                  <SelectItem key={p.id} value={p.name}>
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <Button onClick={submit} disabled={loading} className="w-full h-12 bg-gold hover:bg-gold-dark text-navy font-semibold transition-all duration-300">
-            {loading ? 'Submitting…' : <><span>Request Callback</span> <ArrowRight className="w-4 h-4 ml-2" /></>}
+
+          <div>
+            <Label className="text-xs font-semibold text-slate-700">Preferred Date</Label>
+            <Input
+              className="mt-1 h-11 bg-slate-50 border-slate-200 text-sm rounded-xl text-slate-900"
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm({ ...form, date: e.target.value })}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            disabled={submitting}
+            className="w-full h-12 bg-[#0B2545] hover:bg-[#132E4E] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md"
+          >
+            {submitting ? 'Submitting…' : 'Confirm Site Visit'}
           </Button>
-          <p className="text-xs text-center text-muted-foreground">By submitting, you agree to be contacted by our sales team.</p>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   )
 }
 
-// ─── Project Detail Dialog ────────────────────────────────────
-function ProjectDetailDialog({ open, onOpenChange, project, onBook }) {
-  const [activeImgIndex, setActiveImgIndex] = useState(0)
-
-  useEffect(() => {
-    setActiveImgIndex(0)
-  }, [project])
-
+function ProjectPreviewDialog({ open, onOpenChange, project, onBook }) {
   if (!project) return null
   const p = project
 
-  // Merge cover and gallery without duplicates
-  const allImages = [p.image || p.coverImage, ...(p.gallery || [])].filter(
-    (img, idx, arr) => img && arr.indexOf(img) === idx
-  )
-  const currentImg = allImages[activeImgIndex] || p.image || '/images/renders/goldenPalmTower.png'
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl w-[95vw] sm:w-full p-0 overflow-hidden max-h-[92vh] overflow-y-auto bg-[#0B1F35] text-white border border-[#D4AF37]/30 shadow-2xl rounded-2xl">
-        {/* Main hero image display with interactive switcher */}
-        <div className="relative h-64 sm:h-80 md:h-96 overflow-hidden bg-black/60">
+      <DialogContent className="max-w-2xl w-full bg-white text-slate-900 rounded-3xl p-0 overflow-hidden shadow-2xl">
+        <div className="relative h-60 bg-slate-950">
           <img
-            src={currentImg}
+            src={p.image || p.coverImage}
             alt={p.name}
-            className="w-full h-full object-cover transition-all duration-500 ease-out"
-            onError={(e) => {
-              e.currentTarget.onerror = null
-              e.currentTarget.src = p.image || '/images/renders/goldenPalmTower.png'
-            }}
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F35] via-[#0B1F35]/40 to-transparent" />
-
-          {/* Badges */}
-          <div className="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-            <div className="flex flex-wrap gap-2">
-              {p.isFlagship && <Badge className="bg-[#D4AF37] text-[#0B1F35] font-bold">★ Flagship</Badge>}
-              <Badge className="bg-white/90 text-[#0B1F35] font-semibold">{p.category}</Badge>
-              <Badge variant="outline" className="bg-white/10 backdrop-blur-md text-white border-white/30">{p.status}</Badge>
-            </div>
-            {p.approval && (
-              <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                {p.approval}
-              </Badge>
-            )}
-          </div>
-
-          {/* Title bar at bottom of hero */}
-          <div className="absolute bottom-4 left-4 sm:left-6 right-4 sm:right-6 text-white">
-            <DialogTitle className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight drop-shadow">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+          <div className="absolute bottom-4 left-4 right-4 text-white">
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-[#D4AF37] text-slate-950">
+              {p.approval}
+            </span>
+            <DialogTitle className="font-heading text-2xl sm:text-3xl font-bold mt-1 text-white">
               {p.name}
             </DialogTitle>
-            <p className="text-xs sm:text-sm italic text-[#F4D078] mt-1 line-clamp-1">&ldquo;{p.tagline}&rdquo;</p>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1 flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
-              <span className="truncate">{p.location}</span>
-            </p>
+            <div className="text-xs text-slate-300 flex items-center gap-1.5 mt-0.5">
+              <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" /> {p.location}
+            </div>
           </div>
         </div>
 
-        {/* Thumbnail gallery preview strip */}
-        {allImages.length > 1 && (
-          <div className="px-4 sm:px-6 py-2.5 bg-[#071320] border-y border-[#D4AF37]/20 flex items-center gap-2 overflow-x-auto no-scrollbar">
-            <span className="text-[11px] uppercase font-bold text-[#D4AF37] tracking-wider shrink-0 mr-1">
-              Photos ({allImages.length}):
-            </span>
-            {allImages.map((img, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setActiveImgIndex(i)}
-                className={`relative w-14 h-11 sm:w-16 sm:h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all ${
-                  activeImgIndex === i ? 'border-[#D4AF37] scale-105 shadow-md shadow-[#D4AF37]/30' : 'border-transparent opacity-60 hover:opacity-100'
-                }`}
-              >
-                <img
-                  src={img}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null
-                    e.currentTarget.style.display = 'none'
-                  }}
-                />
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="p-6 space-y-4">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            {p.shortDescription || p.fullDescription?.slice(0, 200) + '...'}
+          </p>
 
-        {/* Modal body */}
-        <div className="p-4 sm:p-6 md:p-8 space-y-6">
-          {/* Dedicated Page Banner link */}
-          <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#D4AF37]/15 to-transparent border border-[#D4AF37]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
             <div>
-              <div className="text-xs font-bold text-[#F4D078] uppercase tracking-wider">Dedicated Project Experience</div>
-              <div className="text-xs text-slate-300 mt-0.5">Explore full master plan, zoning layout, high-res gallery & investment calculator.</div>
+              <div className="text-[10px] uppercase text-slate-400 font-semibold">Plots</div>
+              <div className="font-bold text-slate-800 mt-0.5">{p.plotRange}</div>
             </div>
-            <Link href={`/projects/${p.slug || p.id}`} className="shrink-0 w-full sm:w-auto">
-              <Button size="sm" className="w-full bg-[#D4AF37] hover:bg-[#B8860B] text-[#0B1F35] font-bold text-xs uppercase tracking-wider">
-                <span>View Full Dedicated Page</span>
-                <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
-              </Button>
-            </Link>
+            <div>
+              <div className="text-[10px] uppercase text-slate-400 font-semibold">Price</div>
+              <div className="font-bold text-[#B8860B] mt-0.5">{p.price}</div>
+            </div>
+            <div>
+              <div className="text-[10px] uppercase text-slate-400 font-semibold">Status</div>
+              <div className="font-bold text-slate-800 mt-0.5">{p.status}</div>
+            </div>
+            <div>
+              <div className="text-[10px] uppercase text-slate-400 font-semibold">Possession</div>
+              <div className="font-bold text-slate-800 mt-0.5">{p.possession}</div>
+            </div>
           </div>
 
-          {/* Key Specs Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            {[
-              { l: 'Type', v: p.type },
-              { l: 'Plot Range', v: p.plotRange },
-              { l: 'Total Area', v: p.totalArea || p.totalAreaShort || '—' },
-              { l: 'Possession', v: p.possession },
-              { l: 'Approval', v: p.approval },
-              { l: 'RERA', v: p.rera || '—' },
-              { l: 'Distance', v: p.distance },
-              { l: 'Price', v: p.price },
-            ].map(x => (
-              <div key={x.l} className="border-l-2 border-[#D4AF37] pl-3 py-1 bg-white/[0.02] rounded-r-lg">
-                <div className="text-[10px] tracking-[0.2em] uppercase text-slate-400">{x.l}</div>
-                <div className="text-xs sm:text-sm text-white font-semibold mt-0.5 break-words">{x.v}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Description */}
-          {p.shortDescription && (
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              {p.shortDescription}
-            </p>
-          )}
-
-          {/* Highlights & USPs */}
-          {p.usps && p.usps.length > 0 && (
-            <div>
-              <h4 className="font-heading text-lg sm:text-xl text-[#F4D078] mb-2.5">Why Invest in {p.name}</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {p.usps.map((u, i) => (
-                  <div key={i} className="flex items-start gap-2 text-xs sm:text-sm text-slate-200">
-                    <CheckCircle2 className="w-4 h-4 text-[#D4AF37] mt-0.5 shrink-0" />
-                    <span>{u}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Amenities */}
-          {p.amenities && p.amenities.length > 0 && (
-            <div>
-              <h4 className="font-heading text-lg sm:text-xl text-[#F4D078] mb-2.5">Key Amenities</h4>
-              <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                {p.amenities.map(a => (
-                  <span key={a} className="text-xs px-2.5 py-1 bg-white/5 text-slate-200 border border-white/10 rounded-md">
-                    {a}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Nearby */}
-          {p.nearby && p.nearby.length > 0 && (
-            <div>
-              <h4 className="font-heading text-lg sm:text-xl text-[#F4D078] mb-2.5">Connectivity & Proximity</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {p.nearby.slice(0, 6).map(n => (
-                  <div key={n.name} className="border border-white/10 rounded-lg p-2.5 bg-white/[0.02]">
-                    <div className="text-xs text-white line-clamp-1">{n.name}</div>
-                    <div className="text-[11px] text-[#F4D078] font-numbers mt-0.5">{n.dist}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Action Footer */}
-          <div className="flex flex-wrap gap-2.5 sm:gap-3 pt-4 border-t border-white/10">
-            <Button
-              onClick={() => { onBook(p); onOpenChange(false) }}
-              className="flex-1 min-w-[140px] bg-[#D4AF37] hover:bg-[#B8860B] text-[#0B1F35] font-bold text-xs uppercase tracking-wider transition-all duration-300"
-            >
-              <Calendar className="w-4 h-4 mr-2" /> Book Site Visit
-            </Button>
+          <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link href={`/projects/${p.slug || p.id}`} className="flex-1 min-w-[140px]">
-              <Button variant="outline" className="w-full border-[#D4AF37]/50 text-[#F4D078] hover:bg-[#D4AF37]/10 text-xs uppercase tracking-wider">
-                <Eye className="w-4 h-4 mr-2" /> Dedicated Page
+              <Button className="w-full bg-[#0B2545] hover:bg-[#132E4E] text-white font-bold text-xs uppercase tracking-wider py-2.5 rounded-xl">
+                <span>View Full Dedicated Page</span>
+                <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
-            {p.brochureUrl && (
-              <a href={p.brochureUrl} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 text-xs">
-                  <FileText className="w-4 h-4 mr-1.5" /> Brochure
-                </Button>
-              </a>
-            )}
-            <a
-              href={`https://wa.me/${BRAND.whatsapp}?text=Interested%20in%20${encodeURIComponent(p.name)}`}
-              target="_blank"
-              rel="noopener noreferrer"
+
+            <Button
+              onClick={() => { onOpenChange(false); onBook(p) }}
+              variant="outline"
+              className="flex-1 min-w-[140px] border-[#D4AF37] text-[#8B6508] hover:bg-amber-50 font-bold text-xs uppercase tracking-wider py-2.5 rounded-xl"
             >
-              <Button variant="outline" className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 text-xs">
-                <MessageCircle className="w-4 h-4 mr-1.5" /> WhatsApp
-              </Button>
-            </a>
+              <Calendar className="w-4 h-4 mr-1.5 text-[#D4AF37]" />
+              <span>Book Site Visit</span>
+            </Button>
           </div>
         </div>
       </DialogContent>
@@ -1948,38 +1629,49 @@ function ProjectDetailDialog({ open, onOpenChange, project, onBook }) {
   )
 }
 
-// ─── Root App ─────────────────────────────────────────────────
+// ─── Main Root App ────────────────────────────────────────────
 export default function App() {
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [dialogProject, setDialogProject] = useState(null)
-  const [detailsOpen, setDetailsOpen] = useState(false)
-  const [detailsProject, setDetailsProject] = useState(null)
+  const [bookDialogOpen, setBookDialogOpen] = useState(false)
+  const [selectedBookProject, setSelectedBookProject] = useState(null)
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false)
+  const [selectedPreviewProject, setSelectedPreviewProject] = useState(null)
 
-  const openCTA = () => { setDialogProject(null); setDialogOpen(true) }
-  const onBook = (p) => { setDialogProject(p); setDialogOpen(true) }
-  const onDetails = (p) => { setDetailsProject(p); setDetailsOpen(true) }
+  const handleBook = (project) => {
+    setSelectedBookProject(project)
+    setBookDialogOpen(true)
+  }
+
+  const handlePreview = (project) => {
+    setSelectedPreviewProject(project)
+    setPreviewDialogOpen(true)
+  }
 
   return (
-    <main className="min-h-screen bg-background">
-      <ScrollProgress />
-      <SectionNav />
-      <Nav onCTA={openCTA} />
-      <Hero onCTA={openCTA} onBrochure={openCTA} />
-      <MarqueeApprovals />
-      <TrustSection />
-      <FeaturedProjects onBook={onBook} onDetails={onDetails} />
-      <FlagshipSection onBook={onBook} />
-      <WhyKP />
-      <InvestmentCalculator />
-      <Testimonials />
-      <ScheduleVisitForm />
-      <Blogs />
-      <CTABand onCTA={openCTA} />
-      <Footer />
-      <FloatingActions onCTA={openCTA} />
-      <LeadDialog open={dialogOpen} onOpenChange={setDialogOpen} project={dialogProject} />
-      <ProjectDetailDialog open={detailsOpen} onOpenChange={setDetailsOpen} project={detailsProject} onBook={onBook} />
-      <div className="md:hidden h-14" />
+    <main className="min-h-screen bg-white text-slate-900 selection:bg-[#D4AF37]/30 selection:text-slate-950">
+      <MainNavbar onBook={handleBook} />
+      <HeroSection onBook={handleBook} />
+      <TrustNumbers />
+      <AboutSection onBook={handleBook} />
+      <ProjectsPortfolio onBook={handleBook} onDetails={handlePreview} />
+      <FlagshipSpotlight onBook={handleBook} />
+      <WhyChooseSection />
+      <TestimonialsSection />
+      <ContactVisitSection />
+      <CorporateFooter />
+      <FloatingContactActions onBook={handleBook} />
+
+      <SiteVisitDialog
+        open={bookDialogOpen}
+        onOpenChange={setBookDialogOpen}
+        project={selectedBookProject}
+      />
+
+      <ProjectPreviewDialog
+        open={previewDialogOpen}
+        onOpenChange={setPreviewDialogOpen}
+        project={selectedPreviewProject}
+        onBook={handleBook}
+      />
     </main>
   )
 }
