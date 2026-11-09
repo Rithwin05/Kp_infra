@@ -8,6 +8,7 @@ import {
   Calendar,
   CheckCircle2,
   ChevronRight,
+  Download,
   ExternalLink,
   Filter,
   Home,
@@ -51,29 +52,29 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
   }, [initialProjects, selectedFilter, searchQuery])
 
   return (
-    <div className="min-h-screen bg-[#071320] text-slate-100 font-body selection:bg-[#D4AF37]/30 selection:text-[#F4D078]">
-      {/* ─── Header ─────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#071320]/90 border-b border-[#D4AF37]/20">
+    <div className="min-h-screen bg-[#FAFAFA] text-slate-900 font-sans selection:bg-[#C5A880]/30 selection:text-slate-950">
+      {/* ─── Architectural Header ───────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="p-2.5 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 hover:text-[#D4AF37] transition-colors border border-white/10"
-              title="Back to Home"
+              className="p-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-950 transition-colors border border-slate-200"
+              title="Return to Home"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4" />
             </Link>
 
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border border-[#D4AF37]/50 overflow-hidden bg-[#0B1F35] flex items-center justify-center p-1 shadow-lg shadow-[#D4AF37]/10">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-full border border-slate-200 overflow-hidden bg-white flex items-center justify-center p-1 shadow-sm">
                 <img src={BRAND.logo} alt="KP Infra Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <div className="font-heading text-lg font-bold tracking-wider text-white">
-                  KINGS PRIDE <span className="text-[#D4AF37]">INFRA</span>
+                <div className="font-serif text-lg tracking-wider font-semibold text-slate-950">
+                  KINGS PRIDE <span className="text-[#C5A880]">INFRA</span>
                 </div>
-                <div className="text-[10px] tracking-widest uppercase text-slate-400 font-numbers -mt-1">
-                  Project Portfolio
+                <div className="text-[10px] tracking-widest uppercase text-slate-500 font-mono -mt-1">
+                  11 Landmark Developments
                 </div>
               </div>
             </Link>
@@ -82,75 +83,77 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
           <div className="flex items-center gap-3">
             <a
               href={`tel:${BRAND.phoneIntl}`}
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold border border-white/10 transition-colors"
+              className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-slate-700 hover:text-slate-950 transition-colors"
             >
-              <Phone className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <Phone className="w-3.5 h-3.5 text-[#C5A880]" />
               <span>{BRAND.phone}</span>
             </a>
 
             <Link
               href="/#contact"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg hover:brightness-110 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-950 hover:bg-slate-800 text-white font-medium text-xs tracking-wide transition-all shadow-sm"
             >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Book Site Visit</span>
+              <Calendar className="w-3.5 h-3.5 text-[#C5A880]" />
+              <span>Schedule a Visit</span>
             </Link>
           </div>
         </div>
       </header>
 
       {/* ─── Hero Intro ──────────────────────────────────────────────── */}
-      <section className="relative py-16 border-b border-slate-800 bg-gradient-to-b from-[#091829] to-[#071320] overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#D4AF37]/5 rounded-full blur-3xl pointer-events-none" />
+      <section className="relative py-16 sm:py-20 bg-white border-b border-slate-200 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-4">
-          <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-[#D4AF37]/15 text-[#F4D078] border border-[#D4AF37]/30">
-            22+ Years of Real Estate Excellence
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight">
-            Our Landmark Projects
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs tracking-widest uppercase font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
+            Official Project Directory • 11 Master-Planned Ventures
+          </div>
+
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-slate-950 tracking-tight max-w-4xl mx-auto">
+            Plotted Communities & Agro-Farmlands Engineered for Life
           </h1>
-          <p className="max-w-2xl mx-auto text-slate-300 text-sm sm:text-base font-light">
-            Discover K.P. Infra’s curated portfolio of highway-facing gated layouts, HMDA & DTCP approved residential plotted communities, and high-yielding farmland estates across Telangana.
+
+          <p className="max-w-2xl mx-auto text-slate-600 text-sm sm:text-base font-light leading-relaxed">
+            Every venture in KP Infra’s 22-year portfolio is backed by 100% statutory clear titles, statutory DTCP/TG-RERA approvals, and prime highway connectivity along Telangana’s high-growth corridors.
           </p>
 
-          {/* Stat Badges */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto pt-6">
-            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
-              <div className="font-heading text-2xl font-bold text-[#F4D078]">{STATS.yearsOfLegacy}+</div>
-              <div className="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Years Legacy</div>
+          {/* ASBL-Style 4-Pillar Stat Row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto pt-8">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <div className="font-serif text-2xl sm:text-3xl font-medium text-slate-950">{STATS.yearsOfLegacy}+</div>
+              <div className="text-[11px] text-slate-500 uppercase tracking-widest mt-1">Years Trust</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
-              <div className="font-heading text-2xl font-bold text-[#F4D078]">{STATS.totalProjects || 11}</div>
-              <div className="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Ventures</div>
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <div className="font-serif text-2xl sm:text-3xl font-medium text-slate-950">{STATS.totalProjects || 11}</div>
+              <div className="text-[11px] text-slate-500 uppercase tracking-widest mt-1">Ventures</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
-              <div className="font-heading text-2xl font-bold text-[#F4D078]">{STATS.happyFamilies.toLocaleString()}+</div>
-              <div className="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Happy Families</div>
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <div className="font-serif text-2xl sm:text-3xl font-medium text-slate-950">{STATS.happyFamilies.toLocaleString()}+</div>
+              <div className="text-[11px] text-slate-500 uppercase tracking-widest mt-1">Delighted Families</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
-              <div className="font-heading text-2xl font-bold text-[#F4D078]">{STATS.acresDeveloped}+</div>
-              <div className="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Acres Developed</div>
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <div className="font-serif text-2xl sm:text-3xl font-medium text-slate-950">{STATS.acresDeveloped}+</div>
+              <div className="text-[11px] text-slate-500 uppercase tracking-widest mt-1">Acres Master-Planned</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ─── Search & Filter Controls ────────────────────────────────── */}
-      <section className="sticky top-20 z-30 bg-[#071320]/95 backdrop-blur-md border-b border-slate-800 py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+      <section className="sticky top-20 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 py-4 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             {/* Filter Pills */}
-            <div className="flex overflow-x-auto no-scrollbar gap-2 w-full md:w-auto">
+            <div className="flex overflow-x-auto no-scrollbar gap-2 w-full md:w-auto pb-1 md:pb-0">
               {FILTERS.map((f) => {
                 const isActive = selectedFilter === f
                 return (
                   <button
                     key={f}
                     onClick={() => setSelectedFilter(f)}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                    className={`px-4 py-2 rounded-full text-xs tracking-wider transition-all whitespace-nowrap ${
                       isActive
-                        ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold shadow-md shadow-[#D4AF37]/20'
-                        : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                        ? 'bg-slate-950 text-white font-medium shadow-sm'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 border border-slate-200'
                     }`}
                   >
                     {f}
@@ -160,30 +163,38 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
             </div>
 
             {/* Search Input */}
-            <div className="relative w-full md:w-72">
+            <div className="relative w-full md:w-80">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search projects, locations..."
+                placeholder="Search venture name, corridor, approval..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder:text-slate-500 focus:border-[#D4AF37] outline-none transition-colors"
+                className="w-full pl-10 pr-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-slate-950 outline-none transition-all"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs"
+                >
+                  ✕
+                </button>
+              )}
             </div>
           </div>
         </div>
       </section>
 
       {/* ─── Projects Grid ───────────────────────────────────────────── */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         {filteredProjects.length === 0 ? (
-          <div className="text-center py-20 bg-slate-900/40 rounded-3xl border border-slate-800">
-            <Building2 className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-            <h3 className="text-lg font-heading font-semibold text-white">No projects found</h3>
-            <p className="text-xs text-slate-400 mt-1">Try adjusting your category filter or search terms.</p>
+          <div className="text-center py-20 bg-white rounded-2xl border border-slate-200 shadow-sm max-w-lg mx-auto">
+            <Building2 className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+            <h3 className="text-lg font-serif font-semibold text-slate-900">No matching developments found</h3>
+            <p className="text-xs text-slate-500 mt-1">Try resetting the category filter or searching with a different term.</p>
             <button
-              onClick={() => { setSelectedFilter('all'); setSearchQuery('') }}
-              className="mt-4 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-white"
+              onClick={() => { setSelectedFilter('All'); setSearchQuery('') }}
+              className="mt-4 px-4 py-2 rounded-full bg-slate-950 text-xs text-white hover:bg-slate-800 transition-colors"
             >
               Reset Filters
             </button>
@@ -193,10 +204,10 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
             {filteredProjects.map((project) => (
               <div
                 key={project.id}
-                className="group rounded-3xl bg-slate-900/80 border border-slate-800 hover:border-[#D4AF37]/50 overflow-hidden transition-all duration-300 flex flex-col shadow-xl hover:shadow-2xl hover:shadow-black/50"
+                className="group rounded-2xl bg-white border border-slate-200 hover:border-slate-400 overflow-hidden transition-all duration-300 flex flex-col shadow-sm hover:shadow-xl"
               >
                 {/* Project Image */}
-                <div className="relative h-64 overflow-hidden bg-slate-950">
+                <div className="relative h-64 overflow-hidden bg-slate-100">
                   <img
                     src={project.image || project.coverImage}
                     alt={project.name}
@@ -207,70 +218,86 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
                       e.currentTarget.src = '/images/renders/goldenPalmTower.png'
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-black/50 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
 
                   {/* Top tags */}
                   <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-medium tracking-wider uppercase backdrop-blur-md ${
                       project.isFlagship
-                        ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950'
-                        : 'bg-slate-950/80 backdrop-blur-md text-[#F4D078] border border-white/10'
+                        ? 'bg-[#C5A880] text-slate-950 font-semibold shadow-sm'
+                        : project.status === 'Ongoing'
+                        ? 'bg-slate-950/80 text-white border border-white/20'
+                        : 'bg-white/90 text-slate-900 border border-slate-200'
                     }`}>
                       {project.isFlagship ? '★ Flagship' : project.status}
                     </span>
 
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-md">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider bg-white/90 text-slate-900 border border-slate-200 backdrop-blur-md shadow-sm">
                       {project.approval}
                     </span>
                   </div>
 
-                  {/* Bottom Image Overlay Strip */}
-                  <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end text-xs">
-                    <div className="text-[#F4D078] font-heading font-bold text-lg drop-shadow">
+                  {/* Price Tag Overlay at Bottom Left */}
+                  <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between text-white">
+                    <div className="font-serif text-lg font-medium drop-shadow-md">
                       {project.price}
                     </div>
-                    <div className="text-[11px] text-slate-300 drop-shadow">
+                    <div className="text-[11px] text-slate-200 font-mono drop-shadow-md">
                       {project.plotRange}
                     </div>
                   </div>
                 </div>
 
-                {/* Project Details */}
+                {/* Project Card Content */}
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2">
-                    <div className="text-[11px] font-bold text-[#D4AF37] uppercase tracking-wider">
+                    <div className="text-[11px] font-mono uppercase tracking-widest text-[#947854]">
                       {project.category} • {project.totalAreaShort || project.totalArea}
                     </div>
-                    <h3 className="font-heading text-2xl font-bold text-white group-hover:text-[#F4D078] transition-colors">
+                    <h3 className="font-serif text-2xl font-normal text-slate-950 group-hover:text-[#947854] transition-colors leading-tight">
                       {project.name}
                     </h3>
-                    <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
                       {project.shortDescription || project.tagline}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs text-slate-400 border-t border-slate-800/80 pt-3">
-                    <MapPin className="w-3.5 h-3.5 text-[#D4AF37] flex-shrink-0" />
+                  {/* Location strip */}
+                  <div className="flex items-center gap-2 text-xs text-slate-500 border-t border-slate-100 pt-3">
+                    <MapPin className="w-3.5 h-3.5 text-[#C5A880] flex-shrink-0" />
                     <span className="truncate">{project.location}</span>
                   </div>
 
-                  {/* Actions */}
+                  {/* Action Buttons */}
                   <div className="grid grid-cols-2 gap-2 pt-2">
                     <Link
                       href={`/projects/${project.slug || project.id}`}
-                      className="w-full py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold text-center flex items-center justify-center gap-1 group-hover:border-[#D4AF37]/40 transition-all"
+                      className="w-full py-2.5 px-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-medium text-center flex items-center justify-center gap-1 transition-colors border border-slate-200"
                     >
-                      <span>Explore Details</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      <span>Explore Story</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
                     </Link>
 
-                    <Link
-                      href={`/projects/${project.slug || project.id}#book-visit`}
-                      className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1 hover:brightness-110 transition-all"
-                    >
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>Book Visit</span>
-                    </Link>
+                    {project.brochureUrl ? (
+                      <a
+                        href={project.brochureUrl}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-2.5 px-3 rounded-full bg-slate-950 hover:bg-slate-800 text-white text-xs font-medium text-center flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                      >
+                        <Download className="w-3.5 h-3.5 text-[#C5A880]" />
+                        <span>Brochure</span>
+                      </a>
+                    ) : (
+                      <Link
+                        href={`/projects/${project.slug || project.id}#book-visit`}
+                        className="w-full py-2.5 px-3 rounded-full bg-slate-950 hover:bg-slate-800 text-white text-xs font-medium text-center flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                      >
+                        <Calendar className="w-3.5 h-3.5 text-[#C5A880]" />
+                        <span>Visit</span>
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
@@ -279,53 +306,54 @@ export default function ProjectsDirectoryClient({ initialProjects }) {
         )}
       </main>
 
-      {/* ─── Footer ─────────────────────────────────────────────────── */}
-      <footer className="border-t border-[#D4AF37]/20 bg-[#030810] py-12 text-slate-400 text-xs">
+      {/* ─── Architectural Footer ────────────────────────────────────── */}
+      <footer className="border-t border-slate-200 bg-white py-12 text-slate-500 text-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <div className="font-heading text-sm font-bold text-white">{BRAND.legalName}</div>
+            <div className="font-serif text-sm font-semibold text-slate-900">{BRAND.legalName}</div>
             <div className="text-[11px] text-slate-500 mt-1">
-              Telangana’s Premier Real Estate Developer Since 2003 • Headquartered in Mehdipatnam, Hyderabad
+              Telangana’s Benchmark Real Estate Developer Since 2003 • Headquartered in Mehdipatnam, Hyderabad
             </div>
           </div>
-          <div className="flex items-center gap-6">
-            <Link href="/" className="hover:text-[#D4AF37] transition-colors">Home</Link>
-            <Link href="/projects" className="hover:text-[#D4AF37] text-[#D4AF37] font-semibold">Projects</Link>
-            <Link href="/#contact" className="hover:text-[#D4AF37] transition-colors">Contact</Link>
+          <div className="flex items-center gap-6 text-slate-600">
+            <Link href="/" className="hover:text-slate-950 transition-colors">Home</Link>
+            <Link href="/projects" className="text-slate-950 font-semibold">Developments</Link>
+            <Link href="/#philosophy" className="hover:text-slate-950 transition-colors">Philosophy</Link>
+            <Link href="/#contact" className="hover:text-slate-950 transition-colors">Contact</Link>
           </div>
         </div>
       </footer>
 
       {/* ─── Mobile Sticky Action Bar ─────────────────────────────── */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#071320]/95 backdrop-blur-xl border-t border-[#D4AF37]/30 px-3 py-2 flex items-center justify-between gap-2 shadow-[0_-4px_25px_rgba(0,0,0,0.6)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-slate-200 px-3 py-2 flex items-center justify-between gap-2 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
         <a
           href={`tel:${BRAND.mobile1}`}
-          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold"
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-slate-100 text-slate-800 text-[10px] font-medium"
         >
-          <Phone className="w-4 h-4 text-[#D4AF37] mb-0.5" />
+          <Phone className="w-4 h-4 text-[#C5A880] mb-0.5" />
           <span>Call</span>
         </a>
         <a
           href={`https://wa.me/${BRAND.whatsapp}?text=${encodeURIComponent("Hi KP Infra, I am browsing your portfolio of projects.")}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-emerald-500/15 active:bg-emerald-500/25 text-emerald-300 text-[10px] font-semibold"
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-emerald-50 text-emerald-800 text-[10px] font-medium border border-emerald-200"
         >
-          <MessageCircle className="w-4 h-4 text-emerald-400 mb-0.5" />
+          <MessageCircle className="w-4 h-4 text-emerald-600 mb-0.5" />
           <span>WhatsApp</span>
         </a>
         <Link
           href="/#contact"
-          className="flex-[1.3] flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold text-[11px] uppercase tracking-wider shadow-md"
+          className="flex-[1.4] flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full bg-slate-950 text-white font-medium text-[11px] tracking-wide shadow-sm"
         >
-          <Calendar className="w-3.5 h-3.5" />
+          <Calendar className="w-3.5 h-3.5 text-[#C5A880]" />
           <span>Book Visit</span>
         </Link>
         <Link
           href="/"
-          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-white/5 active:bg-white/15 text-slate-200 text-[10px] font-semibold"
+          className="flex-1 flex flex-col items-center justify-center py-1.5 rounded-lg bg-slate-100 text-slate-800 text-[10px] font-medium"
         >
-          <Home className="w-4 h-4 text-[#D4AF37] mb-0.5" />
+          <Home className="w-4 h-4 text-[#C5A880] mb-0.5" />
           <span>Home</span>
         </Link>
       </div>

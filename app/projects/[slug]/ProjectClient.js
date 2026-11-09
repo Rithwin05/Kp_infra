@@ -209,7 +209,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
 
             <a
               href="#book-visit"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-[#071320] font-semibold text-xs uppercase tracking-wider shadow-lg shadow-[#D4AF37]/20 hover:brightness-110 active:scale-95 transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#C5A880] hover:bg-[#b8996e] text-slate-950 font-medium text-xs tracking-wide shadow-sm transition-all"
             >
               <Calendar className="w-4 h-4" />
               <span>Book Site Visit</span>
@@ -252,7 +252,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
               {/* Badges row */}
               <div className="flex flex-wrap items-center gap-2.5">
                 {project.isFlagship && (
-                  <span className="px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 shadow-md">
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-[#C5A880] text-slate-950 shadow-sm">
                     ★ Flagship Development
                   </span>
                 )}
@@ -321,7 +321,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                 <div className="mt-5 space-y-2.5">
                   <a
                     href="#book-visit"
-                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-2 shadow-lg shadow-[#D4AF37]/25 hover:brightness-110 active:scale-98 transition-all"
+                    className="w-full py-3.5 px-4 rounded-full bg-[#C5A880] hover:bg-[#b8996e] text-slate-950 font-semibold text-xs uppercase tracking-wider text-center flex items-center justify-center gap-2 shadow-sm active:scale-98 transition-all"
                   >
                     <Calendar className="w-4 h-4" />
                     <span>Book Private Site Visit</span>
@@ -398,9 +398,9 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wider whitespace-nowrap transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium tracking-wide whitespace-nowrap transition-all ${
                     isActive
-                      ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 shadow-md shadow-[#D4AF37]/20 font-bold'
+                      ? 'bg-[#C5A880] text-slate-950 shadow-sm font-semibold'
                       : 'bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/5'
                   }`}
                 >
@@ -523,7 +523,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                       download
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg hover:brightness-110 transition-all"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#C5A880] hover:bg-[#b8996e] text-slate-950 font-semibold text-xs uppercase tracking-wider shadow-sm transition-all"
                     >
                       <Download className="w-4 h-4" />
                       <span>Download PDF</span>
@@ -754,7 +754,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                   </p>
                   <a
                     href="#book-visit"
-                    className="inline-block py-2.5 px-5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider"
+                    className="inline-block py-2.5 px-5 rounded-full bg-[#C5A880] hover:bg-[#b8996e] text-slate-950 font-semibold text-xs uppercase tracking-wider transition-all"
                   >
                     Schedule Chauffeured Visit
                   </a>
@@ -903,7 +903,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                 </div>
                 <a
                   href="#book-visit"
-                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-slate-950 font-bold text-xs uppercase tracking-wider block hover:brightness-110 transition-all"
+                  className="w-full py-3 px-4 rounded-full bg-[#C5A880] hover:bg-[#b8996e] text-slate-950 font-semibold text-xs uppercase tracking-wider block text-center transition-all"
                 >
                   Lock In Current Price
                 </a>
@@ -1026,7 +1026,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
             <button
               type="submit"
               disabled={bookingLoading}
-              className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-[#D4AF37]/30 hover:brightness-110 active:scale-98 disabled:opacity-50 transition-all"
+              className="w-full py-4 px-6 rounded-full bg-[#C5A880] hover:bg-[#b8996e] text-slate-950 font-semibold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm active:scale-98 disabled:opacity-50 transition-all"
             >
               {bookingLoading ? (
                 <span>Confirming Booking...</span>
@@ -1054,8 +1054,8 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
                 <span className="text-xs font-bold tracking-widest text-[#D4AF37] uppercase">Curated Portfolio</span>
                 <h2 className="font-heading text-2xl sm:text-3xl font-bold text-white mt-1">Explore Other Projects</h2>
               </div>
-              <Link href="/#projects" className="text-xs font-semibold text-[#D4AF37] hover:underline flex items-center gap-1">
-                <span>View All 10 Projects</span>
+              <Link href="/projects" className="text-xs font-semibold text-[#C5A880] hover:underline flex items-center gap-1">
+                <span>View All 11 Projects Directory</span>
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
@@ -1166,10 +1166,10 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <Link href="/" className="hover:text-[#D4AF37] transition-colors">Home</Link>
-            <Link href="/#projects" className="hover:text-[#D4AF37] transition-colors">All Projects</Link>
-            <Link href="/#calculator" className="hover:text-[#D4AF37] transition-colors">Calculator</Link>
-            <Link href="/#contact" className="hover:text-[#D4AF37] transition-colors">Contact</Link>
+            <Link href="/" className="hover:text-[#C5A880] transition-colors">Home</Link>
+            <Link href="/projects" className="hover:text-[#C5A880] transition-colors">Developments</Link>
+            <Link href="/#philosophy" className="hover:text-[#C5A880] transition-colors">Philosophy</Link>
+            <Link href="/#contact" className="hover:text-[#C5A880] transition-colors">Contact</Link>
           </div>
         </div>
       </footer>
@@ -1193,7 +1193,7 @@ export default function ProjectClient({ project, relatedProjects = [] }) {
         </a>
         <a
           href="#book-visit"
-          className="flex-[1.4] flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-gradient-to-r from-[#D4AF37] via-[#F4D078] to-[#B8860B] text-slate-950 font-bold text-[11px] uppercase tracking-wider shadow-md active:scale-95 transition-transform"
+          className="flex-[1.4] flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full bg-[#C5A880] text-slate-950 font-semibold text-[11px] uppercase tracking-wider shadow-sm active:scale-95 transition-transform"
         >
           <Calendar className="w-3.5 h-3.5" />
           <span>Book Visit</span>
