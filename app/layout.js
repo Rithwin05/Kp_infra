@@ -28,8 +28,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} ${montserrat.variable}`}>
-      <body className="font-body bg-background text-foreground antialiased">
+    <html lang="en" className={`${playfair.variable} ${inter.variable} ${montserrat.variable} overflow-x-hidden w-full max-w-full`}>
+      <body className="font-body bg-background text-foreground antialiased overflow-x-hidden w-full max-w-full">
         {children}
         <Toaster richColors position="top-center" />
       </body>
