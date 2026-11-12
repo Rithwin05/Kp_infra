@@ -6,9 +6,9 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Phone, MessageCircle, Menu, X, MapPin, Star,
-  CheckCircle2, ChevronRight, Mail, Quote, ArrowRight,
-  Award, Shield, Users, Clock, Building2, Download,
-  ExternalLink, Sparkles, Check
+  CheckCircle2, ChevronRight, Mail, ArrowRight,
+  Award, Shield, Users, Building2,
+  ExternalLink, Sparkles
 } from 'lucide-react'
 import { BRAND, STATS, PROJECTS, TESTIMONIALS } from '@/lib/projects'
 
@@ -111,7 +111,6 @@ function ProjectCard({ project, index }) {
       transition={{ duration: 0.45, delay: index * 0.06 }}
       className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-neutral-100 flex flex-col group"
     >
-      {/* Image container */}
       <div className="relative h-52 sm:h-56 overflow-hidden bg-neutral-100">
         <Image
           src={project.coverImage || project.image}
@@ -120,7 +119,6 @@ function ProjectCard({ project, index }) {
           className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        {/* Status Badge */}
         <div className={`absolute top-3.5 left-3.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide shadow-sm ${
           project.status === 'Ongoing'
             ? 'bg-emerald-600 text-white'
@@ -129,7 +127,6 @@ function ProjectCard({ project, index }) {
           {project.status}
         </div>
 
-        {/* Flagship star */}
         {project.isFlagship && (
           <div className="absolute top-3.5 right-3.5 bg-neutral-900/90 backdrop-blur-sm text-[#F0C040] text-[11px] font-bold px-3 py-1 rounded-full shadow-sm">
             ★ Flagship
@@ -137,7 +134,6 @@ function ProjectCard({ project, index }) {
         )}
       </div>
 
-      {/* Card Content */}
       <div className="p-5 sm:p-6 flex flex-col flex-1">
         <div className="text-[11px] font-bold text-[#B91C1C] uppercase tracking-widest mb-1.5">
           {project.category}
@@ -150,7 +146,6 @@ function ProjectCard({ project, index }) {
           {project.location?.split(',').slice(0, 2).join(',')}
         </p>
 
-        {/* Approval Tag */}
         {project.approval && (
           <div className="text-[11px] font-medium text-neutral-600 bg-neutral-50 border border-neutral-200/70 rounded-lg px-2.5 py-1 mb-4 line-clamp-1">
             {project.approval}
@@ -186,13 +181,23 @@ export default function HomePage() {
   const [projectFilter, setProjectFilter] = useState('All')
   const [modalOpen, setModalOpen]         = useState(false)
   const [statsActive, setStatsActive]     = useState(false)
+  const [scrolled, setScrolled]           = useState(false)
   const statsRef                          = useRef(null)
 
-  // Quick Enquiry in Modal
+  // Quick Enquiry Form state
   const [enquiryName, setEnquiryName]       = useState('')
   const [enquiryPhone, setEnquiryPhone]     = useState('')
   const [enquiryProject, setEnquiryProject] = useState('Golden Palm City')
   const [enquirySent, setEnquirySent]       = useState(false)
+
+  // Track scroll position for sticky navbar style transformation
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Intersection observer for stats counter
   useEffect(() => {
@@ -231,21 +236,43 @@ export default function HomePage() {
     <div className="bg-white min-h-screen text-neutral-900 selection:bg-[#B91C1C] selection:text-white">
 
       {/* ════════════════════════════════════════════════════════════
-          NAVBAR — Clean White Header (Googee Style)
+          NAVBAR — OVERLAID ON TOP OF HERO IMAGE
+          Transitions smoothly when scrolled past hero
       ════════════════════════════════════════════════════════════ */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6">
+      <header
+        className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? 'top-0 bg-white/95 backdrop-blur-md shadow-[0_2px_15px_-3px_rgba(0,0,0,0.08)] border-b border-neutral-100 py-2.5 px-4 sm:px-6 lg:px-8'
+            : 'top-2 sm:top-3 md:top-4 px-3 sm:px-5 md:px-7 lg:px-9 py-2 bg-transparent pointer-events-none'
+        }`}
+      >
+        <div className={`max-w-7xl mx-auto flex items-center justify-between gap-6 pointer-events-auto ${
+          scrolled ? '' : 'px-2 sm:px-4'
+        }`}>
 
           {/* Logo */}
           <Link href="/" className="shrink-0 flex items-center">
-            <Image
-              src="/images/logo-full.png"
-              alt="Kings Pride Infra Projects Pvt. Ltd."
-              width={180}
-              height={70}
-              className="h-14 sm:h-16 w-auto object-contain"
-              priority
-            />
+            {scrolled ? (
+              <Image
+                src="/images/logo-full.png"
+                alt="Kings Pride Infra Projects Pvt. Ltd."
+                width={170}
+                height={65}
+                className="h-12 sm:h-14 w-auto object-contain transition-all"
+                priority
+              />
+            ) : (
+              <div className="bg-white/95 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-lg border border-white/60 flex items-center">
+                <Image
+                  src="/images/logo-full.png"
+                  alt="Kings Pride Infra Projects Pvt. Ltd."
+                  width={150}
+                  height={56}
+                  className="h-9 sm:h-11 w-auto object-contain"
+                  priority
+                />
+              </div>
+            )}
           </Link>
 
           {/* Desktop Nav Links */}
@@ -254,7 +281,11 @@ export default function HomePage() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm font-semibold text-neutral-700 hover:text-[#B91C1C] transition-colors tracking-wide"
+                className={`text-sm font-bold tracking-wide transition-colors ${
+                  scrolled
+                    ? 'text-neutral-700 hover:text-[#B91C1C]'
+                    : 'text-white hover:text-white/80 drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)]'
+                }`}
               >
                 {link.label}
               </a>
@@ -265,7 +296,7 @@ export default function HomePage() {
           <div className="hidden sm:flex items-center gap-3">
             <button
               onClick={() => setModalOpen(true)}
-              className="bg-[#B91C1C] hover:bg-[#991B1B] text-white text-xs sm:text-sm font-bold uppercase tracking-wider px-6 py-2.5 rounded-full transition-all duration-200 shadow-md shadow-[#B91C1C]/20"
+              className="bg-[#B91C1C] hover:bg-[#991B1B] text-white text-xs sm:text-sm font-bold uppercase tracking-wider px-6 py-2.5 rounded-full transition-all duration-200 shadow-lg shadow-[#B91C1C]/30 hover:scale-[1.02] active:scale-[0.98]"
             >
               SCHEDULE SITE VISIT
             </button>
@@ -274,10 +305,14 @@ export default function HomePage() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileOpen(v => !v)}
-            className="lg:hidden p-2 text-neutral-700 hover:text-[#B91C1C] transition-colors"
+            className={`lg:hidden p-2.5 rounded-full transition-colors ${
+              scrolled
+                ? 'text-neutral-700 hover:text-[#B91C1C]'
+                : 'text-white bg-black/40 backdrop-blur-sm shadow-md'
+            }`}
             aria-label="Toggle navigation menu"
           >
-            {mobileOpen ? <X size={26} /> : <Menu size={26} />}
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
@@ -289,7 +324,7 @@ export default function HomePage() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="lg:hidden bg-white border-t border-neutral-100 overflow-hidden shadow-xl"
+              className="lg:hidden bg-white/95 backdrop-blur-md border border-neutral-200 mt-2 mx-2 rounded-2xl overflow-hidden shadow-2xl pointer-events-auto"
             >
               <div className="px-6 py-6 flex flex-col gap-4">
                 {NAV_LINKS.map(link => (
@@ -324,14 +359,16 @@ export default function HomePage() {
 
       <main>
         {/* ════════════════════════════════════════════════════════════
-            1. INSET HERO / FRAMED HERO LAYOUT (Googee Reference)
-            Sits inside intentional white outer spacing, rounded frame,
-            grand serif typography with centered white logo pill!
+            1. INSET HERO / FRAMED HERO LAYOUT
+            - Margin of frame is thinner (p-2 sm:p-3 md:p-4)
+            - Hero image extends from very top to bottom of frame
+            - Navbar elements sit directly on top of the image
+            - Zero color tinting / golden glazing: 100% natural photo
         ════════════════════════════════════════════════════════════ */}
-        <section className="bg-white px-4 sm:px-8 md:px-12 lg:px-16 pt-4 sm:pt-6 pb-2">
-          <div className="relative w-full max-w-7xl mx-auto rounded-2xl sm:rounded-3xl lg:rounded-[36px] overflow-hidden shadow-2xl min-h-[460px] sm:min-h-[540px] md:min-h-[600px] lg:min-h-[660px] flex flex-col items-center justify-center text-center p-6 sm:p-10 md:p-14">
+        <section className="bg-white p-2 sm:p-3 md:p-4">
+          <div className="relative w-full rounded-2xl sm:rounded-3xl lg:rounded-[32px] overflow-hidden shadow-2xl h-[88vh] min-h-[620px] sm:min-h-[700px] md:min-h-[760px] lg:min-h-[820px] flex flex-col items-center justify-center text-center p-6 sm:p-10 md:p-14">
 
-            {/* Background Image — Hyderabad Panoramic Sunset */}
+            {/* Background Image — 100% Natural, No Color Glaze or Tint */}
             <Image
               src="/images/hero-hyderabad.jpg"
               alt="Hyderabad Skyline — Kings Pride Infra"
@@ -341,37 +378,33 @@ export default function HomePage() {
               quality={95}
             />
 
-            {/* Deep rich dark wine / burgundy gradient overlay (Googee aesthetic) */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#120306]/85 via-[#250711]/75 to-[#100205]/90" />
-            <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#120306]/40 to-[#0e0205]/95" />
+            {/* Hero Centered Content — Clean Serif Headline & Logo Pill */}
+            <div className="relative z-10 flex flex-col items-center max-w-5xl mx-auto mt-16 sm:mt-12">
 
-            {/* Hero Centered Content — Pure, Uncluttered, Majestic */}
-            <div className="relative z-10 flex flex-col items-center max-w-5xl mx-auto">
-
-              {/* Main Headline — Elegant Serif in ALL CAPS */}
+              {/* Main Headline — High Contrast Pure White with Deep Shadow for Crisp Legibility */}
               <motion.h1
                 initial={{ opacity: 0, y: 25 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-wider uppercase leading-tight drop-shadow-xl"
+                className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-wider uppercase leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] [text-shadow:_0_3px_16px_rgba(0,0,0,0.85)]"
               >
                 BEST REAL ESTATE DEVELOPER<br />
                 <span className="text-white">IN TELANGANA</span>
               </motion.h1>
 
-              {/* Centered White Logo Pill Badge (Exact Googee style centre badge) */}
+              {/* Centered White Logo Pill Badge (Exact Googee Style) */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.88, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.25, ease: 'easeOut' }}
-                className="mt-8 sm:mt-10 bg-white rounded-full px-7 sm:px-10 py-3 sm:py-4 shadow-[0_15px_40px_rgba(0,0,0,0.4)] flex items-center justify-center border border-white/60"
+                className="mt-8 sm:mt-12 bg-white rounded-full px-8 sm:px-12 py-3.5 sm:py-5 shadow-[0_20px_50px_rgba(0,0,0,0.45)] flex items-center justify-center border border-white/80"
               >
                 <Image
                   src="/images/logo-full.png"
                   alt="Kings Pride Infra Projects Pvt. Ltd."
-                  width={220}
-                  height={80}
-                  className="h-10 sm:h-12 md:h-14 w-auto object-contain"
+                  width={240}
+                  height={85}
+                  className="h-11 sm:h-14 md:h-16 w-auto object-contain"
                   priority
                 />
               </motion.div>
@@ -468,12 +501,10 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
               className="lg:col-span-7 flex flex-col items-start"
             >
-              {/* Red Label */}
               <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-2">
                 LEADERSHIP EXCELLENCE
               </div>
 
-              {/* Headline */}
               <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 mb-3 leading-tight">
                 Visionary Leadership
               </h2>
@@ -490,14 +521,12 @@ export default function HomePage() {
                 </p>
               </div>
 
-              {/* Quote / Highlight Box */}
               <div className="w-full bg-neutral-50 border-l-4 border-[#B91C1C] p-4 sm:p-5 rounded-r-2xl mb-8">
                 <p className="text-xs sm:text-sm text-neutral-700 italic leading-relaxed">
                   &ldquo;Recognized across Telangana for pioneering DTCP, HMDA, and TG RERA approved plotted communities with immediate spot registration and lifetime infrastructure integrity.&rdquo;
                 </p>
               </div>
 
-              {/* Bottom Signature & Badge Row */}
               <div className="flex flex-wrap items-center justify-between gap-4 w-full pt-4 border-t border-neutral-100">
                 <div>
                   <div className="font-heading text-base font-bold text-neutral-900">
@@ -527,10 +556,8 @@ export default function HomePage() {
         <section id="approvals" className="bg-white py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
 
-            {/* Dark Navy Framed Inset Container */}
             <div className="bg-[#09152B] rounded-3xl sm:rounded-[36px] p-8 sm:p-12 lg:p-16 text-center text-white shadow-2xl relative overflow-hidden">
 
-              {/* Ambient radial glow */}
               <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
               <div className="relative z-10 max-w-4xl mx-auto">
@@ -547,7 +574,6 @@ export default function HomePage() {
                   All KP Infra projects are strictly compliant with statutory government bodies, securing your hard-earned investments with complete legal transparency.
                 </p>
 
-                {/* White Pill Badge Strip with Authority Logos */}
                 <div className="bg-white rounded-full py-3.5 px-6 sm:px-8 shadow-lg inline-flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-neutral-800 text-xs sm:text-sm font-bold mb-12">
                   <span className="flex items-center gap-1.5">
                     <Shield size={15} className="text-[#B91C1C]" /> HMDA Approved
@@ -570,7 +596,6 @@ export default function HomePage() {
                   </span>
                 </div>
 
-                {/* 3 Blue/Navy Inset Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
                   <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
                     <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-4">
@@ -621,7 +646,6 @@ export default function HomePage() {
         <section id="projects" className="bg-[#FAF9F6] py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
 
-            {/* Section Header */}
             <div className="text-center max-w-3xl mx-auto mb-10">
               <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-3">
                 OUR PROJECTS
@@ -634,7 +658,6 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Category Filter Tabs */}
             <div className="flex justify-center items-center gap-2 mb-10 flex-wrap">
               {['All', 'Ongoing', 'Completed'].map(tab => (
                 <button
@@ -651,14 +674,12 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Project Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {filteredProjects.map((project, idx) => (
                 <ProjectCard key={project.id} project={project} index={idx} />
               ))}
             </div>
 
-            {/* View All CTA */}
             <div className="text-center mt-14">
               <Link
                 href="/projects"
@@ -686,7 +707,6 @@ export default function HomePage() {
               </h2>
             </div>
 
-            {/* 6 Cards Grid (2 rows of 3) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {SETS_US_APART.map((item, idx) => (
                 <motion.div
@@ -736,7 +756,6 @@ export default function HomePage() {
               </h2>
             </div>
 
-            {/* 4 Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {(TESTIMONIALS || []).slice(0, 4).map((t, idx) => (
                 <motion.div
@@ -747,7 +766,6 @@ export default function HomePage() {
                   transition={{ duration: 0.45, delay: idx * 0.08 }}
                   className="bg-white border border-neutral-200/70 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col"
                 >
-                  {/* 5 Stars */}
                   <div className="flex gap-1 mb-4">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} size={14} fill="#F59E0B" className="text-[#F59E0B]" />
@@ -775,7 +793,6 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Pill button at bottom */}
             <div className="text-center mt-12">
               <button
                 onClick={() => setModalOpen(true)}
@@ -794,7 +811,6 @@ export default function HomePage() {
         <section id="contact" className="bg-[#FAF9F6] py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-12 items-start">
 
-            {/* Left Column: Office & Contact Info */}
             <div className="lg:col-span-5">
               <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-3">
                 GET IN TOUCH
@@ -864,7 +880,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Column: Contact Card */}
             <div className="lg:col-span-7 bg-white border border-neutral-200/80 rounded-3xl p-8 sm:p-10 shadow-sm">
               <h3 className="font-heading text-xl font-bold text-neutral-900 mb-2">
                 Schedule a Private Site Inspection
@@ -950,7 +965,6 @@ export default function HomePage() {
         <footer className="bg-[#050C1B] text-white/60 py-16 px-4 sm:px-6 lg:px-8 border-t border-white/5">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 pb-12 border-b border-white/10">
 
-            {/* Column 1: Brand Info */}
             <div>
               <Image
                 src="/images/logo-full.png"
@@ -967,7 +981,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Column 2: Quick Links */}
             <div>
               <h4 className="font-heading text-sm font-bold text-white uppercase tracking-wider mb-4">
                 QUICK LINKS
@@ -988,7 +1001,6 @@ export default function HomePage() {
               </ul>
             </div>
 
-            {/* Column 3: Corporate Head Office */}
             <div>
               <h4 className="font-heading text-sm font-bold text-white uppercase tracking-wider mb-4">
                 CORPORATE HEAD OFFICE
@@ -1005,7 +1017,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Column 4: Branch Offices & Contact */}
             <div>
               <h4 className="font-heading text-sm font-bold text-white uppercase tracking-wider mb-4">
                 BRANCH / SITE OFFICES
@@ -1032,7 +1043,6 @@ export default function HomePage() {
 
           </div>
 
-          {/* Bottom Legal Notice */}
           <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-white/30">
             <div>
               © {new Date().getFullYear()} K.P. Infra Projects Pvt. Ltd. All Rights Reserved.
