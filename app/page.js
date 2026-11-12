@@ -468,26 +468,27 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
               className="lg:col-span-5 relative"
             >
-              <div className="relative h-[380px] sm:h-[460px] rounded-3xl overflow-hidden shadow-2xl bg-neutral-100">
+              <div className="relative h-[420px] sm:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-neutral-100">
                 <Image
-                  src={FLAGSHIP.coverImage || FLAGSHIP.image}
-                  alt="K.P. Infra Leadership"
+                  src="/images/mohammed-aleemuddin.jpg"
+                  alt="Mohammed Aleemuddin — Founder & Chairman, K.P. Infra Projects Pvt. Ltd."
                   fill
-                  className="object-cover"
+                  className="object-cover object-top"
                   sizes="(max-width: 1024px) 100vw, 40vw"
+                  priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
                 {/* Overlaid Badge at bottom */}
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="text-[11px] font-bold text-[#F0C040] uppercase tracking-wider">
-                    EXECUTIVE LEADERSHIP
+                    FOUNDER &amp; CHAIRMAN
                   </div>
-                  <div className="text-white font-bold text-lg sm:text-xl">
-                    K.P. Infra Management
+                  <div className="text-white font-bold text-xl sm:text-2xl">
+                    Mohammed Aleemuddin
                   </div>
-                  <div className="text-white/60 text-xs">
-                    Founder &amp; Board of Directors
+                  <div className="text-white/70 text-xs">
+                    K.P. Infra Projects Pvt. Ltd.
                   </div>
                 </div>
               </div>
@@ -514,7 +515,7 @@ export default function HomePage() {
 
               <div className="space-y-4 text-neutral-600 text-sm sm:text-base leading-relaxed mb-6">
                 <p>
-                  At Kings Pride Infra, our leadership has always believed that real estate is not merely about land transactions—it is about laying the foundation for generational wealth and family security.
+                  At Kings Pride Infra, under the stewardship of <strong className="text-neutral-900 font-bold">Mohammed Aleemuddin</strong>, our leadership has always believed that real estate is not merely about land transactions—it is about laying the foundation for generational wealth and family security.
                 </p>
                 <p>
                   From our very first project in 2003 to our flagship Golden Palm City on NH-44, every layout reflects our commitment to 100% clear titles, rigorous statutory approvals, and timely execution.
@@ -529,18 +530,18 @@ export default function HomePage() {
 
               <div className="flex flex-wrap items-center justify-between gap-4 w-full pt-4 border-t border-neutral-100">
                 <div>
-                  <div className="font-heading text-base font-bold text-neutral-900">
-                    K.P. Infra Projects Pvt. Ltd.
+                  <div className="font-heading text-lg font-bold text-neutral-900">
+                    Mohammed Aleemuddin
                   </div>
-                  <div className="text-xs text-neutral-400">
-                    Founder &amp; Chairman • Established 2003
+                  <div className="text-xs text-neutral-500 font-medium">
+                    Founder &amp; Chairman • K.P. Infra Projects Pvt. Ltd.
                   </div>
                 </div>
 
                 <div className="bg-[#0B1528] text-white px-5 py-2.5 rounded-xl shadow-md flex items-center gap-2">
                   <span className="text-[#F0C040] font-extrabold text-sm">22+</span>
                   <span className="text-[11px] text-white/80 font-medium uppercase tracking-wider">
-                    Years of Professional Excellence
+                    Years of Leadership Excellence
                   </span>
                 </div>
               </div>
