@@ -1,158 +1,176 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Phone, MessageCircle, Menu, X, ArrowRight, ChevronDown,
-  MapPin, Award, Star, Users, Clock, Shield, CheckCircle2,
-  Building2, Home, FileText, Calendar, Mail, Quote, ChevronRight
+  Phone, MessageCircle, Menu, X, MapPin, Star,
+  CheckCircle2, ChevronRight, Mail, Quote, ArrowRight,
+  Award, Shield, Users, Clock, Building2, Download,
+  ExternalLink, Sparkles, Check
 } from 'lucide-react'
 import { BRAND, STATS, PROJECTS, TESTIMONIALS } from '@/lib/projects'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const ONGOING = PROJECTS.filter(p => p.status === 'Ongoing')
+const ONGOING   = PROJECTS.filter(p => p.status === 'Ongoing')
 const COMPLETED = PROJECTS.filter(p => p.status === 'Completed')
-const FLAGSHIP = PROJECTS.find(p => p.isFlagship) || PROJECTS[0]
+const FLAGSHIP  = PROJECTS.find(p => p.isFlagship) || PROJECTS[0]
 
 const NAV_LINKS = [
-  { label: 'Projects',     href: '#projects' },
-  { label: 'Why KP Infra',href: '#why-us' },
-  { label: 'Legacy',       href: '#legacy' },
-  { label: 'Testimonials', href: '#testimonials' },
-  { label: 'Contact',      href: '#contact' },
+  { label: 'Home',        href: '#' },
+  { label: 'About Us',    href: '#about' },
+  { label: 'Projects',    href: '#projects' },
+  { label: 'Approvals',   href: '#approvals' },
+  { label: 'Why Us',      href: '#why-us' },
+  { label: 'Testimonials',href: '#testimonials' },
+  { label: 'Contact Us',  href: '#contact' },
 ]
 
-const TRUST_BADGES = [
-  { icon: Shield,       label: 'DTCP Approved' },
-  { icon: CheckCircle2, label: 'HMDA Approved' },
-  { icon: Award,        label: 'TG RERA Registered' },
-  { icon: Clock,        label: '22+ Years Legacy' },
-  { icon: Users,        label: '12,000+ Families' },
+const STAT_ITEMS = [
+  { value: '22+',    label: 'Years of Professional Excellence' },
+  { value: '12,000+',label: 'Happy Families' },
+  { value: '11+',    label: 'Completed & Ongoing Projects' },
+  { value: '300+',   label: 'Acres Developed' },
 ]
 
-const WHY_CARDS = [
+const SETS_US_APART = [
   {
-    icon: Award,
-    title: 'Proven Legacy Since 2003',
-    desc: 'Over two decades of uncompromising integrity, 300+ acres developed, and 12,000+ happy families across Telangana.'
+    title: 'High-Quality Development',
+    desc: 'Every project is master-planned with 40/33/30 ft black-top roads, underground modern drainage, avenue plantations, and LED street lighting.',
+    accent: '#3B82F6',
   },
   {
-    icon: Shield,
-    title: 'Fully Legal & Clear Title',
-    desc: 'Every project carries DTCP, HMDA, RERA, or Municipal approvals with 100% clear title and spot-registration facility.'
+    title: 'Transparent Dealings',
+    desc: '100% clear titles, zero hidden charges, exact survey stone demarcation, and instant spot registration with comprehensive legal clearance.',
+    accent: '#06B6D4',
   },
   {
-    icon: MapPin,
-    title: 'High-Growth Corridors',
-    desc: 'Strategically chosen locations on NH-44, ORR, and emerging SEZ corridors for maximum capital appreciation.'
+    title: 'Strong Price Appreciation',
+    desc: 'Carefully chosen land banks in high-growth corridors (NH-44, Pharma SEZ, Shamshabad Airport, RRR) delivering rapid capital multiplication.',
+    accent: '#10B981',
   },
   {
-    icon: Building2,
-    title: 'Premium Infrastructure',
-    desc: 'Black-top roads, underground drainage, avenue plantations, gated security, and world-class amenities in every project.'
+    title: 'Prime Corridor Locations',
+    desc: 'Direct highway frontage and rapid arterial connectivity to Rajiv Gandhi International Airport, Outer Ring Road, and emerging employment hubs.',
+    accent: '#F59E0B',
   },
   {
-    icon: Users,
-    title: 'Customer-First Philosophy',
-    desc: 'Transparent dealings, honest pricing, and after-sale support that extends well beyond handover day.'
+    title: 'Trusted Reliability',
+    desc: 'Over 22 unbroken years of on-schedule delivery, continuous infrastructure maintenance, and unblemished reputational excellence across Telangana.',
+    accent: '#8B5CF6',
   },
   {
-    icon: Star,
-    title: 'Award-Winning Projects',
-    desc: 'Recognised by industry bodies for design excellence, environmental sensitivity, and timely delivery.'
+    title: 'Complete Peace of Mind',
+    desc: 'Heavy pre-cast boundary walls, 24/7 security, dedicated caretakers, and professional post-handover customer assistance for all property owners.',
+    accent: '#EC4899',
   },
 ]
 
-// ─── Smooth counter hook ───────────────────────────────────────────────────────
-function useCounter(end, duration = 2000, start = false) {
-  const [count, setCount] = useState(0)
+// ─── Smooth Counter Hook ───────────────────────────────────────────────────────
+function useCounter(targetStr, duration = 2000, trigger = false) {
+  const [val, setVal] = useState(0)
   useEffect(() => {
-    if (!start) return
-    let startTime = null
-    const step = (timestamp) => {
-      if (!startTime) startTime = timestamp
-      const progress = Math.min((timestamp - startTime) / duration, 1)
-      setCount(Math.floor(progress * end))
+    if (!trigger) return
+    const num = parseInt(targetStr.replace(/[^0-9]/g, ''), 10)
+    let start = null
+    const step = (ts) => {
+      if (!start) start = ts
+      const progress = Math.min((ts - start) / duration, 1)
+      setVal(Math.floor(progress * num))
       if (progress < 1) requestAnimationFrame(step)
     }
     requestAnimationFrame(step)
-  }, [end, duration, start])
-  return count
+  }, [targetStr, duration, trigger])
+
+  const suffix = targetStr.replace(/[0-9,]/g, '')
+  return `${val.toLocaleString()}${suffix}`
 }
 
-// ─── Stat Card ────────────────────────────────────────────────────────────────
-function StatCard({ value, suffix, label, started }) {
-  const count = useCounter(value, 2200, started)
+function StatNumber({ value, label, trigger }) {
+  const count = useCounter(value, 2200, trigger)
   return (
-    <div className="text-center">
-      <div className="text-5xl md:text-6xl font-bold text-[#C5A028] mb-2">
-        {count.toLocaleString()}{suffix}
-      </div>
-      <div className="text-sm md:text-base text-white/70 uppercase tracking-widest">{label}</div>
+    <div className="flex flex-col items-center text-center px-4 py-2">
+      <span className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#B91C1C] tracking-tight">
+        {count}
+      </span>
+      <span className="text-xs sm:text-sm text-neutral-500 font-medium mt-2 max-w-[180px] leading-snug">
+        {label}
+      </span>
     </div>
   )
 }
 
-// ─── Project Card ─────────────────────────────────────────────────────────────
+// ─── Project Card Component ───────────────────────────────────────────────────
 function ProjectCard({ project, index }) {
-  const [hovered, setHovered] = useState(false)
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500"
+      transition={{ duration: 0.45, delay: index * 0.06 }}
+      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-neutral-100 flex flex-col group"
     >
-      {/* Image */}
-      <div className="relative h-56 overflow-hidden bg-neutral-100">
+      {/* Image container */}
+      <div className="relative h-52 sm:h-56 overflow-hidden bg-neutral-100">
         <Image
           src={project.coverImage || project.image}
           alt={project.name}
           fill
-          className={`object-cover transition-transform duration-700 ${hovered ? 'scale-110' : 'scale-100'}`}
+          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        {/* Status pill */}
-        <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold tracking-wide ${
+        {/* Status Badge */}
+        <div className={`absolute top-3.5 left-3.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide shadow-sm ${
           project.status === 'Ongoing'
-            ? 'bg-emerald-500 text-white'
-            : 'bg-[#C5A028] text-white'
+            ? 'bg-emerald-600 text-white'
+            : 'bg-[#B91C1C] text-white'
         }`}>
           {project.status}
         </div>
+
+        {/* Flagship star */}
         {project.isFlagship && (
-          <div className="absolute top-4 right-4 px-3 py-1 bg-[#1a1a2e] text-[#C5A028] text-xs font-bold rounded-full tracking-wide">
+          <div className="absolute top-3.5 right-3.5 bg-neutral-900/90 backdrop-blur-sm text-[#F0C040] text-[11px] font-bold px-3 py-1 rounded-full shadow-sm">
             ★ Flagship
           </div>
         )}
       </div>
 
-      {/* Content */}
-      <div className="p-5">
-        <div className="text-xs text-[#C5A028] font-semibold uppercase tracking-widest mb-1">{project.category}</div>
-        <h3 className="text-lg font-bold text-neutral-900 mb-1 group-hover:text-[#C5A028] transition-colors">{project.name}</h3>
-        <p className="text-sm text-neutral-500 flex items-center gap-1 mb-3">
-          <MapPin size={12} className="shrink-0" />
+      {/* Card Content */}
+      <div className="p-5 sm:p-6 flex flex-col flex-1">
+        <div className="text-[11px] font-bold text-[#B91C1C] uppercase tracking-widest mb-1.5">
+          {project.category}
+        </div>
+        <h3 className="font-heading text-lg sm:text-xl font-bold text-neutral-900 mb-2 group-hover:text-[#B91C1C] transition-colors line-clamp-1">
+          {project.name}
+        </h3>
+        <p className="text-xs text-neutral-500 flex items-center gap-1.5 mb-3 line-clamp-1">
+          <MapPin size={13} className="text-[#B91C1C] shrink-0" />
           {project.location?.split(',').slice(0, 2).join(',')}
         </p>
-        <p className="text-sm text-neutral-600 line-clamp-2 mb-4">{project.shortDescription}</p>
 
-        {/* Price + CTA */}
-        <div className="flex items-center justify-between pt-4 border-t border-neutral-100">
+        {/* Approval Tag */}
+        {project.approval && (
+          <div className="text-[11px] font-medium text-neutral-600 bg-neutral-50 border border-neutral-200/70 rounded-lg px-2.5 py-1 mb-4 line-clamp-1">
+            {project.approval}
+          </div>
+        )}
+
+        <div className="mt-auto pt-4 border-t border-neutral-100 flex items-center justify-between">
           <div>
-            <div className="text-xs text-neutral-400">{project.priceLabel || 'Starting From'}</div>
-            <div className="text-base font-bold text-neutral-900">{project.price}</div>
+            <div className="text-[11px] text-neutral-400 font-medium">
+              {project.priceLabel || 'Plot Sizes'}
+            </div>
+            <div className="text-sm font-bold text-neutral-900">
+              {project.plotRange || project.price}
+            </div>
           </div>
           <Link
             href={`/projects/${project.slug}`}
-            className="flex items-center gap-1.5 bg-[#1a1a2e] hover:bg-[#C5A028] text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors duration-300"
+            className="inline-flex items-center gap-1 bg-neutral-900 hover:bg-[#B91C1C] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors duration-200 shadow-sm"
           >
-            Explore <ArrowRight size={14} />
+            Explore <ChevronRight size={13} />
           </Link>
         </div>
       </div>
@@ -160,182 +178,143 @@ function ProjectCard({ project, index }) {
   )
 }
 
-// ─── Testimonial Card ─────────────────────────────────────────────────────────
-function TestimonialCard({ t, index }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bg-white rounded-2xl p-7 shadow-md border border-neutral-100 flex flex-col gap-4"
-    >
-      <Quote size={28} className="text-[#C5A028] opacity-60" />
-      <p className="text-neutral-700 leading-relaxed text-sm">{t.quote || t.text}</p>
-      <div className="flex items-center gap-3 mt-auto pt-4 border-t border-neutral-100">
-        <div className="w-10 h-10 rounded-full bg-[#C5A028]/20 flex items-center justify-center font-bold text-[#C5A028]">
-          {(t.name || t.author || 'C').charAt(0)}
-        </div>
-        <div>
-          <div className="font-semibold text-sm text-neutral-900">{t.name || t.author}</div>
-          <div className="text-xs text-neutral-400">{t.role || t.location || 'Homeowner'}</div>
-        </div>
-        <div className="ml-auto flex gap-0.5">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} size={12} fill="#C5A028" className="text-[#C5A028]" />
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  )
-}
-
 // ═══════════════════════════════════════════════════════════════════════════════
-// MAIN PAGE
+// MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function HomePage() {
-  // Nav state
-  const [scrolled, setScrolled] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('')
+  const [mobileOpen, setMobileOpen]       = useState(false)
+  const [projectFilter, setProjectFilter] = useState('All')
+  const [modalOpen, setModalOpen]         = useState(false)
+  const [statsActive, setStatsActive]     = useState(false)
+  const statsRef                          = useRef(null)
 
-  // Hero enquiry form
-  const [enquiryProject, setEnquiryProject] = useState('')
-  const [enquiryPhone, setEnquiryPhone] = useState('')
-  const [enquirySent, setEnquirySent] = useState(false)
+  // Quick Enquiry in Modal
+  const [enquiryName, setEnquiryName]       = useState('')
+  const [enquiryPhone, setEnquiryPhone]     = useState('')
+  const [enquiryProject, setEnquiryProject] = useState('Golden Palm City')
+  const [enquirySent, setEnquirySent]       = useState(false)
 
-  // Filter state for projects
-  const [filter, setFilter] = useState('All')
-
-  // Legacy counter trigger
-  const legacyRef = useRef(null)
-  const [legacyVisible, setLegacyVisible] = useState(false)
-
-  // Scroll tracking
+  // Intersection observer for stats counter
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    if (!statsRef.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsActive(true)
+        }
+      },
+      { threshold: 0.3 }
+    )
+    observer.observe(statsRef.current)
+    return () => observer.disconnect()
   }, [])
 
-  // Legacy section visibility
-  useEffect(() => {
-    if (!legacyRef.current) return
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setLegacyVisible(true) }, { threshold: 0.3 })
-    obs.observe(legacyRef.current)
-    return () => obs.disconnect()
-  }, [])
+  const filteredProjects = useMemo(() => {
+    if (projectFilter === 'Ongoing') return ONGOING
+    if (projectFilter === 'Completed') return COMPLETED
+    return PROJECTS
+  }, [projectFilter])
 
-  // Close mobile menu on nav click
-  const handleNav = useCallback(() => setMobileOpen(false), [])
-
-  // Filter projects
-  const filteredProjects = filter === 'All' ? PROJECTS : filter === 'Ongoing' ? ONGOING : COMPLETED
-
-  // Enquiry submit
-  const handleEnquiry = (e) => {
+  const handleEnquirySubmit = (e) => {
     e.preventDefault()
     if (!enquiryPhone || enquiryPhone.length < 10) return
     setEnquirySent(true)
-    setTimeout(() => setEnquirySent(false), 4000)
-    setEnquiryPhone('')
-    setEnquiryProject('')
+    setTimeout(() => {
+      setEnquirySent(false)
+      setModalOpen(false)
+      setEnquiryPhone('')
+      setEnquiryName('')
+    }, 2500)
   }
 
   return (
-    <>
+    <div className="bg-white min-h-screen text-neutral-900 selection:bg-[#B91C1C] selection:text-white">
+
       {/* ════════════════════════════════════════════════════════════
-          NAVBAR
+          NAVBAR — Clean White Header (Googee Style)
       ════════════════════════════════════════════════════════════ */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'bg-[#0f1023]/95 backdrop-blur-md shadow-xl py-2' : 'bg-transparent py-4'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6">
 
           {/* Logo */}
-          <Link href="/" className="shrink-0 flex items-center gap-3">
+          <Link href="/" className="shrink-0 flex items-center">
             <Image
               src="/images/logo-full.png"
-              alt="Kings Pride Infra"
-              width={160}
-              height={72}
-              className="h-14 w-auto object-contain"
+              alt="Kings Pride Infra Projects Pvt. Ltd."
+              width={180}
+              height={70}
+              className="h-14 sm:h-16 w-auto object-contain"
               priority
             />
           </Link>
 
-          {/* Desktop nav */}
+          {/* Desktop Nav Links */}
           <nav className="hidden lg:flex items-center gap-7">
-            {NAV_LINKS.map(l => (
+            {NAV_LINKS.map(link => (
               <a
-                key={l.href}
-                href={l.href}
-                className="text-white/80 hover:text-[#C5A028] text-sm font-medium tracking-wide transition-colors duration-200"
+                key={link.label}
+                href={link.href}
+                className="text-sm font-semibold text-neutral-700 hover:text-[#B91C1C] transition-colors tracking-wide"
               >
-                {l.label}
+                {link.label}
               </a>
             ))}
           </nav>
 
-          {/* CTA + Phone */}
-          <div className="hidden lg:flex items-center gap-4">
-            <a href={`tel:${BRAND.mobile1}`} className="flex items-center gap-2 text-white/80 hover:text-[#C5A028] text-sm font-medium transition-colors">
-              <Phone size={15} />
-              {BRAND.mobile1}
-            </a>
-            <a
-              href={`https://wa.me/${BRAND.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-[#C5A028] hover:bg-[#a8891e] text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 shadow-lg shadow-[#C5A028]/30"
+          {/* Right CTA Button */}
+          <div className="hidden sm:flex items-center gap-3">
+            <button
+              onClick={() => setModalOpen(true)}
+              className="bg-[#B91C1C] hover:bg-[#991B1B] text-white text-xs sm:text-sm font-bold uppercase tracking-wider px-6 py-2.5 rounded-full transition-all duration-200 shadow-md shadow-[#B91C1C]/20"
             >
-              <MessageCircle size={15} />
-              WhatsApp
-            </a>
+              SCHEDULE SITE VISIT
+            </button>
           </div>
 
-          {/* Mobile hamburger */}
+          {/* Mobile Menu Button */}
           <button
-            className="lg:hidden text-white p-2 rounded-lg"
             onClick={() => setMobileOpen(v => !v)}
-            aria-label="Toggle menu"
+            className="lg:hidden p-2 text-neutral-700 hover:text-[#B91C1C] transition-colors"
+            aria-label="Toggle navigation menu"
           >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Dropdown Drawer */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden bg-[#0f1023] border-t border-white/10"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="lg:hidden bg-white border-t border-neutral-100 overflow-hidden shadow-xl"
             >
-              <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-5">
-                {NAV_LINKS.map(l => (
+              <div className="px-6 py-6 flex flex-col gap-4">
+                {NAV_LINKS.map(link => (
                   <a
-                    key={l.href}
-                    href={l.href}
-                    onClick={handleNav}
-                    className="text-white/80 hover:text-[#C5A028] text-base font-medium transition-colors"
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="text-base font-semibold text-neutral-800 hover:text-[#B91C1C] transition-colors py-1"
                   >
-                    {l.label}
+                    {link.label}
                   </a>
                 ))}
-                <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                  <a href={`tel:${BRAND.mobile1}`} className="flex items-center gap-2 text-white text-base font-medium">
-                    <Phone size={16} /> {BRAND.mobile1}
-                  </a>
+                <div className="pt-4 border-t border-neutral-100 flex flex-col gap-3">
                   <a
-                    href={`https://wa.me/${BRAND.whatsapp}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-[#C5A028] text-white text-base font-semibold px-5 py-3 rounded-xl"
+                    href={`tel:${BRAND.mobile1}`}
+                    className="flex items-center gap-2 text-sm font-medium text-neutral-700"
                   >
-                    <MessageCircle size={16} /> WhatsApp Us
+                    <Phone size={15} className="text-[#B91C1C]" /> {BRAND.mobile1}
                   </a>
+                  <button
+                    onClick={() => { setMobileOpen(false); setModalOpen(true) }}
+                    className="bg-[#B91C1C] text-white text-sm font-bold uppercase tracking-wider py-3 rounded-full text-center shadow-md"
+                  >
+                    SCHEDULE SITE VISIT
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -345,617 +324,823 @@ export default function HomePage() {
 
       <main>
         {/* ════════════════════════════════════════════════════════════
-            HERO SECTION — Googee Properties Style
+            1. INSET HERO / FRAMED HERO LAYOUT (Googee Reference)
+            Sits inside intentional white outer spacing, rounded frame,
+            grand serif typography with centered white logo pill!
         ════════════════════════════════════════════════════════════ */}
-        <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        <section className="bg-white px-4 sm:px-8 md:px-12 lg:px-16 pt-4 sm:pt-6 pb-2">
+          <div className="relative w-full max-w-7xl mx-auto rounded-2xl sm:rounded-3xl lg:rounded-[36px] overflow-hidden shadow-2xl min-h-[460px] sm:min-h-[540px] md:min-h-[600px] lg:min-h-[660px] flex flex-col items-center justify-center text-center p-6 sm:p-10 md:p-14">
 
-          {/* Background — Hyderabad skyline */}
-          <div className="absolute inset-0">
+            {/* Background Image — Hyderabad Panoramic Sunset */}
             <Image
               src="/images/hero-hyderabad.jpg"
               alt="Hyderabad Skyline — Kings Pride Infra"
               fill
-              className="object-cover object-center scale-105"
+              className="object-cover object-center"
               priority
-              quality={90}
+              quality={95}
             />
-            {/* Multi-layer gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0a0d1a]/75 via-[#0a0d1a]/55 to-[#0a0d1a]/90" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0a0d1a]/40 via-transparent to-[#0a0d1a]/30" />
-          </div>
 
-          {/* Hero content */}
-          <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center pt-28 pb-10 gap-6">
+            {/* Deep rich dark wine / burgundy gradient overlay (Googee aesthetic) */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#120306]/85 via-[#250711]/75 to-[#100205]/90" />
+            <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#120306]/40 to-[#0e0205]/95" />
 
-            {/* Logo centrepiece */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.9, ease: 'easeOut' }}
-            >
-              <Image
-                src="/images/logo-full.png"
-                alt="Kings Pride Infra Projects Pvt Ltd"
-                width={260}
-                height={130}
-                className="h-28 sm:h-36 w-auto object-contain drop-shadow-2xl"
-                priority
-              />
-            </motion.div>
+            {/* Hero Centered Content — Pure, Uncluttered, Majestic */}
+            <div className="relative z-10 flex flex-col items-center max-w-5xl mx-auto">
 
-            {/* Tagline pill */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="flex items-center gap-2 bg-[#C5A028]/20 border border-[#C5A028]/40 text-[#C5A028] px-5 py-1.5 rounded-full text-sm font-semibold tracking-widest uppercase backdrop-blur-sm"
-            >
-              <Award size={14} />
-              Telangana&apos;s Most Trusted Since 2003
-            </motion.div>
-
-            {/* Main headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.45 }}
-              className="text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-tight tracking-tight"
-            >
-              Your Gateway to{' '}
-              <span className="text-[#C5A028]">Luxury Living</span>
-              <br className="hidden sm:block" />
-              {' '}in Telangana
-            </motion.h1>
-
-            {/* Sub-headline */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.6 }}
-              className="text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed"
-            >
-              22+ years of building dreams — premium plotted communities, farmland estates &amp; gated townships
-              across Hyderabad&apos;s most sought-after growth corridors.
-            </motion.p>
-
-            {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.75 }}
-              className="flex flex-wrap items-center justify-center gap-3 mt-2"
-            >
-              <a
-                href="#projects"
-                className="flex items-center gap-2 bg-[#C5A028] hover:bg-[#a8891e] text-white font-semibold px-7 py-3.5 rounded-full transition-all duration-300 shadow-lg shadow-[#C5A028]/30 text-sm sm:text-base"
+              {/* Main Headline — Elegant Serif in ALL CAPS */}
+              <motion.h1
+                initial={{ opacity: 0, y: 25 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-wider uppercase leading-tight drop-shadow-xl"
               >
-                Explore Projects <ArrowRight size={16} />
-              </a>
-              <a
-                href={`https://wa.me/${BRAND.whatsapp}?text=Hello%2C%20I%20am%20interested%20in%20your%20projects.%20Please%20share%20details.`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-7 py-3.5 rounded-full transition-all duration-300 backdrop-blur-sm text-sm sm:text-base"
-              >
-                <MessageCircle size={16} /> Schedule Site Visit
-              </a>
-            </motion.div>
+                BEST REAL ESTATE DEVELOPER<br />
+                <span className="text-white">IN TELANGANA</span>
+              </motion.h1>
 
-            {/* Enquiry form bar — Googee style */}
-            <motion.form
-              onSubmit={handleEnquiry}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9 }}
-              className="w-full max-w-3xl mt-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 flex flex-col sm:flex-row gap-3"
-            >
-              <select
-                value={enquiryProject}
-                onChange={e => setEnquiryProject(e.target.value)}
-                className="flex-1 bg-white/5 border border-white/20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#C5A028] appearance-none"
-              >
-                <option value="" className="text-black">Select a Project</option>
-                {PROJECTS.map(p => (
-                  <option key={p.slug} value={p.slug} className="text-black">{p.name}</option>
-                ))}
-              </select>
-              <input
-                type="tel"
-                value={enquiryPhone}
-                onChange={e => setEnquiryPhone(e.target.value)}
-                placeholder="Your Phone Number"
-                className="flex-1 bg-white/5 border border-white/20 text-white placeholder:text-white/40 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#C5A028]"
-                required
-              />
-              <button
-                type="submit"
-                className="bg-[#C5A028] hover:bg-[#a8891e] text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors whitespace-nowrap"
-              >
-                {enquirySent ? '✓ Sent!' : 'Request Callback'}
-              </button>
-            </motion.form>
-          </div>
-
-          {/* Scroll cue */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4, duration: 0.6 }}
-            className="relative z-10 pb-8 flex flex-col items-center"
-          >
-            <a href="#trust" className="flex flex-col items-center gap-1 text-white/40 hover:text-white/70 transition-colors">
-              <ChevronDown size={22} className="animate-bounce" />
-            </a>
-          </motion.div>
-        </section>
-
-        {/* ════════════════════════════════════════════════════════════
-            TRUST BADGES
-        ════════════════════════════════════════════════════════════ */}
-        <section id="trust" className="bg-[#0f1023] border-y border-white/10">
-          <div className="max-w-6xl mx-auto px-4 py-5 flex flex-wrap justify-center sm:justify-between gap-5">
-            {TRUST_BADGES.map((b, i) => (
+              {/* Centered White Logo Pill Badge (Exact Googee style centre badge) */}
               <motion.div
-                key={b.label}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="flex items-center gap-2.5 text-white/70"
+                initial={{ opacity: 0, scale: 0.88, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.25, ease: 'easeOut' }}
+                className="mt-8 sm:mt-10 bg-white rounded-full px-7 sm:px-10 py-3 sm:py-4 shadow-[0_15px_40px_rgba(0,0,0,0.4)] flex items-center justify-center border border-white/60"
               >
-                <b.icon size={18} className="text-[#C5A028] shrink-0" />
-                <span className="text-sm font-medium whitespace-nowrap">{b.label}</span>
+                <Image
+                  src="/images/logo-full.png"
+                  alt="Kings Pride Infra Projects Pvt. Ltd."
+                  width={220}
+                  height={80}
+                  className="h-10 sm:h-12 md:h-14 w-auto object-contain"
+                  priority
+                />
               </motion.div>
-            ))}
+
+            </div>
           </div>
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            PROJECTS SECTION
+            2. ABOUT US SECTION (White Canvas with Bold Red Stats)
         ════════════════════════════════════════════════════════════ */}
-        <section id="projects" className="bg-[#f8f7f4] py-20 px-4 sm:px-6">
+        <section id="about" className="bg-white py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto text-center">
+
+            {/* Red Small Label */}
+            <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-4">
+              ABOUT US
+            </div>
+
+            {/* Body Copy */}
+            <div className="space-y-4 text-neutral-600 text-sm sm:text-base leading-relaxed max-w-4xl mx-auto">
+              <p>
+                Founded in 2003, <strong className="text-neutral-900 font-bold">K.P. Infra Projects Pvt. Ltd.</strong> is
+                driven by dynamic leadership and a highly qualified team of civil engineers, master architects, and urban planners.
+                We specialize in plotted township development, non-agriculture farmland communities, infrastructure, and gated residential enclaves.
+                Over two unbroken decades, our name has become a benchmark for clear titles, statutory transparency, and remarkable capital growth.
+              </p>
+              <p>
+                Leveraging this strong foundation, we have systematically identified and developed prime land parcels along South Hyderabad&apos;s
+                fastest-growing highway corridors. As part of our roadmap, the group continues to deliver sprawling townships in Jadcherla, Shadnagar,
+                Chandenvalle, and Balanagar, creating sustainable living and high appreciation for our investors.
+              </p>
+            </div>
+
+            {/* 4 Stats Grid with Bold Red Numbers */}
+            <div ref={statsRef} className="mt-14 pt-10 border-t border-neutral-100 grid grid-cols-2 lg:grid-cols-4 gap-8">
+              {STAT_ITEMS.map(stat => (
+                <StatNumber
+                  key={stat.label}
+                  value={stat.value}
+                  label={stat.label}
+                  trigger={statsActive}
+                />
+              ))}
+            </div>
+
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════════════
+            3. VISIONARY LEADERSHIP (Two Columns on White Background)
+        ════════════════════════════════════════════════════════════ */}
+        <section className="bg-white py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-t border-neutral-100">
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+
+            {/* Left Column: Portrait Card with Rounded Corners */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-5 relative"
+            >
+              <div className="relative h-[380px] sm:h-[460px] rounded-3xl overflow-hidden shadow-2xl bg-neutral-100">
+                <Image
+                  src={FLAGSHIP.coverImage || FLAGSHIP.image}
+                  alt="K.P. Infra Leadership"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+
+                {/* Overlaid Badge at bottom */}
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="text-[11px] font-bold text-[#F0C040] uppercase tracking-wider">
+                    EXECUTIVE LEADERSHIP
+                  </div>
+                  <div className="text-white font-bold text-lg sm:text-xl">
+                    K.P. Infra Management
+                  </div>
+                  <div className="text-white/60 text-xs">
+                    Founder &amp; Board of Directors
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Right Column: Leadership Text */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-7 flex flex-col items-start"
+            >
+              {/* Red Label */}
+              <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-2">
+                LEADERSHIP EXCELLENCE
+              </div>
+
+              {/* Headline */}
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 mb-3 leading-tight">
+                Visionary Leadership
+              </h2>
+              <p className="text-sm text-neutral-500 font-medium mb-6">
+                Guiding Higher Standards in Real Estate Development
+              </p>
+
+              <div className="space-y-4 text-neutral-600 text-sm sm:text-base leading-relaxed mb-6">
+                <p>
+                  At Kings Pride Infra, our leadership has always believed that real estate is not merely about land transactions—it is about laying the foundation for generational wealth and family security.
+                </p>
+                <p>
+                  From our very first project in 2003 to our flagship Golden Palm City on NH-44, every layout reflects our commitment to 100% clear titles, rigorous statutory approvals, and timely execution.
+                </p>
+              </div>
+
+              {/* Quote / Highlight Box */}
+              <div className="w-full bg-neutral-50 border-l-4 border-[#B91C1C] p-4 sm:p-5 rounded-r-2xl mb-8">
+                <p className="text-xs sm:text-sm text-neutral-700 italic leading-relaxed">
+                  &ldquo;Recognized across Telangana for pioneering DTCP, HMDA, and TG RERA approved plotted communities with immediate spot registration and lifetime infrastructure integrity.&rdquo;
+                </p>
+              </div>
+
+              {/* Bottom Signature & Badge Row */}
+              <div className="flex flex-wrap items-center justify-between gap-4 w-full pt-4 border-t border-neutral-100">
+                <div>
+                  <div className="font-heading text-base font-bold text-neutral-900">
+                    K.P. Infra Projects Pvt. Ltd.
+                  </div>
+                  <div className="text-xs text-neutral-400">
+                    Founder &amp; Chairman • Established 2003
+                  </div>
+                </div>
+
+                <div className="bg-[#0B1528] text-white px-5 py-2.5 rounded-xl shadow-md flex items-center gap-2">
+                  <span className="text-[#F0C040] font-extrabold text-sm">22+</span>
+                  <span className="text-[11px] text-white/80 font-medium uppercase tracking-wider">
+                    Years of Professional Excellence
+                  </span>
+                </div>
+              </div>
+
+            </motion.div>
+
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════════════
+            4. RECOGNITIONS THAT REFLECT OUR STANDARDS (Dark Navy Inset Card)
+        ════════════════════════════════════════════════════════════ */}
+        <section id="approvals" className="bg-white py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
+
+            {/* Dark Navy Framed Inset Container */}
+            <div className="bg-[#09152B] rounded-3xl sm:rounded-[36px] p-8 sm:p-12 lg:p-16 text-center text-white shadow-2xl relative overflow-hidden">
+
+              {/* Ambient radial glow */}
+              <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative z-10 max-w-4xl mx-auto">
+
+                <div className="text-cyan-400 text-xs font-bold uppercase tracking-[0.25em] mb-3">
+                  OUR APPROVALS
+                </div>
+
+                <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+                  Recognitions That Reflect Our Standards
+                </h2>
+
+                <p className="text-white/70 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-10">
+                  All KP Infra projects are strictly compliant with statutory government bodies, securing your hard-earned investments with complete legal transparency.
+                </p>
+
+                {/* White Pill Badge Strip with Authority Logos */}
+                <div className="bg-white rounded-full py-3.5 px-6 sm:px-8 shadow-lg inline-flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-neutral-800 text-xs sm:text-sm font-bold mb-12">
+                  <span className="flex items-center gap-1.5">
+                    <Shield size={15} className="text-[#B91C1C]" /> HMDA Approved
+                  </span>
+                  <span className="text-neutral-300 hidden sm:inline">•</span>
+                  <span className="flex items-center gap-1.5">
+                    <Award size={15} className="text-blue-600" /> TG RERA Registered
+                  </span>
+                  <span className="text-neutral-300 hidden sm:inline">•</span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 size={15} className="text-emerald-600" /> DTCP Sanctioned
+                  </span>
+                  <span className="text-neutral-300 hidden sm:inline">•</span>
+                  <span className="flex items-center gap-1.5">
+                    <Building2 size={15} className="text-indigo-600" /> MUDA Approved
+                  </span>
+                  <span className="text-neutral-300 hidden sm:inline">•</span>
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles size={15} className="text-amber-500" /> 100% Clear Title
+                  </span>
+                </div>
+
+                {/* 3 Blue/Navy Inset Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-4">
+                      <Award size={20} />
+                    </div>
+                    <div className="text-white font-bold text-sm mb-1.5 uppercase tracking-wider">
+                      STATUTORY APPROVALS
+                    </div>
+                    <div className="text-white/60 text-xs leading-relaxed">
+                      100% Sanctioned layouts with official LP numbers from DTCP, HMDA, and TG RERA authority.
+                    </div>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-4">
+                      <Users size={20} />
+                    </div>
+                    <div className="text-white font-bold text-sm mb-1.5 uppercase tracking-wider">
+                      12,000+ FAMILIES
+                    </div>
+                    <div className="text-white/60 text-xs leading-relaxed">
+                      A multi-generational community of satisfied plot owners who trust KP Infra for their lifetime homes.
+                    </div>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">
+                      <Shield size={20} />
+                    </div>
+                    <div className="text-white font-bold text-sm mb-1.5 uppercase tracking-wider">
+                      SPOT REGISTRATION
+                    </div>
+                    <div className="text-white/60 text-xs leading-relaxed">
+                      Immediate physical demarcation with survey stones, clear title deeds, and spot registration facility.
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════════════
+            5. OUR PROJECTS (Explore Our Range of Expert Real Estate Services)
+        ════════════════════════════════════════════════════════════ */}
+        <section id="projects" className="bg-[#FAF9F6] py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
 
-            {/* Section header */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <div className="text-[#C5A028] text-sm font-semibold uppercase tracking-widest mb-2">Our Portfolio</div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#0f1023] mb-4">
-                Handcrafted Communities Across Telangana
+            {/* Section Header */}
+            <div className="text-center max-w-3xl mx-auto mb-10">
+              <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-3">
+                OUR PROJECTS
+              </div>
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4 leading-tight">
+                Explore Our Range of Expert Real Estate Services
               </h2>
-              <p className="text-neutral-500 max-w-2xl mx-auto text-base">
-                From highway townships to hill-view farmlands — every KP Infra project is a meticulously planned
-                environment built for life, leisure, and legacy.
+              <p className="text-neutral-500 text-sm sm:text-base leading-relaxed">
+                Handcrafted highway townships, gated plotted communities, and farmland retreats across Telangana.
               </p>
-            </motion.div>
+            </div>
 
-            {/* Filter tabs */}
-            <div className="flex justify-center gap-3 mb-10 flex-wrap">
+            {/* Category Filter Tabs */}
+            <div className="flex justify-center items-center gap-2 mb-10 flex-wrap">
               {['All', 'Ongoing', 'Completed'].map(tab => (
                 <button
                   key={tab}
-                  onClick={() => setFilter(tab)}
-                  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 ${
-                    filter === tab
-                      ? 'bg-[#0f1023] text-white shadow-md'
-                      : 'bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200'
+                  onClick={() => setProjectFilter(tab)}
+                  className={`px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 shadow-sm ${
+                    projectFilter === tab
+                      ? 'bg-neutral-900 text-white shadow-md'
+                      : 'bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 border border-neutral-200/60'
                   }`}
                 >
-                  {tab}
-                  <span className="ml-1.5 text-xs opacity-60">
-                    ({tab === 'All' ? PROJECTS.length : tab === 'Ongoing' ? ONGOING.length : COMPLETED.length})
-                  </span>
+                  {tab === 'All' ? `All Projects (${PROJECTS.length})` : tab === 'Ongoing' ? `Ongoing (${ONGOING.length})` : `Delivered (${COMPLETED.length})`}
                 </button>
               ))}
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects.map((p, i) => (
-                <ProjectCard key={p.id} project={p} index={i} />
+            {/* Project Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {filteredProjects.map((project, idx) => (
+                <ProjectCard key={project.id} project={project} index={idx} />
               ))}
             </div>
 
-            {/* All projects CTA */}
-            <div className="text-center mt-12">
+            {/* View All CTA */}
+            <div className="text-center mt-14">
               <Link
                 href="/projects"
-                className="inline-flex items-center gap-2 bg-[#0f1023] hover:bg-[#1a2048] text-white font-semibold px-8 py-4 rounded-full transition-colors duration-300 shadow-lg"
+                className="inline-flex items-center gap-2 bg-white hover:bg-neutral-900 text-neutral-900 hover:text-white border-2 border-neutral-900 text-xs sm:text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-full transition-all duration-300 shadow-sm"
               >
-                View All Projects <ArrowRight size={16} />
+                View Complete Portfolio <ArrowRight size={15} />
               </Link>
             </div>
+
           </div>
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            FLAGSHIP SPOTLIGHT
+            6. WHAT SETS US APART? (Dark Navy Full-Width Section)
         ════════════════════════════════════════════════════════════ */}
-        <section id="flagship" className="bg-[#0f1023] py-20 px-4 sm:px-6">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+        <section id="why-us" className="bg-[#070E1E] py-20 sm:py-28 px-4 sm:px-6 lg:px-8 text-white relative">
+          <div className="max-w-6xl mx-auto">
 
-            {/* Text side */}
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="order-2 lg:order-1"
-            >
-              <div className="text-[#C5A028] text-sm font-semibold uppercase tracking-widest mb-3">
-                Flagship Development
+            <div className="text-center max-w-3xl mx-auto mb-14">
+              <div className="text-cyan-400 text-xs font-bold uppercase tracking-[0.25em] mb-3">
+                A HERITAGE OF TRUST BUILT ON OVER 22 YEARS
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-snug">
-                {FLAGSHIP.name}
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-wider uppercase">
+                WHAT <span className="text-cyan-400">SETS US APART?</span>
               </h2>
-              <p className="text-white/60 mb-6 leading-relaxed">{FLAGSHIP.shortDescription}</p>
+            </div>
 
-              {/* Key stats */}
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                {[
-                  { label: 'Total Area', value: FLAGSHIP.totalAreaShort },
-                  { label: 'Approval', value: 'DTCP • MUDA • RERA' },
-                  { label: 'Plot Sizes', value: FLAGSHIP.plotRange },
-                  { label: 'Location', value: 'NH-44, Jadcherla' },
-                ].map(item => (
-                  <div key={item.label} className="bg-white/5 border border-white/10 rounded-xl p-4">
-                    <div className="text-[#C5A028] text-xs uppercase tracking-widest mb-1">{item.label}</div>
-                    <div className="text-white font-semibold text-sm">{item.value}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Highlights */}
-              <ul className="space-y-2 mb-8">
-                {FLAGSHIP.highlights.slice(0, 5).map(h => (
-                  <li key={h} className="flex items-start gap-2 text-white/70 text-sm">
-                    <CheckCircle2 size={15} className="text-[#C5A028] shrink-0 mt-0.5" />
-                    {h}
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href={`/projects/${FLAGSHIP.slug}`}
-                className="inline-flex items-center gap-2 bg-[#C5A028] hover:bg-[#a8891e] text-white font-semibold px-7 py-3.5 rounded-full transition-colors shadow-lg shadow-[#C5A028]/20"
-              >
-                Explore {FLAGSHIP.name} <ArrowRight size={16} />
-              </Link>
-            </motion.div>
-
-            {/* Image side */}
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="order-1 lg:order-2 relative"
-            >
-              <div className="relative h-72 sm:h-96 lg:h-[520px] rounded-2xl overflow-hidden">
-                <Image
-                  src={FLAGSHIP.coverImage || FLAGSHIP.image}
-                  alt={FLAGSHIP.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0f1023]/60 via-transparent to-transparent" />
-                {/* Badge */}
-                <div className="absolute bottom-6 left-6 right-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4">
-                  <div className="text-white font-semibold text-sm">{FLAGSHIP.rera}</div>
-                  <div className="text-white/50 text-xs mt-0.5">TG RERA Registration Number</div>
-                </div>
-              </div>
-              {/* Floating badge */}
-              <div className="absolute -top-4 -right-4 bg-[#C5A028] text-white rounded-2xl px-4 py-3 shadow-xl">
-                <div className="text-2xl font-bold leading-none">★</div>
-                <div className="text-xs font-semibold mt-0.5">Flagship</div>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════════════════════════════
-            WHY KP INFRA
-        ════════════════════════════════════════════════════════════ */}
-        <section id="why-us" className="bg-white py-20 px-4 sm:px-6">
-          <div className="max-w-7xl mx-auto">
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-14"
-            >
-              <div className="text-[#C5A028] text-sm font-semibold uppercase tracking-widest mb-2">Why Choose Us</div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#0f1023] mb-4">
-                The KP Infra Difference
-              </h2>
-              <p className="text-neutral-500 max-w-2xl mx-auto">
-                Every decision we make is guided by one principle — to give each family the land, the life, and the legacy they deserve.
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {WHY_CARDS.map((card, i) => (
+            {/* 6 Cards Grid (2 rows of 3) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {SETS_US_APART.map((item, idx) => (
                 <motion.div
-                  key={card.title}
-                  initial={{ opacity: 0, y: 30 }}
+                  key={item.title}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="group bg-[#f8f7f4] hover:bg-[#0f1023] rounded-2xl p-7 transition-all duration-400 cursor-default"
+                  transition={{ duration: 0.45, delay: idx * 0.07 }}
+                  className="bg-[#0B172E] border border-white/10 rounded-2xl p-6 sm:p-7 hover:border-cyan-400/40 hover:bg-[#0E1C38] transition-all duration-300 flex flex-col"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-[#C5A028]/15 group-hover:bg-[#C5A028]/20 flex items-center justify-center mb-5 transition-colors">
-                    <card.icon size={22} className="text-[#C5A028]" />
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center mb-5"
+                    style={{ backgroundColor: `${item.accent}20` }}
+                  >
+                    <div
+                      className="w-2.5 h-2.5 rounded-full"
+                      style={{ backgroundColor: item.accent }}
+                    />
                   </div>
-                  <h3 className="text-base font-bold text-[#0f1023] group-hover:text-white mb-2 transition-colors">{card.title}</h3>
-                  <p className="text-sm text-neutral-500 group-hover:text-white/60 leading-relaxed transition-colors">{card.desc}</p>
+
+                  <h3 className="font-heading text-lg font-bold text-white mb-2.5">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-white/60 text-xs sm:text-sm leading-relaxed">
+                    {item.desc}
+                  </p>
                 </motion.div>
               ))}
             </div>
+
           </div>
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            LEGACY / STATS
+            7. TESTIMONIALS (White Canvas with Clean Cards)
         ════════════════════════════════════════════════════════════ */}
-        <section id="legacy" ref={legacyRef} className="bg-[#0f1023] py-20 px-4 sm:px-6">
+        <section id="testimonials" className="bg-white py-20 px-4 sm:px-6 lg:px-8 border-b border-neutral-100">
           <div className="max-w-6xl mx-auto">
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-14"
-            >
-              <div className="text-[#C5A028] text-sm font-semibold uppercase tracking-widest mb-2">Our Track Record</div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                Numbers That Speak for Themselves
+            <div className="text-center max-w-2xl mx-auto mb-14">
+              <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-3">
+                TESTIMONIALS
+              </div>
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 leading-tight">
+                What our happy clients say
               </h2>
-            </motion.div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-              <StatCard value={STATS.yearsOfLegacy} suffix="+" label="Years of Legacy" started={legacyVisible} />
-              <StatCard value={STATS.happyFamilies} suffix="+" label="Happy Families" started={legacyVisible} />
-              <StatCard value={STATS.totalProjects} suffix="" label="Total Projects" started={legacyVisible} />
-              <StatCard value={STATS.acresDeveloped} suffix="+" label="Acres Developed" started={legacyVisible} />
             </div>
-          </div>
-        </section>
 
-        {/* ════════════════════════════════════════════════════════════
-            TESTIMONIALS
-        ════════════════════════════════════════════════════════════ */}
-        <section id="testimonials" className="bg-[#f8f7f4] py-20 px-4 sm:px-6">
-          <div className="max-w-6xl mx-auto">
+            {/* 4 Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {(TESTIMONIALS || []).slice(0, 4).map((t, idx) => (
+                <motion.div
+                  key={t.name || idx}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: idx * 0.08 }}
+                  className="bg-white border border-neutral-200/70 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                >
+                  {/* 5 Stars */}
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={14} fill="#F59E0B" className="text-[#F59E0B]" />
+                    ))}
+                  </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-14"
-            >
-              <div className="text-[#C5A028] text-sm font-semibold uppercase tracking-widest mb-2">Client Stories</div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#0f1023]">
-                Trusted by 12,000+ Families
-              </h2>
-            </motion.div>
+                  <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed mb-6 line-clamp-5 flex-1">
+                    &ldquo;{t.quote || t.text}&rdquo;
+                  </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {(TESTIMONIALS || []).slice(0, 3).map((t, i) => (
-                <TestimonialCard key={i} t={t} index={i} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════════════════════════════
-            CONTACT / CONSULTATION
-        ════════════════════════════════════════════════════════════ */}
-        <section id="contact" className="bg-[#0f1023] py-20 px-4 sm:px-6">
-          <div className="max-w-5xl mx-auto">
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-14"
-            >
-              <div className="text-[#C5A028] text-sm font-semibold uppercase tracking-widest mb-2">Get In Touch</div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                Let&apos;s Find Your Perfect Plot
-              </h2>
-              <p className="text-white/60 max-w-xl mx-auto">
-                Our property consultants are available 7 days a week to answer your questions and arrange site visits.
-              </p>
-            </motion.div>
-
-            <div className="grid lg:grid-cols-5 gap-10">
-
-              {/* Contact info */}
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="lg:col-span-2 flex flex-col gap-6"
-              >
-                {[
-                  { icon: Phone, label: 'Phone', val: BRAND.mobile1, href: `tel:${BRAND.mobile1}` },
-                  { icon: MessageCircle, label: 'WhatsApp', val: '+91 79977 00031', href: `https://wa.me/${BRAND.whatsapp}` },
-                  { icon: Mail, label: 'Email', val: BRAND.email, href: `mailto:${BRAND.email}` },
-                  { icon: MapPin, label: 'Office', val: `${BRAND.office.line1}, ${BRAND.office.area}, Hyderabad`, href: '#' },
-                ].map(item => (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    target={item.href.startsWith('http') ? '_blank' : undefined}
-                    rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="flex items-start gap-4 group"
-                  >
-                    <div className="w-11 h-11 rounded-xl bg-[#C5A028]/15 flex items-center justify-center shrink-0 group-hover:bg-[#C5A028]/30 transition-colors">
-                      <item.icon size={18} className="text-[#C5A028]" />
+                  <div className="flex items-center gap-3 pt-4 border-t border-neutral-100">
+                    <div className="w-9 h-9 rounded-full bg-[#B91C1C]/10 text-[#B91C1C] font-bold text-xs flex items-center justify-center shrink-0">
+                      {(t.name || 'C').charAt(0)}
                     </div>
                     <div>
-                      <div className="text-xs text-white/40 uppercase tracking-widest mb-0.5">{item.label}</div>
-                      <div className="text-white text-sm group-hover:text-[#C5A028] transition-colors">{item.val}</div>
+                      <div className="text-xs font-bold text-neutral-900 line-clamp-1">
+                        {t.name}
+                      </div>
+                      <div className="text-[11px] text-neutral-400 line-clamp-1">
+                        {t.role || t.location}
+                      </div>
                     </div>
-                  </a>
-                ))}
-
-                {/* Social CTA */}
-                <a
-                  href={`https://wa.me/${BRAND.whatsapp}?text=Hello%2C%20I%20am%20interested%20in%20booking%20a%20site%20visit.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 flex items-center justify-center gap-2 bg-[#C5A028] hover:bg-[#a8891e] text-white font-semibold py-4 rounded-xl transition-colors text-sm"
-                >
-                  <MessageCircle size={16} /> Book Site Visit on WhatsApp
-                </a>
-              </motion.div>
-
-              {/* Form */}
-              <motion.form
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="lg:col-span-3 bg-white/5 border border-white/10 rounded-2xl p-7 flex flex-col gap-5"
-                onSubmit={e => { e.preventDefault(); alert('Thank you! Our team will contact you shortly.') }}
-              >
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-white/60 text-xs uppercase tracking-widest">Full Name</label>
-                    <input
-                      type="text"
-                      placeholder="Your full name"
-                      className="bg-white/5 border border-white/15 text-white placeholder:text-white/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#C5A028] transition-colors"
-                      required
-                    />
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-white/60 text-xs uppercase tracking-widest">Phone Number</label>
-                    <input
-                      type="tel"
-                      placeholder="+91 XXXXX XXXXX"
-                      className="bg-white/5 border border-white/15 text-white placeholder:text-white/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#C5A028] transition-colors"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-white/60 text-xs uppercase tracking-widest">Project of Interest</label>
-                  <select className="bg-white/5 border border-white/15 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#C5A028] transition-colors appearance-none">
-                    <option value="" className="text-black">Select a project…</option>
-                    {PROJECTS.map(p => <option key={p.slug} value={p.slug} className="text-black">{p.name}</option>)}
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-white/60 text-xs uppercase tracking-widest">Message (optional)</label>
-                  <textarea
-                    rows={3}
-                    placeholder="Tell us your requirements…"
-                    className="bg-white/5 border border-white/15 text-white placeholder:text-white/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#C5A028] transition-colors resize-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-[#C5A028] hover:bg-[#a8891e] text-white font-bold py-4 rounded-xl text-sm transition-colors shadow-lg shadow-[#C5A028]/20"
-                >
-                  Send Enquiry →
-                </button>
-              </motion.form>
+                </motion.div>
+              ))}
             </div>
+
+            {/* Pill button at bottom */}
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setModalOpen(true)}
+                className="inline-flex items-center gap-1.5 border border-neutral-300 hover:border-neutral-900 text-neutral-700 hover:text-neutral-900 text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-full transition-colors"
+              >
+                VIEW CLIENT STORIES <ChevronRight size={14} />
+              </button>
+            </div>
+
           </div>
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            FOOTER
+            8. CONTACT US SECTION (Clean Two-Column Layout)
         ════════════════════════════════════════════════════════════ */}
-        <footer className="bg-[#080c18] text-white/60 py-14 px-4 sm:px-6 border-t border-white/5">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <section id="contact" className="bg-[#FAF9F6] py-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-12 items-start">
 
-            {/* Brand */}
-            <div className="sm:col-span-2 lg:col-span-1">
+            {/* Left Column: Office & Contact Info */}
+            <div className="lg:col-span-5">
+              <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-3">
+                GET IN TOUCH
+              </div>
+              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-neutral-900 mb-4 leading-tight">
+                Connect With Our Property Advisors
+              </h2>
+              <p className="text-neutral-500 text-sm leading-relaxed mb-8">
+                Whether you are looking to purchase an investment plot on NH-44 or a weekend retreat, our team is ready to guide you.
+              </p>
+
+              <div className="space-y-5">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200/80 flex items-center justify-center shrink-0 text-[#B91C1C] shadow-sm">
+                    <MapPin size={18} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Corporate Office</div>
+                    <div className="text-sm font-semibold text-neutral-800 leading-snug">
+                      {BRAND.office.line1}, {BRAND.office.line2}, {BRAND.office.area}, Hyderabad {BRAND.office.pincode}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200/80 flex items-center justify-center shrink-0 text-[#B91C1C] shadow-sm">
+                    <Phone size={18} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Direct Lines</div>
+                    <div className="text-sm font-semibold text-neutral-800">
+                      <a href={`tel:${BRAND.mobile1}`} className="hover:text-[#B91C1C] transition-colors">{BRAND.mobile1}</a> / <a href={`tel:${BRAND.phone}`} className="hover:text-[#B91C1C] transition-colors">{BRAND.phone}</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200/80 flex items-center justify-center shrink-0 text-[#B91C1C] shadow-sm">
+                    <Mail size={18} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Official Email</div>
+                    <div className="text-sm font-semibold text-neutral-800">
+                      <a href={`mailto:${BRAND.email}`} className="hover:text-[#B91C1C] transition-colors">{BRAND.email}</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200/80 flex items-center justify-center shrink-0 text-emerald-600 shadow-sm">
+                    <MessageCircle size={18} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">WhatsApp Advisory</div>
+                    <div className="text-sm font-semibold text-neutral-800">
+                      <a
+                        href={`https://wa.me/${BRAND.whatsapp}?text=Hello%2C%20I%20am%20interested%20in%20KP%20Infra%20projects.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-emerald-600 transition-colors inline-flex items-center gap-1 font-bold"
+                      >
+                        Chat with us on WhatsApp <ExternalLink size={12} />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Contact Card */}
+            <div className="lg:col-span-7 bg-white border border-neutral-200/80 rounded-3xl p-8 sm:p-10 shadow-sm">
+              <h3 className="font-heading text-xl font-bold text-neutral-900 mb-2">
+                Schedule a Private Site Inspection
+              </h3>
+              <p className="text-xs text-neutral-500 mb-6">
+                Complimentary luxury AC cab pickup and site walkthrough arranged for prospective buyers.
+              </p>
+
+              <form onSubmit={handleEnquirySubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1.5">
+                      Your Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={enquiryName}
+                      onChange={e => setEnquiryName(e.target.value)}
+                      placeholder="e.g. Ramesh Chandra"
+                      className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:bg-white focus:outline-none focus:border-[#B91C1C] transition-colors"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1.5">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={enquiryPhone}
+                      onChange={e => setEnquiryPhone(e.target.value)}
+                      placeholder="+91 98765 43210"
+                      className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:bg-white focus:outline-none focus:border-[#B91C1C] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1.5">
+                    Select Project of Interest
+                  </label>
+                  <select
+                    value={enquiryProject}
+                    onChange={e => setEnquiryProject(e.target.value)}
+                    className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:bg-white focus:outline-none focus:border-[#B91C1C] transition-colors appearance-none"
+                  >
+                    {PROJECTS.map(p => (
+                      <option key={p.id} value={p.name}>
+                        {p.name} — {p.category} ({p.status})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1.5">
+                    Your Requirements / Message (Optional)
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Preferred plot size, budget, or preferred site visit date..."
+                    className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:bg-white focus:outline-none focus:border-[#B91C1C] transition-colors resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-[#B91C1C] hover:bg-[#991B1B] text-white font-bold uppercase tracking-wider py-3.5 rounded-xl transition-colors duration-200 shadow-md shadow-[#B91C1C]/20 text-xs sm:text-sm mt-2"
+                >
+                  {enquirySent ? '✓ Request Submitted Successfully' : 'Request Site Visit / Callback'}
+                </button>
+              </form>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ════════════════════════════════════════════════════════════
+            9. FOOTER (Dark Navy Header & Links)
+        ════════════════════════════════════════════════════════════ */}
+        <footer className="bg-[#050C1B] text-white/60 py-16 px-4 sm:px-6 lg:px-8 border-t border-white/5">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 pb-12 border-b border-white/10">
+
+            {/* Column 1: Brand Info */}
+            <div>
               <Image
                 src="/images/logo-full.png"
                 alt="Kings Pride Infra"
-                width={160}
-                height={72}
-                className="h-20 w-auto object-contain mb-4"
+                width={170}
+                height={70}
+                className="h-16 w-auto object-contain mb-5"
               />
-              <p className="text-sm leading-relaxed text-white/50 mb-4">
-                Building trust and delivering dreams across Telangana since 2003.
+              <p className="text-xs leading-relaxed text-white/50 mb-5">
+                K.P. Infra Projects Pvt. Ltd. — Telangana&apos;s most trusted plotted township and farmland developer. Dedicated to building generational wealth through 100% legal clarity.
               </p>
-              <a
-                href={`https://wa.me/${BRAND.whatsapp}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#C5A028]/20 hover:bg-[#C5A028]/30 border border-[#C5A028]/30 text-[#C5A028] text-sm font-semibold px-4 py-2 rounded-full transition-colors"
-              >
-                <MessageCircle size={14} /> WhatsApp Us
-              </a>
+              <div className="text-xs text-white/80 font-bold">
+                CIN: U45200TG2003PTC040000
+              </div>
             </div>
 
-            {/* Quick Links */}
+            {/* Column 2: Quick Links */}
             <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-widest">Navigate</h4>
-              <ul className="space-y-2.5">
-                {NAV_LINKS.map(l => (
-                  <li key={l.href}>
-                    <a href={l.href} className="text-sm hover:text-[#C5A028] transition-colors">{l.label}</a>
+              <h4 className="font-heading text-sm font-bold text-white uppercase tracking-wider mb-4">
+                QUICK LINKS
+              </h4>
+              <ul className="space-y-2 text-xs">
+                {NAV_LINKS.map(link => (
+                  <li key={link.label}>
+                    <a href={link.href} className="hover:text-white transition-colors">
+                      {link.label}
+                    </a>
                   </li>
                 ))}
-                <li><Link href="/projects" className="text-sm hover:text-[#C5A028] transition-colors">All Projects</Link></li>
+                <li>
+                  <Link href="/projects" className="hover:text-white transition-colors">
+                    Complete Portfolio (11 Projects)
+                  </Link>
+                </li>
               </ul>
             </div>
 
-            {/* Projects */}
+            {/* Column 3: Corporate Head Office */}
             <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-widest">Our Projects</h4>
-              <ul className="space-y-2.5">
-                {PROJECTS.slice(0, 6).map(p => (
-                  <li key={p.slug}>
-                    <Link href={`/projects/${p.slug}`} className="text-sm hover:text-[#C5A028] transition-colors">
-                      {p.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <h4 className="font-heading text-sm font-bold text-white uppercase tracking-wider mb-4">
+                CORPORATE HEAD OFFICE
+              </h4>
+              <p className="text-xs leading-relaxed text-white/60 mb-4">
+                Saleem Manzil, 1st Floor, Reti Bowli,<br />
+                P.V.N.R. Expressway, Opp. Pillar No.56,<br />
+                Mehdipatnam, Hyderabad – 500028,<br />
+                Telangana, India.
+              </p>
+              <div className="text-xs text-white/80 space-y-1">
+                <div>Phone: 040-23522339</div>
+                <div>Mobile: +91 79977 00031</div>
+              </div>
             </div>
 
-            {/* Contact */}
+            {/* Column 4: Branch Offices & Contact */}
             <div>
-              <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-widest">Contact</h4>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-2 text-sm">
-                  <MapPin size={14} className="text-[#C5A028] shrink-0 mt-0.5" />
-                  {BRAND.office.line1}, {BRAND.office.line2}, {BRAND.office.area}, Hyderabad {BRAND.office.pincode}
-                </li>
-                <li>
-                  <a href={`tel:${BRAND.mobile1}`} className="flex items-center gap-2 text-sm hover:text-[#C5A028] transition-colors">
-                    <Phone size={13} className="text-[#C5A028] shrink-0" /> {BRAND.mobile1}
-                  </a>
-                </li>
-                <li>
-                  <a href={`mailto:${BRAND.email}`} className="flex items-center gap-2 text-sm hover:text-[#C5A028] transition-colors">
-                    <Mail size={13} className="text-[#C5A028] shrink-0" /> {BRAND.email}
-                  </a>
-                </li>
-              </ul>
+              <h4 className="font-heading text-sm font-bold text-white uppercase tracking-wider mb-4">
+                BRANCH / SITE OFFICES
+              </h4>
+              <div className="text-xs text-white/60 space-y-3 mb-4">
+                <div>
+                  <strong className="text-white/80">Jadcherla Site Office:</strong><br />
+                  NH-44 Macharam, Opp. IT Park, Jadcherla.
+                </div>
+                <div>
+                  <strong className="text-white/80">Shadnagar Office:</strong><br />
+                  Near Bangalore Highway (NH-44), Rangareddyguda.
+                </div>
+              </div>
+              <div className="pt-2">
+                <a
+                  href={`mailto:${BRAND.email}`}
+                  className="text-xs text-cyan-400 hover:underline"
+                >
+                  {BRAND.email}
+                </a>
+              </div>
             </div>
+
           </div>
 
-          {/* Bottom bar */}
-          <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-white/30">
-            <span>© {new Date().getFullYear()} Kings Pride Infra Projects Pvt. Ltd. All rights reserved.</span>
-            <span>Designed with care for 12,000+ families across Telangana.</span>
+          {/* Bottom Legal Notice */}
+          <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-white/30">
+            <div>
+              © {new Date().getFullYear()} K.P. Infra Projects Pvt. Ltd. All Rights Reserved.
+            </div>
+            <div>
+              Designed with integrity for 12,000+ families across Telangana.
+            </div>
           </div>
         </footer>
+
       </main>
-    </>
+
+      {/* ════════════════════════════════════════════════════════════
+          MODAL: SCHEDULE SITE VISIT / DOWNLOAD BROCHURE
+      ════════════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {modalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setModalOpen(false)}
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="relative z-10 w-full max-w-lg bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-neutral-100"
+            >
+              <button
+                onClick={() => setModalOpen(false)}
+                className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-800 transition-colors"
+                aria-label="Close dialog"
+              >
+                <X size={22} />
+              </button>
+
+              <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-wider mb-1">
+                K.P. INFRA PROJECTS
+              </div>
+              <h3 className="font-heading text-2xl font-bold text-neutral-900 mb-2">
+                Schedule a Site Visit
+              </h3>
+              <p className="text-xs text-neutral-500 mb-6 leading-relaxed">
+                Experience our gated townships in person. Complimentary AC pickup and dedicated executive guidance provided.
+              </p>
+
+              <form onSubmit={handleEnquirySubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={enquiryName}
+                    onChange={e => setEnquiryName(e.target.value)}
+                    placeholder="Enter full name"
+                    className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-[#B91C1C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={enquiryPhone}
+                    onChange={e => setEnquiryPhone(e.target.value)}
+                    placeholder="+91 98765 43210"
+                    className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-[#B91C1C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                    Project
+                  </label>
+                  <select
+                    value={enquiryProject}
+                    onChange={e => setEnquiryProject(e.target.value)}
+                    className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-[#B91C1C]"
+                  >
+                    {PROJECTS.map(p => (
+                      <option key={p.id} value={p.name}>
+                        {p.name} ({p.status})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-[#B91C1C] hover:bg-[#991B1B] text-white font-bold uppercase tracking-wider py-3 rounded-xl transition-colors text-xs mt-3 shadow-md shadow-[#B91C1C]/20"
+                >
+                  {enquirySent ? '✓ Site Visit Scheduled!' : 'Confirm Site Visit Request'}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+    </div>
   )
 }
