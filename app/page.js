@@ -9,7 +9,8 @@ import {
   CheckCircle2, ChevronRight, Mail, ArrowRight,
   Award, Shield, Users, Building2,
   ExternalLink, Sparkles, Trophy, Medal, Scale, Landmark,
-  BadgeCheck, Check
+  BadgeCheck, Check, Trees, Compass, Ruler, Car,
+  ShieldCheck, HeartHandshake
 } from 'lucide-react'
 import { BRAND, STATS, PROJECTS, TESTIMONIALS } from '@/lib/projects'
 
@@ -104,71 +105,132 @@ function StatNumber({ value, label, trigger }) {
 
 // ─── Project Card Component ───────────────────────────────────────────────────
 function ProjectCard({ project, index }) {
+  const isFarmland = project.category?.toLowerCase().includes('farm')
+  const isTownship = project.isFlagship || project.category?.toLowerCase().includes('layout')
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.45, delay: index * 0.06 }}
-      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-neutral-100 flex flex-col group"
+      transition={{ duration: 0.45, delay: index * 0.05 }}
+      className="bg-white rounded-3xl overflow-hidden border border-neutral-200/90 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_45px_-12px_rgba(15,23,42,0.18)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col group relative"
     >
-      <div className="relative h-52 sm:h-56 overflow-hidden bg-neutral-100">
+      {/* Image Container with Luxury Badges */}
+      <div className="relative h-60 sm:h-64 overflow-hidden bg-neutral-100">
         <Image
           src={project.coverImage || project.image}
           alt={project.name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+          className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        <div className={`absolute top-3.5 left-3.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide shadow-sm ${
-          project.status === 'Ongoing'
-            ? 'bg-emerald-600 text-white'
-            : 'bg-[#B91C1C] text-white'
-        }`}>
-          {project.status}
+
+        {/* Top Dark Gradient for badge legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
+
+        {/* Category Pill Top Left */}
+        <div className="absolute top-3.5 left-3.5 bg-black/65 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-white/20 shadow-md">
+          <span>{isFarmland ? '🌴' : isTownship ? '💎' : '🏡'}</span>
+          <span>{project.category}</span>
         </div>
 
+        {/* Status Badge Top Right */}
+        <div className={`absolute top-3.5 right-3.5 px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide shadow-md flex items-center gap-1.5 ${
+          project.status === 'Ongoing'
+            ? 'bg-emerald-600/95 text-white backdrop-blur-sm border border-emerald-400/30'
+            : 'bg-neutral-900/90 text-amber-300 backdrop-blur-sm border border-amber-400/30'
+        }`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${project.status === 'Ongoing' ? 'bg-emerald-300 animate-pulse' : 'bg-amber-300'}`} />
+          <span>{project.status === 'Ongoing' ? 'Under Active Development' : 'Completed & Delivered'}</span>
+        </div>
+
+        {/* Flagship Banner if Flagship */}
         {project.isFlagship && (
-          <div className="absolute top-3.5 right-3.5 bg-neutral-900/90 backdrop-blur-sm text-[#F0C040] text-[11px] font-bold px-3 py-1 rounded-full shadow-sm">
-            ★ Flagship
+          <div className="absolute top-12 left-3.5 bg-gradient-to-r from-amber-500 to-amber-600 text-neutral-950 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+            <span>⭐</span>
+            <span>Flagship Township</span>
           </div>
         )}
+
+        {/* Bottom Location Strip on Image */}
+        <div className="absolute bottom-3 left-3.5 right-3.5 text-white flex items-center justify-between text-xs font-semibold">
+          <span className="flex items-center gap-1 drop-shadow-md truncate max-w-[70%]">
+            <span>📍</span>
+            <span className="truncate">{project.location?.split(',').slice(0, 2).join(',')}</span>
+          </span>
+          <span className="text-[11px] text-amber-300 font-bold drop-shadow-md shrink-0">
+            {project.totalAreaShort || 'Premium Layout'}
+          </span>
+        </div>
       </div>
 
+      {/* Card Content Body */}
       <div className="p-5 sm:p-6 flex flex-col flex-1">
-        <div className="text-[11px] font-bold text-[#B91C1C] uppercase tracking-widest mb-1.5">
-          {project.category}
-        </div>
-        <h3 className="font-heading text-lg sm:text-xl font-bold text-neutral-900 mb-2 group-hover:text-[#B91C1C] transition-colors line-clamp-1">
-          {project.name}
+
+        {/* Project Title */}
+        <h3 className="font-heading text-xl font-bold text-neutral-900 mb-2 group-hover:text-emerald-700 transition-colors line-clamp-1 flex items-center justify-between">
+          <span>{project.name}</span>
+          <ArrowRight size={16} className="text-neutral-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all shrink-0 ml-2" />
         </h3>
-        <p className="text-xs text-neutral-500 flex items-center gap-1.5 mb-3 line-clamp-1">
-          <MapPin size={13} className="text-[#B91C1C] shrink-0" />
-          {project.location?.split(',').slice(0, 2).join(',')}
+
+        {/* Short Description */}
+        <p className="text-xs text-neutral-500 line-clamp-2 leading-relaxed mb-4">
+          {project.shortDescription || project.tagline}
         </p>
 
-        {project.approval && (
-          <div className="text-[11px] font-medium text-neutral-600 bg-neutral-50 border border-neutral-200/70 rounded-lg px-2.5 py-1 mb-4 line-clamp-1">
-            {project.approval}
+        {/* Key Specs 3-Chip Grid */}
+        <div className="grid grid-cols-3 gap-2 py-3 px-3 bg-neutral-50 rounded-2xl border border-neutral-150/70 mb-4 text-center">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Plot Sizes</span>
+            <span className="text-xs font-bold text-neutral-800 truncate mt-0.5">
+              📐 {project.plotRange?.split('–')[0]?.trim() || 'Custom'}
+            </span>
           </div>
-        )}
+          <div className="flex flex-col border-x border-neutral-200/80 px-1">
+            <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Sanction</span>
+            <span className="text-xs font-bold text-neutral-800 truncate mt-0.5">
+              📜 {project.approval?.split('•')[0]?.trim() || 'Approved'}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Demarcation</span>
+            <span className="text-xs font-bold text-neutral-800 truncate mt-0.5">
+              ⚖️ Spot Ready
+            </span>
+          </div>
+        </div>
 
-        <div className="mt-auto pt-4 border-t border-neutral-100 flex items-center justify-between">
-          <div>
-            <div className="text-[11px] text-neutral-400 font-medium">
-              {project.priceLabel || 'Plot Sizes'}
+        {/* Amenities Highlights (2 key points) */}
+        <div className="space-y-1.5 mb-5 text-xs text-neutral-600">
+          {(project.highlights || []).slice(0, 2).map((h, i) => (
+            <div key={i} className="flex items-center gap-2 truncate">
+              <span className="text-emerald-600 font-bold shrink-0">✓</span>
+              <span className="truncate">{h}</span>
             </div>
-            <div className="text-sm font-bold text-neutral-900">
-              {project.plotRange || project.price}
+          ))}
+        </div>
+
+        {/* Card Footer: Price & Explore CTA */}
+        <div className="mt-auto pt-4 border-t border-neutral-100 flex items-center justify-between gap-3">
+          <div>
+            <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
+              {project.priceLabel || 'Investment Value'}
+            </div>
+            <div className="text-base font-extrabold text-neutral-900">
+              {project.price}
             </div>
           </div>
+
           <Link
             href={`/projects/${project.slug}`}
-            className="inline-flex items-center gap-1 bg-neutral-900 hover:bg-[#B91C1C] text-white text-xs font-semibold px-4 py-2 rounded-xl transition-colors duration-200 shadow-sm"
+            className="inline-flex items-center gap-1.5 bg-neutral-900 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md shrink-0"
           >
-            Explore <ChevronRight size={13} />
+            <span>Explore Layout</span>
+            <span>↗</span>
           </Link>
         </div>
+
       </div>
     </motion.div>
   )
@@ -553,293 +615,119 @@ export default function HomePage() {
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            4. RECOGNITIONS THAT REFLECT OUR STANDARDS (Grand Prestigious Inset Canvas)
+            4. RECOGNITIONS & STATUTORY APPROVALS (Compact, Feel-Good Luxury Canvas)
+            - Mobile-optimized: Compact, NO long scroll!
+            - Feel-good color palette: Deep Obsidian Navy, Champagne Gold & Emerald
+            - Real estate domain badges & emojis
         ════════════════════════════════════════════════════════════ */}
-        <section id="approvals" className="bg-white py-14 sm:py-20 px-3 sm:px-6 lg:px-8">
+        <section id="approvals" className="bg-[#FAF8F5] py-12 sm:py-16 px-3 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
 
-            {/* Inset Container with Deep Royal Midnight Gradient & Gold Trim */}
-            <div className="bg-gradient-to-b from-[#061226] via-[#091D3E] to-[#040C1A] rounded-3xl sm:rounded-[40px] p-6 sm:p-10 lg:p-16 text-center text-white shadow-[0_25px_80px_-15px_rgba(2,8,20,0.85)] border border-amber-400/25 relative overflow-hidden">
+            <div className="bg-[#0A1424] rounded-3xl sm:rounded-[36px] p-6 sm:p-10 lg:p-12 text-center text-white shadow-xl border border-amber-400/20 relative overflow-hidden">
 
-              {/* Luminous Ambient Background Glows */}
-              <div className="absolute -top-36 -left-20 w-[420px] h-[420px] bg-amber-500/15 rounded-full blur-[120px] pointer-events-none" />
-              <div className="absolute -bottom-36 -right-20 w-[420px] h-[420px] bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-radial-gradient from-blue-600/10 via-transparent to-transparent pointer-events-none" />
+              {/* Subtle ambient light */}
+              <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 max-w-6xl mx-auto">
+              <div className="relative z-10 max-w-5xl mx-auto">
 
                 {/* Eyebrow Badge */}
-                <motion.div
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 border border-amber-400/40 text-amber-300 text-[11px] sm:text-xs font-bold uppercase tracking-[0.25em] px-5 py-2 rounded-full mb-4 shadow-sm backdrop-blur-sm"
-                >
-                  <Sparkles size={14} className="text-amber-400" />
-                  100% STATUTORY COMPLIANCE &amp; LEGAL CLEARANCE
-                </motion.div>
+                <div className="inline-flex items-center gap-1.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[11px] sm:text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">
+                  <span>🏛️</span>
+                  <span>100% STATUTORY APPROVALS &amp; LEGAL CLEARANCE</span>
+                </div>
 
                 {/* Main Heading */}
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4 leading-tight tracking-tight drop-shadow-md"
-                >
+                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-3 leading-tight tracking-tight">
                   Recognitions That Reflect Our Standards
-                </motion.h2>
+                </h2>
 
-                {/* Subtitle */}
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="text-white/75 text-sm sm:text-base max-w-3xl mx-auto leading-relaxed mb-12 font-medium"
-                >
-                  Every square yard in our plotted townships and gated farmland communities is legally sanctioned by statutory government authorities, ensuring complete financial safety and generational wealth.
-                </motion.p>
+                <p className="text-white/70 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed mb-8">
+                  Every square yard in our developments is officially sanctioned by statutory planning bodies with clear titles, survey demarcations, and bank loan pre-approvals.
+                </p>
 
-                {/* 5 Statutory Accreditation Seals Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-12">
+                {/* 5 Accreditations Micro-Badges — COMPACT on Mobile (Takes minimal vertical space!) */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 mb-8">
                   {[
-                    {
-                      name: 'TG RERA',
-                      authority: 'Telangana Real Estate Regulatory Authority',
-                      desc: 'Registered Layout Sanctions & Strict Investor Safeguards',
-                      status: 'Sanctioned',
-                      icon: Shield,
-                      accent: '#F59E0B',
-                    },
-                    {
-                      name: 'HMDA',
-                      authority: 'Hyderabad Metropolitan Development Authority',
-                      desc: 'Master Plan Zonal Compliance & Infrastructure Norms',
-                      status: 'Compliant',
-                      icon: Landmark,
-                      accent: '#38BDF8',
-                    },
-                    {
-                      name: 'DTCP',
-                      authority: 'Directorate of Town & Country Planning',
-                      desc: 'Approved Road Widths, Drainage, Parks & Commercial Belts',
-                      status: 'Approved',
-                      icon: Building2,
-                      accent: '#10B981',
-                    },
-                    {
-                      name: 'MUDA',
-                      authority: 'Mahabubnagar Urban Development Authority',
-                      desc: 'NH-44 Corridor Urban Infrastructure Clearances',
-                      status: 'Sanctioned',
-                      icon: Award,
-                      accent: '#A855F7',
-                    },
-                    {
-                      name: 'CLEAR TITLE',
-                      authority: '100% Verified Ownership & Spot Demarcation',
-                      desc: '30-Year Encumbrance Search & Immediate Spot Registration',
-                      status: 'Guaranteed',
-                      icon: Scale,
-                      accent: '#EC4899',
-                    },
-                  ].map((auth, idx) => (
-                    <motion.div
-                      key={auth.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.45, delay: idx * 0.08 }}
-                      className={`bg-white/[0.06] backdrop-blur-md border border-white/15 hover:border-amber-400/60 hover:bg-white/[0.12] transition-all duration-300 rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center group shadow-sm ${
-                        idx === 4 ? 'col-span-2 md:col-span-1' : ''
+                    { name: 'TG RERA', label: 'RERA Sanctioned', icon: '🏛️', status: 'Verified' },
+                    { name: 'HMDA', label: 'Zonal Compliant', icon: '📐', status: 'Approved' },
+                    { name: 'DTCP', label: 'Town Planning', icon: '📜', status: 'Sanctioned' },
+                    { name: 'MUDA', label: 'Urban Clearances', icon: '🛣️', status: 'Approved' },
+                    { name: 'CLEAR TITLE', label: '30-Yr Search', icon: '⚖️', status: 'Guaranteed' },
+                  ].map((item, idx) => (
+                    <div
+                      key={item.name}
+                      className={`bg-white/[0.07] border border-white/10 hover:border-amber-400/50 rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center transition-all ${
+                        idx === 4 ? 'col-span-2 sm:col-span-1' : ''
                       }`}
                     >
-                      {/* Medallion Ring */}
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400/20 to-amber-600/10 border border-amber-400/40 flex items-center justify-center text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)] group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] transition-all duration-300 mb-3">
-                        <auth.icon size={22} style={{ color: auth.accent }} />
-                      </div>
-
-                      {/* Name */}
-                      <div className="font-heading text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors mb-1 tracking-wider">
-                        {auth.name}
-                      </div>
-
-                      {/* Authority Label */}
-                      <div className="text-[11px] text-white/80 font-semibold leading-snug line-clamp-2 mb-2">
-                        {auth.authority}
-                      </div>
-
-                      {/* Verified Pill */}
-                      <div className="mt-auto inline-flex items-center gap-1 bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                        <Check size={11} className="stroke-[3]" /> {auth.status}
-                      </div>
-                    </motion.div>
+                      <span className="text-xl sm:text-2xl mb-1">{item.icon}</span>
+                      <span className="font-heading text-xs sm:text-sm font-bold text-white tracking-wide">{item.name}</span>
+                      <span className="text-[10px] text-white/60 font-medium truncate mt-0.5">{item.label}</span>
+                      <span className="mt-1.5 text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">
+                        ✓ {item.status}
+                      </span>
+                    </div>
                   ))}
                 </div>
 
-                {/* 3 Grand Gold Medallion Feature Cards (Googee Reference Style) */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-10">
+                {/* 3 Core Trust Guarantees — Concise & Non-Flashy */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-6">
 
-                  {/* Medallion 1: Statutory Approvals */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 25 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                    className="relative bg-gradient-to-b from-[#0B1E40] to-[#07152D] border border-amber-400/30 hover:border-amber-400/70 rounded-3xl p-7 sm:p-8 transition-all duration-300 hover:shadow-[0_15px_35px_rgba(245,158,11,0.15)] flex flex-col group overflow-hidden"
-                  >
-                    <div className="absolute top-0 right-0 w-28 h-28 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-
-                    {/* Gold Crest Top Row */}
-                    <div className="flex items-center gap-4 mb-5">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 p-[1px] shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300 shrink-0">
-                        <div className="w-full h-full bg-[#081730] rounded-2xl flex items-center justify-center text-amber-300">
-                          <Trophy size={26} />
-                        </div>
-                      </div>
+                  {/* Pillar 1 */}
+                  <div className="bg-white/[0.05] border border-white/10 hover:border-amber-400/40 rounded-2xl p-5 transition-all">
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <span className="text-xl">🏆</span>
                       <div>
-                        <div className="text-[11px] font-bold text-amber-400 uppercase tracking-widest">
-                          OFFICIAL SANCTIONS
-                        </div>
-                        <h3 className="font-heading text-lg sm:text-xl font-bold text-white group-hover:text-amber-200 transition-colors">
-                          Statutory Layouts
-                        </h3>
+                        <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">OFFICIAL SANCTIONS</div>
+                        <h3 className="font-heading text-sm sm:text-base font-bold text-white">100% Statutory Layouts</h3>
                       </div>
                     </div>
-
-                    <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6 flex-1">
-                      Every layout carries verified statutory LP orders, adhering strictly to government master plans with 40/33/30 ft black-top roads and civic reservations.
+                    <p className="text-white/65 text-xs leading-relaxed">
+                      Approved government LP orders with standardized 40/33/30 ft blacktop roads, underground storm drainage, and reserved public parks.
                     </p>
+                  </div>
 
-                    <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-white/85">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
-                        <span>Official Government LP Numbering</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
-                        <span>100% Vaastu Compliant Planning</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
-                        <span>Underground Drainage &amp; Water Systems</span>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* Medallion 2: Customer Trust & Legacy */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 25 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="relative bg-gradient-to-b from-[#0B1E40] to-[#07152D] border border-amber-400/30 hover:border-amber-400/70 rounded-3xl p-7 sm:p-8 transition-all duration-300 hover:shadow-[0_15px_35px_rgba(245,158,11,0.15)] flex flex-col group overflow-hidden"
-                  >
-                    <div className="absolute top-0 right-0 w-28 h-28 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
-
-                    <div className="flex items-center gap-4 mb-5">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 p-[1px] shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300 shrink-0">
-                        <div className="w-full h-full bg-[#081730] rounded-2xl flex items-center justify-center text-amber-300">
-                          <Medal size={26} />
-                        </div>
-                      </div>
+                  {/* Pillar 2 */}
+                  <div className="bg-white/[0.05] border border-white/10 hover:border-amber-400/40 rounded-2xl p-5 transition-all">
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <span className="text-xl">🤝</span>
                       <div>
-                        <div className="text-[11px] font-bold text-amber-400 uppercase tracking-widest">
-                          UNBLEMISHED RECORD
-                        </div>
-                        <h3 className="font-heading text-lg sm:text-xl font-bold text-white group-hover:text-amber-200 transition-colors">
-                          12,000+ Happy Families
-                        </h3>
+                        <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">22+ YEARS TRUST</div>
+                        <h3 className="font-heading text-sm sm:text-base font-bold text-white">12,000+ Happy Families</h3>
                       </div>
                     </div>
-
-                    <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6 flex-1">
-                      Over 22 years of continuous on-schedule delivery with zero litigation across 11 landmark developments throughout Telangana&apos;s prime growth corridors.
+                    <p className="text-white/65 text-xs leading-relaxed">
+                      Two unbroken decades of on-time project execution across 11 landmark developments with zero litigation and continuous capital growth.
                     </p>
+                  </div>
 
-                    <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-white/85">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
-                        <span>22+ Years Established Track Record</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
-                        <span>Multi-Fold Capital Appreciation</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
-                        <span>Zero Dispute &amp; Clean Title Legacy</span>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* Medallion 3: Spot Registration & Bank Finance */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 25 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                    className="relative bg-gradient-to-b from-[#0B1E40] to-[#07152D] border border-amber-400/30 hover:border-amber-400/70 rounded-3xl p-7 sm:p-8 transition-all duration-300 hover:shadow-[0_15px_35px_rgba(245,158,11,0.15)] flex flex-col group overflow-hidden"
-                  >
-                    <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-
-                    <div className="flex items-center gap-4 mb-5">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 p-[1px] shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform duration-300 shrink-0">
-                        <div className="w-full h-full bg-[#081730] rounded-2xl flex items-center justify-center text-amber-300">
-                          <Scale size={26} />
-                        </div>
-                      </div>
+                  {/* Pillar 3 */}
+                  <div className="bg-white/[0.05] border border-white/10 hover:border-amber-400/40 rounded-2xl p-5 transition-all">
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <span className="text-xl">📑</span>
                       <div>
-                        <div className="text-[11px] font-bold text-amber-400 uppercase tracking-widest">
-                          SPOT CONVEYANCE
-                        </div>
-                        <h3 className="font-heading text-lg sm:text-xl font-bold text-white group-hover:text-amber-200 transition-colors">
-                          Immediate Registration
-                        </h3>
+                        <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">SPOT CONVEYANCE</div>
+                        <h3 className="font-heading text-sm sm:text-base font-bold text-white">Immediate Spot Registration</h3>
                       </div>
                     </div>
-
-                    <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6 flex-1">
-                      Physical plot demarcation with survey stones, 30-year link document verification, instant mutation support, and bank loan approvals from premier lenders.
+                    <p className="text-white/65 text-xs leading-relaxed">
+                      Concrete numbered boundary stones, spot sub-registrar booking, mutation assistance, and pre-approved loans with SBI, HDFC &amp; ICICI.
                     </p>
-
-                    <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-white/85">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
-                        <span>Instant Spot Sub-Registrar Booking</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
-                        <span>Numbered Concrete Boundary Stones</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 size={14} className="text-amber-400 shrink-0" />
-                        <span>Pre-Approved Bank Loans (SBI / HDFC)</span>
-                      </div>
-                    </div>
-                  </motion.div>
+                  </div>
 
                 </div>
 
-                {/* Bottom Interactive Legal Verification Strip */}
-                <div className="bg-white/5 border border-amber-400/20 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 backdrop-blur-sm">
-                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 sm:gap-6 text-xs text-white/80 font-medium">
-                    <span className="flex items-center gap-1.5">
-                      <Shield size={14} className="text-amber-400" /> 100% Clear Marketable Titles
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <BadgeCheck size={14} className="text-emerald-400" /> Non-Agricultural Approved
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <CheckCircle2 size={14} className="text-cyan-400" /> Spot Physical Possession
-                    </span>
+                {/* Compact Legal Strip */}
+                <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/70">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
+                    <span>🛡️ Clear Marketable Titles</span>
+                    <span>📍 Numbered Survey Stones</span>
+                    <span>🏛️ Bank Loan Facility</span>
                   </div>
-
                   <button
                     onClick={() => setModalOpen(true)}
-                    className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-neutral-950 text-xs font-extrabold uppercase tracking-wider px-6 py-2.5 rounded-full transition-all duration-200 shadow-md shadow-amber-500/25 shrink-0"
+                    className="bg-amber-400 hover:bg-amber-300 text-neutral-950 text-xs font-bold px-5 py-2 rounded-full transition-colors shrink-0 shadow-sm"
                   >
                     Verify Layout Sanctions
                   </button>
@@ -852,51 +740,151 @@ export default function HomePage() {
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            5. OUR PROJECTS (Explore Our Range of Expert Real Estate Services)
+            5. OUR PROJECTS (Attractive, Astonishing Real Estate Showcase)
+            - Flagship Spotlight for Golden Palm City
+            - Category Filter Tabs with real estate emojis
+            - Elevated Project Cards with rich specifications
         ════════════════════════════════════════════════════════════ */}
-        <section id="projects" className="bg-[#FAF9F6] py-20 px-4 sm:px-6 lg:px-8">
+        <section id="projects" className="bg-[#FAF8F5] py-16 sm:py-20 px-3 sm:px-6 lg:px-8 border-t border-neutral-200/60">
           <div className="max-w-7xl mx-auto">
 
-            <div className="text-center max-w-3xl mx-auto mb-10">
-              <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-3">
-                OUR PROJECTS
+            {/* Section Header */}
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <div className="inline-flex items-center gap-1.5 text-[#B91C1C] text-xs font-bold uppercase tracking-[0.2em] mb-2">
+                <span>🏡</span>
+                <span>CURATED PORTFOLIO</span>
               </div>
-              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4 leading-tight">
-                Explore Our Range of Expert Real Estate Services
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 mb-4 leading-tight">
+                Handcrafted Communities Across Telangana
               </h2>
-              <p className="text-neutral-500 text-sm sm:text-base leading-relaxed">
-                Handcrafted highway townships, gated plotted communities, and farmland retreats across Telangana.
+              <p className="text-neutral-600 text-sm sm:text-base leading-relaxed">
+                From luxury highway townships to nature-embraced farmland estates — every KP Infra development is a masterpiece of legal clarity, prime location, and lasting value.
               </p>
             </div>
 
+            {/* 🌟 FLAGSHIP SPOTLIGHT BANNER: Golden Palm City on NH-44 Macharam 🌟 */}
+            <div className="mb-14 bg-gradient-to-br from-neutral-900 via-[#111A2E] to-neutral-900 rounded-3xl sm:rounded-[36px] overflow-hidden shadow-2xl border border-neutral-800 text-white grid lg:grid-cols-12 items-center">
+
+              {/* Left Image Side */}
+              <div className="lg:col-span-7 relative h-72 sm:h-96 lg:h-[460px] overflow-hidden bg-neutral-950">
+                <Image
+                  src={FLAGSHIP.coverImage || FLAGSHIP.image}
+                  alt={FLAGSHIP.name}
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+
+                {/* Floating Tags on Image */}
+                <div className="absolute top-4 left-4 bg-gradient-to-r from-amber-500 to-amber-600 text-neutral-950 text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+                  <span>⭐</span>
+                  <span>FLAGSHIP HIGHWAY TOWNSHIP</span>
+                </div>
+
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-semibold text-white/90">
+                  <span className="flex items-center gap-1">
+                    <span>🛣️</span>
+                    <span>NH-44 Hyderabad-Bengaluru Corridor</span>
+                  </span>
+                  <span className="bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-amber-300 font-bold border border-white/20">
+                    7.27 Acres • 9 Blocks
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Details Side */}
+              <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+                <div>
+                  <div className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-1.5">
+                    {FLAGSHIP.category} • NH-44 Macharam, Jadcherla
+                  </div>
+                  <h3 className="font-heading text-2xl sm:text-3xl font-bold text-white mb-3">
+                    {FLAGSHIP.name}
+                  </h3>
+                  <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6">
+                    {FLAGSHIP.shortDescription}
+                  </p>
+
+                  {/* Highlights Grid */}
+                  <div className="grid grid-cols-2 gap-3 mb-6 text-xs text-white/85">
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                      <span>🏊</span>
+                      <span className="truncate">Clubhouse &amp; Pool</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                      <span>📜</span>
+                      <span className="truncate">DTCP, MUDA &amp; RERA</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                      <span>📐</span>
+                      <span className="truncate">161 – 2,950 sq.yds</span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                      <span>📍</span>
+                      <span className="truncate">Opp. Pharma SEZ</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-4">
+                  <div>
+                    <div className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Pricing</div>
+                    <div className="text-lg font-extrabold text-amber-400">Price On Request</div>
+                  </div>
+                  <Link
+                    href={`/projects/${FLAGSHIP.slug}`}
+                    className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-neutral-950 text-xs sm:text-sm font-extrabold px-6 py-3 rounded-xl transition-all shadow-lg hover:shadow-amber-400/20"
+                  >
+                    <span>View Flagship Details</span>
+                    <span>↗</span>
+                  </Link>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Category Filter Tabs with Real Estate Emojis */}
             <div className="flex justify-center items-center gap-2 mb-10 flex-wrap">
-              {['All', 'Ongoing', 'Completed'].map(tab => (
+              {[
+                { id: 'All', label: 'All Developments', count: PROJECTS.length, icon: '🌟' },
+                { id: 'Ongoing', label: 'Ongoing Townships', count: ONGOING.length, icon: '🏗️' },
+                { id: 'Completed', label: 'Delivered Communities', count: COMPLETED.length, icon: '🏡' },
+              ].map(tab => (
                 <button
-                  key={tab}
-                  onClick={() => setProjectFilter(tab)}
-                  className={`px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 shadow-sm ${
-                    projectFilter === tab
+                  key={tab.id}
+                  onClick={() => setProjectFilter(tab.id)}
+                  className={`inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all shadow-sm ${
+                    projectFilter === tab.id
                       ? 'bg-neutral-900 text-white shadow-md'
-                      : 'bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 border border-neutral-200/60'
+                      : 'bg-white text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 border border-neutral-200'
                   }`}
                 >
-                  {tab === 'All' ? `All Projects (${PROJECTS.length})` : tab === 'Ongoing' ? `Ongoing (${ONGOING.length})` : `Delivered (${COMPLETED.length})`}
+                  <span>{tab.icon}</span>
+                  <span>{tab.label}</span>
+                  <span className={`text-[11px] px-2 py-0.2 rounded-full ${projectFilter === tab.id ? 'bg-white/20 text-white' : 'bg-neutral-100 text-neutral-500'}`}>
+                    {tab.count}
+                  </span>
                 </button>
               ))}
             </div>
 
+            {/* Project Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {filteredProjects.map((project, idx) => (
                 <ProjectCard key={project.id} project={project} index={idx} />
               ))}
             </div>
 
+            {/* View Complete Portfolio Button */}
             <div className="text-center mt-14">
               <Link
                 href="/projects"
                 className="inline-flex items-center gap-2 bg-white hover:bg-neutral-900 text-neutral-900 hover:text-white border-2 border-neutral-900 text-xs sm:text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-full transition-all duration-300 shadow-sm"
               >
-                View Complete Portfolio <ArrowRight size={15} />
+                <span>Browse All 11 Projects</span>
+                <ArrowRight size={15} />
               </Link>
             </div>
 
@@ -904,47 +892,96 @@ export default function HomePage() {
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            6. WHAT SETS US APART? (Dark Navy Full-Width Section)
+            6. WHAT SETS US APART? (Real Estate Domain Advantage Matrix)
+            - Feel-good modern palette with deep obsidian canvas
+            - Real estate icons & emojis
+            - Clear, compelling investor value propositions
         ════════════════════════════════════════════════════════════ */}
-        <section id="why-us" className="bg-[#070E1E] py-20 sm:py-28 px-4 sm:px-6 lg:px-8 text-white relative">
+        <section id="why-us" className="bg-[#0B1528] py-16 sm:py-24 px-3 sm:px-6 lg:px-8 text-white relative">
           <div className="max-w-6xl mx-auto">
 
             <div className="text-center max-w-3xl mx-auto mb-14">
-              <div className="text-cyan-400 text-xs font-bold uppercase tracking-[0.25em] mb-3">
-                A HERITAGE OF TRUST BUILT ON OVER 22 YEARS
+              <div className="inline-flex items-center gap-1.5 text-amber-400 text-xs font-bold uppercase tracking-[0.2em] mb-2.5">
+                <span>🏆</span>
+                <span>THE KINGS PRIDE ADVANTAGE</span>
               </div>
-              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-wider uppercase">
-                WHAT <span className="text-cyan-400">SETS US APART?</span>
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-wide uppercase">
+                WHAT <span className="text-amber-400">SETS US APART?</span>
               </h2>
+              <p className="text-white/70 text-xs sm:text-sm mt-3 max-w-xl mx-auto leading-relaxed">
+                Why 12,000+ families have entrusted their land investments to KP Infra over the past 22 years.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {SETS_US_APART.map((item, idx) => (
+            {/* 6 Real Estate Advantage Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+              {[
+                {
+                  emoji: '🏗️',
+                  title: 'Master-Planned Infrastructure',
+                  desc: 'Standardized 40, 33 & 30 ft wide black-top roads with kerbing stones, modern underground drainage, overhead water storage, and dense avenue trees.',
+                  highlight: 'Built for Longevity',
+                },
+                {
+                  emoji: '⚖️',
+                  title: '100% Clear & Marketable Titles',
+                  desc: 'Direct spot registration with the Sub-Registrar, comprehensive 30-year non-encumbrance reports, and zero legal disputes in 22 years.',
+                  highlight: 'Spot Conveyance',
+                },
+                {
+                  emoji: '📈',
+                  title: 'High Capital Appreciation',
+                  desc: 'Prime growth corridors on South Hyderabad growth spine (NH-44, Pharma SEZs, Shamshabad Airport, and Regional Ring Road).',
+                  highlight: 'Rapid Growth Corridor',
+                },
+                {
+                  emoji: '📍',
+                  title: 'Strategic Economic Hubs',
+                  desc: 'Adjacent to world-class industrial hubs (Welspun Flooring, Microsoft Mega Data Centre, Amazon AWS, and Pollepally Pharma SEZ).',
+                  highlight: 'Industrial Proximity',
+                },
+                {
+                  emoji: '🤝',
+                  title: '22+ Years Builder Integrity',
+                  desc: 'Over two unbroken decades of on-time project execution, transparent dealings, and 12,000+ satisfied plot and villa homeowners.',
+                  highlight: 'Unbroken Legacy',
+                },
+                {
+                  emoji: '🛡️',
+                  title: 'Gated Security & Long-Term Care',
+                  desc: 'Heavy pre-cast compound perimeter walls, 24/7 CCTV surveillance, physical demarcation survey stones, and layout maintenance.',
+                  highlight: '24/7 Peace of Mind',
+                },
+              ].map((item, idx) => (
                 <motion.div
                   key={item.title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.45, delay: idx * 0.07 }}
-                  className="bg-[#0B172E] border border-white/10 rounded-2xl p-6 sm:p-7 hover:border-cyan-400/40 hover:bg-[#0E1C38] transition-all duration-300 flex flex-col"
+                  transition={{ duration: 0.45, delay: idx * 0.06 }}
+                  className="bg-white/[0.05] border border-white/10 hover:border-amber-400/40 hover:bg-white/[0.08] rounded-2xl p-6 sm:p-7 transition-all flex flex-col justify-between"
                 >
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center mb-5"
-                    style={{ backgroundColor: `${item.accent}20` }}
-                  >
-                    <div
-                      className="w-2.5 h-2.5 rounded-full"
-                      style={{ backgroundColor: item.accent }}
-                    />
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-3xl">{item.emoji}</span>
+                      <span className="text-[10px] font-bold text-amber-300 bg-amber-400/15 border border-amber-400/30 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                        {item.highlight}
+                      </span>
+                    </div>
+
+                    <h3 className="font-heading text-lg font-bold text-white mb-2">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-white/65 text-xs sm:text-sm leading-relaxed mb-4">
+                      {item.desc}
+                    </p>
                   </div>
 
-                  <h3 className="font-heading text-lg font-bold text-white mb-2.5">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-white/60 text-xs sm:text-sm leading-relaxed">
-                    {item.desc}
-                  </p>
+                  <div className="pt-3 border-t border-white/10 flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
+                    <span>✓</span>
+                    <span>Verified KP Infra Guarantee</span>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -953,18 +990,22 @@ export default function HomePage() {
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            7. TESTIMONIALS (White Canvas with Clean Cards)
+            7. TESTIMONIALS (Warm, Feel-Good Luxury Editorial Cards)
         ════════════════════════════════════════════════════════════ */}
-        <section id="testimonials" className="bg-white py-20 px-4 sm:px-6 lg:px-8 border-b border-neutral-100">
+        <section id="testimonials" className="bg-[#FAF8F5] py-16 sm:py-24 px-3 sm:px-6 lg:px-8 border-b border-neutral-200/60">
           <div className="max-w-6xl mx-auto">
 
             <div className="text-center max-w-2xl mx-auto mb-14">
-              <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-3">
-                TESTIMONIALS
+              <div className="inline-flex items-center gap-1.5 text-[#B91C1C] text-xs font-bold uppercase tracking-[0.2em] mb-2">
+                <span>💬</span>
+                <span>CLIENT EXPERIENCES</span>
               </div>
-              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 leading-tight">
-                What our happy clients say
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-neutral-900 leading-tight">
+                What Our Happy Clients Say
               </h2>
+              <p className="text-neutral-500 text-xs sm:text-sm mt-2">
+                Real stories from verified plot and farmland owners across our developments.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -975,28 +1016,31 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.45, delay: idx * 0.08 }}
-                  className="bg-white border border-neutral-200/70 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                  className="bg-white border border-neutral-200 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between"
                 >
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={14} fill="#F59E0B" className="text-[#F59E0B]" />
-                    ))}
+                  <div>
+                    {/* 5 Stars */}
+                    <div className="flex gap-1 mb-3">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={15} fill="#F59E0B" className="text-[#F59E0B]" />
+                      ))}
+                    </div>
+
+                    <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed mb-6 italic">
+                      &ldquo;{t.quote || t.text}&rdquo;
+                    </p>
                   </div>
 
-                  <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed mb-6 line-clamp-5 flex-1">
-                    &ldquo;{t.quote || t.text}&rdquo;
-                  </p>
-
-                  <div className="flex items-center gap-3 pt-4 border-t border-neutral-100">
-                    <div className="w-9 h-9 rounded-full bg-[#B91C1C]/10 text-[#B91C1C] font-bold text-xs flex items-center justify-center shrink-0">
+                  <div className="pt-4 border-t border-neutral-100 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 font-bold text-sm flex items-center justify-center shrink-0">
                       {(t.name || 'C').charAt(0)}
                     </div>
                     <div>
                       <div className="text-xs font-bold text-neutral-900 line-clamp-1">
                         {t.name}
                       </div>
-                      <div className="text-[11px] text-neutral-400 line-clamp-1">
-                        {t.role || t.location}
+                      <div className="text-[10px] text-emerald-700 font-semibold line-clamp-1">
+                        🏡 {t.role || t.location}
                       </div>
                     </div>
                   </div>
@@ -1007,9 +1051,10 @@ export default function HomePage() {
             <div className="text-center mt-12">
               <button
                 onClick={() => setModalOpen(true)}
-                className="inline-flex items-center gap-1.5 border border-neutral-300 hover:border-neutral-900 text-neutral-700 hover:text-neutral-900 text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-full transition-colors"
+                className="inline-flex items-center gap-1.5 border-2 border-neutral-900 text-neutral-900 hover:bg-neutral-900 hover:text-white text-xs font-bold uppercase tracking-wider px-7 py-3 rounded-full transition-all"
               >
-                VIEW CLIENT STORIES <ChevronRight size={14} />
+                <span>Read More Verified Reviews</span>
+                <ChevronRight size={14} />
               </button>
             </div>
 
@@ -1017,66 +1062,67 @@ export default function HomePage() {
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            8. CONTACT US SECTION (Clean Two-Column Layout)
+            8. CONTACT & SITE INSPECTION LOUNGE
+            - Free luxury AC cab site inspection
+            - Direct office contact & WhatsApp
         ════════════════════════════════════════════════════════════ */}
-        <section id="contact" className="bg-[#FAF9F6] py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-12 items-start">
+        <section id="contact" className="bg-[#FAF8F5] py-16 sm:py-20 px-3 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-10 items-start">
 
+            {/* Left Column: Office & Direct Advisory */}
             <div className="lg:col-span-5">
-              <div className="text-[#B91C1C] text-xs font-bold uppercase tracking-[0.25em] mb-3">
-                GET IN TOUCH
+              <div className="inline-flex items-center gap-1.5 text-[#B91C1C] text-xs font-bold uppercase tracking-[0.2em] mb-2.5">
+                <span>📍</span>
+                <span>GET IN TOUCH</span>
               </div>
-              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-neutral-900 mb-4 leading-tight">
+              <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-neutral-900 mb-4 leading-tight">
                 Connect With Our Property Advisors
               </h2>
-              <p className="text-neutral-500 text-sm leading-relaxed mb-8">
-                Whether you are looking to purchase an investment plot on NH-44 or a weekend retreat, our team is ready to guide you.
+              <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed mb-8">
+                Whether you are seeking high-growth plotted investments on NH-44 or a tranquil weekend farm retreat, our advisors are here for you 7 days a week.
               </p>
 
-              <div className="space-y-5">
+              {/* Free Cab Incentive Pill */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-6 flex items-start gap-3">
+                <span className="text-2xl">🚗</span>
+                <div className="text-xs text-emerald-950">
+                  <strong className="font-bold">Complimentary Site Walkthrough:</strong>
+                  <div className="text-emerald-800 text-[11px] mt-0.5">Free luxury AC cab pickup and drop arranged directly from your residence in Hyderabad.</div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
                 <div className="flex items-start gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200/80 flex items-center justify-center shrink-0 text-[#B91C1C] shadow-sm">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200 flex items-center justify-center shrink-0 text-[#B91C1C] shadow-sm">
                     <MapPin size={18} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Corporate Office</div>
-                    <div className="text-sm font-semibold text-neutral-800 leading-snug">
+                    <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Corporate Head Office</div>
+                    <div className="text-xs sm:text-sm font-semibold text-neutral-800 leading-snug">
                       {BRAND.office.line1}, {BRAND.office.line2}, {BRAND.office.area}, Hyderabad {BRAND.office.pincode}
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200/80 flex items-center justify-center shrink-0 text-[#B91C1C] shadow-sm">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200 flex items-center justify-center shrink-0 text-[#B91C1C] shadow-sm">
                     <Phone size={18} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Direct Lines</div>
-                    <div className="text-sm font-semibold text-neutral-800">
+                    <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Direct Helplines</div>
+                    <div className="text-xs sm:text-sm font-semibold text-neutral-800">
                       <a href={`tel:${BRAND.mobile1}`} className="hover:text-[#B91C1C] transition-colors">{BRAND.mobile1}</a> / <a href={`tel:${BRAND.phone}`} className="hover:text-[#B91C1C] transition-colors">{BRAND.phone}</a>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200/80 flex items-center justify-center shrink-0 text-[#B91C1C] shadow-sm">
-                    <Mail size={18} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Official Email</div>
-                    <div className="text-sm font-semibold text-neutral-800">
-                      <a href={`mailto:${BRAND.email}`} className="hover:text-[#B91C1C] transition-colors">{BRAND.email}</a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200/80 flex items-center justify-center shrink-0 text-emerald-600 shadow-sm">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-neutral-200 flex items-center justify-center shrink-0 text-emerald-600 shadow-sm">
                     <MessageCircle size={18} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">WhatsApp Advisory</div>
-                    <div className="text-sm font-semibold text-neutral-800">
+                    <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5">Instant WhatsApp Advisory</div>
+                    <div className="text-xs sm:text-sm font-semibold text-neutral-800">
                       <a
                         href={`https://wa.me/${BRAND.whatsapp}?text=Hello%2C%20I%20am%20interested%20in%20KP%20Infra%20projects.`}
                         target="_blank"
@@ -1091,12 +1137,16 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="lg:col-span-7 bg-white border border-neutral-200/80 rounded-3xl p-8 sm:p-10 shadow-sm">
-              <h3 className="font-heading text-xl font-bold text-neutral-900 mb-2">
-                Schedule a Private Site Inspection
-              </h3>
+            {/* Right Column: Site Inspection Booking Form */}
+            <div className="lg:col-span-7 bg-white border border-neutral-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-xl">📋</span>
+                <h3 className="font-heading text-lg sm:text-xl font-bold text-neutral-900">
+                  Book a Complimentary Site Inspection
+                </h3>
+              </div>
               <p className="text-xs text-neutral-500 mb-6">
-                Complimentary luxury AC cab pickup and site walkthrough arranged for prospective buyers.
+                Fill in your details below. Our senior project manager will confirm your AC cab pickup time.
               </p>
 
               <form onSubmit={handleEnquirySubmit} className="space-y-4">
@@ -1132,7 +1182,7 @@ export default function HomePage() {
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1.5">
-                    Select Project of Interest
+                    Select Development of Interest
                   </label>
                   <select
                     value={enquiryProject}
@@ -1149,20 +1199,20 @@ export default function HomePage() {
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-neutral-600 mb-1.5">
-                    Your Requirements / Message (Optional)
+                    Preferred Visit Date &amp; Notes (Optional)
                   </label>
                   <textarea
-                    rows={3}
-                    placeholder="Preferred plot size, budget, or preferred site visit date..."
+                    rows={2}
+                    placeholder="Preferred weekend date, plot size requirements, or family size..."
                     className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-900 focus:bg-white focus:outline-none focus:border-[#B91C1C] transition-colors resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-[#B91C1C] hover:bg-[#991B1B] text-white font-bold uppercase tracking-wider py-3.5 rounded-xl transition-colors duration-200 shadow-md shadow-[#B91C1C]/20 text-xs sm:text-sm mt-2"
+                  className="w-full bg-[#B91C1C] hover:bg-[#991B1B] text-white font-bold uppercase tracking-wider py-3.5 rounded-xl transition-all duration-200 shadow-md shadow-[#B91C1C]/20 text-xs sm:text-sm mt-2"
                 >
-                  {enquirySent ? '✓ Request Submitted Successfully' : 'Request Site Visit / Callback'}
+                  {enquirySent ? '✓ Site Visit Request Received!' : 'Confirm Free Site Visit Booking'}
                 </button>
               </form>
             </div>
@@ -1171,7 +1221,7 @@ export default function HomePage() {
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            9. FOOTER (Dark Navy Header & Links)
+            9. CORPORATE FOOTER
         ════════════════════════════════════════════════════════════ */}
         <footer className="bg-[#050C1B] text-white/60 py-16 px-4 sm:px-6 lg:px-8 border-t border-white/5">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 pb-12 border-b border-white/10">
