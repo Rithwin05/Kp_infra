@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Phone, MessageCircle, Menu, X, MapPin, Star,
-  CheckCircle2, ChevronRight, Mail, ArrowRight,
+  CheckCircle2, ChevronRight, ChevronLeft, Mail, ArrowRight,
   Award, Shield, Users, Building2,
   ExternalLink, Sparkles, Trophy, Medal, Scale, Landmark,
   BadgeCheck, Check, Trees, Compass, Ruler, Car,
@@ -104,26 +104,22 @@ function StatNumber({ value, label, trigger }) {
 }
 
 // ─── Project Card Component ───────────────────────────────────────────────────
-function ProjectCard({ project, index }) {
+function ProjectCard({ project, index, className = '' }) {
   const isFarmland = project.category?.toLowerCase().includes('farm')
   const isTownship = project.isFlagship || project.category?.toLowerCase().includes('layout')
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.45, delay: index * 0.05 }}
-      className="bg-white rounded-3xl overflow-hidden border border-neutral-200/90 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_45px_-12px_rgba(15,23,42,0.18)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col group relative"
+    <div
+      className={`bg-white rounded-3xl overflow-hidden border border-neutral-200/90 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_45px_-12px_rgba(15,23,42,0.18)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col group relative ${className}`}
     >
       {/* Image Container with Luxury Badges */}
-      <div className="relative h-60 sm:h-64 overflow-hidden bg-neutral-100">
+      <div className="relative h-52 sm:h-56 overflow-hidden bg-neutral-100">
         <Image
           src={project.coverImage || project.image}
           alt={project.name}
           fill
           className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="(max-width: 768px) 85vw, 400px"
         />
 
         {/* Top Dark Gradient for badge legibility */}
@@ -142,7 +138,7 @@ function ProjectCard({ project, index }) {
             : 'bg-neutral-900/90 text-amber-300 backdrop-blur-sm border border-amber-400/30'
         }`}>
           <span className={`w-1.5 h-1.5 rounded-full ${project.status === 'Ongoing' ? 'bg-emerald-300 animate-pulse' : 'bg-amber-300'}`} />
-          <span>{project.status === 'Ongoing' ? 'Under Active Development' : 'Completed & Delivered'}</span>
+          <span>{project.status === 'Ongoing' ? 'Active Project' : 'Delivered'}</span>
         </div>
 
         {/* Flagship Banner if Flagship */}
@@ -169,7 +165,7 @@ function ProjectCard({ project, index }) {
       <div className="p-5 sm:p-6 flex flex-col flex-1">
 
         {/* Project Title */}
-        <h3 className="font-heading text-xl font-bold text-neutral-900 mb-2 group-hover:text-emerald-700 transition-colors line-clamp-1 flex items-center justify-between">
+        <h3 className="font-heading text-lg sm:text-xl font-bold text-neutral-900 mb-2 group-hover:text-emerald-700 transition-colors line-clamp-1 flex items-center justify-between">
           <span>{project.name}</span>
           <ArrowRight size={16} className="text-neutral-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all shrink-0 ml-2" />
         </h3>
@@ -180,7 +176,7 @@ function ProjectCard({ project, index }) {
         </p>
 
         {/* Key Specs 3-Chip Grid */}
-        <div className="grid grid-cols-3 gap-2 py-3 px-3 bg-neutral-50 rounded-2xl border border-neutral-150/70 mb-4 text-center">
+        <div className="grid grid-cols-3 gap-1.5 py-2.5 px-2 bg-neutral-50 rounded-2xl border border-neutral-150/70 mb-4 text-center">
           <div className="flex flex-col">
             <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Plot Sizes</span>
             <span className="text-xs font-bold text-neutral-800 truncate mt-0.5">
@@ -232,7 +228,7 @@ function ProjectCard({ project, index }) {
         </div>
 
       </div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -246,6 +242,22 @@ export default function HomePage() {
   const [statsActive, setStatsActive]     = useState(false)
   const [scrolled, setScrolled]           = useState(false)
   const statsRef                          = useRef(null)
+  const projectsScrollRef                 = useRef(null)
+  const testimonialsScrollRef             = useRef(null)
+
+  const scrollProjects = (dir) => {
+    if (projectsScrollRef.current) {
+      const scrollAmount = dir === 'left' ? -380 : 380
+      projectsScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    }
+  }
+
+  const scrollTestimonials = (dir) => {
+    if (testimonialsScrollRef.current) {
+      const scrollAmount = dir === 'left' ? -360 : 360
+      testimonialsScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    }
+  }
 
   // Quick Enquiry Form state
   const [enquiryName, setEnquiryName]       = useState('')
@@ -615,15 +627,15 @@ export default function HomePage() {
         </section>
 
         {/* ════════════════════════════════════════════════════════════
-            4. RECOGNITIONS & STATUTORY APPROVALS (Compact, Feel-Good Luxury Canvas)
-            - Mobile-optimized: Compact, NO long scroll!
-            - Feel-good color palette: Deep Obsidian Navy, Champagne Gold & Emerald
+            4. RECOGNITIONS & STATUTORY APPROVALS (Compact, Mobile-Optimized)
+            - Short vertical footprint on mobile!
+            - Swipeable horizontal guarantees & single-strip accreditations
             - Real estate domain badges & emojis
         ════════════════════════════════════════════════════════════ */}
-        <section id="approvals" className="bg-[#FAF8F5] py-12 sm:py-16 px-3 sm:px-6 lg:px-8">
+        <section id="approvals" className="bg-[#FAF8F5] py-8 sm:py-16 px-3 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
 
-            <div className="bg-[#0A1424] rounded-3xl sm:rounded-[36px] p-6 sm:p-10 lg:p-12 text-center text-white shadow-xl border border-amber-400/20 relative overflow-hidden">
+            <div className="bg-[#0A1424] rounded-2xl sm:rounded-[36px] p-4 sm:p-8 lg:p-10 text-center text-white shadow-xl border border-amber-400/20 relative overflow-hidden">
 
               {/* Subtle ambient light */}
               <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -632,54 +644,52 @@ export default function HomePage() {
               <div className="relative z-10 max-w-5xl mx-auto">
 
                 {/* Eyebrow Badge */}
-                <div className="inline-flex items-center gap-1.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[11px] sm:text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-3">
+                <div className="inline-flex items-center gap-1.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2 sm:mb-3">
                   <span>🏛️</span>
                   <span>100% STATUTORY APPROVALS &amp; LEGAL CLEARANCE</span>
                 </div>
 
                 {/* Main Heading */}
-                <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-3 leading-tight tracking-tight">
+                <h2 className="font-heading text-xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-2 leading-tight tracking-tight">
                   Recognitions That Reflect Our Standards
                 </h2>
 
-                <p className="text-white/70 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed mb-8">
+                <p className="text-white/70 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed mb-4 sm:mb-6">
                   Every square yard in our developments is officially sanctioned by statutory planning bodies with clear titles, survey demarcations, and bank loan pre-approvals.
                 </p>
 
-                {/* 5 Accreditations Micro-Badges — COMPACT on Mobile (Takes minimal vertical space!) */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3 mb-8">
+                {/* 5 Accreditations Micro-Badges — Ultra-compact horizontal row on mobile */}
+                <div className="flex sm:grid sm:grid-cols-5 gap-2 overflow-x-auto sm:overflow-visible scroll-hide snap-x mb-4 sm:mb-6 pb-1 sm:pb-0">
                   {[
                     { name: 'TG RERA', label: 'RERA Sanctioned', icon: '🏛️', status: 'Verified' },
                     { name: 'HMDA', label: 'Zonal Compliant', icon: '📐', status: 'Approved' },
                     { name: 'DTCP', label: 'Town Planning', icon: '📜', status: 'Sanctioned' },
                     { name: 'MUDA', label: 'Urban Clearances', icon: '🛣️', status: 'Approved' },
                     { name: 'CLEAR TITLE', label: '30-Yr Search', icon: '⚖️', status: 'Guaranteed' },
-                  ].map((item, idx) => (
+                  ].map((item) => (
                     <div
                       key={item.name}
-                      className={`bg-white/[0.07] border border-white/10 hover:border-amber-400/50 rounded-2xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center transition-all ${
-                        idx === 4 ? 'col-span-2 sm:col-span-1' : ''
-                      }`}
+                      className="min-w-[105px] sm:min-w-0 flex-1 bg-white/[0.07] border border-white/10 hover:border-amber-400/50 rounded-xl sm:rounded-2xl p-2 sm:p-3 flex flex-col items-center justify-center text-center snap-start"
                     >
-                      <span className="text-xl sm:text-2xl mb-1">{item.icon}</span>
+                      <span className="text-lg sm:text-xl mb-0.5">{item.icon}</span>
                       <span className="font-heading text-xs sm:text-sm font-bold text-white tracking-wide">{item.name}</span>
-                      <span className="text-[10px] text-white/60 font-medium truncate mt-0.5">{item.label}</span>
-                      <span className="mt-1.5 text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full">
+                      <span className="text-[9px] sm:text-[10px] text-white/60 font-medium truncate mt-0.5">{item.label}</span>
+                      <span className="mt-1 text-[8px] sm:text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.2 rounded-full">
                         ✓ {item.status}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                {/* 3 Core Trust Guarantees — Concise & Non-Flashy */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-6">
+                {/* 3 Core Trust Guarantees — Swipeable Horizontal Carousel on Mobile (Takes ~120px height!), 3 cols on desktop */}
+                <div className="flex sm:grid sm:grid-cols-3 gap-3 overflow-x-auto sm:overflow-visible scroll-hide snap-x snap-mandatory text-left mb-3 sm:mb-6 pb-2 sm:pb-0">
 
                   {/* Pillar 1 */}
-                  <div className="bg-white/[0.05] border border-white/10 hover:border-amber-400/40 rounded-2xl p-5 transition-all">
-                    <div className="flex items-center gap-2.5 mb-2">
-                      <span className="text-xl">🏆</span>
+                  <div className="w-[78vw] sm:w-auto shrink-0 snap-start bg-white/[0.05] border border-white/10 hover:border-amber-400/40 rounded-2xl p-4 sm:p-5 transition-all">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-lg sm:text-xl">🏆</span>
                       <div>
-                        <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">OFFICIAL SANCTIONS</div>
+                        <div className="text-[9px] sm:text-[10px] font-bold text-amber-400 uppercase tracking-wider">OFFICIAL SANCTIONS</div>
                         <h3 className="font-heading text-sm sm:text-base font-bold text-white">100% Statutory Layouts</h3>
                       </div>
                     </div>
@@ -689,11 +699,11 @@ export default function HomePage() {
                   </div>
 
                   {/* Pillar 2 */}
-                  <div className="bg-white/[0.05] border border-white/10 hover:border-amber-400/40 rounded-2xl p-5 transition-all">
-                    <div className="flex items-center gap-2.5 mb-2">
-                      <span className="text-xl">🤝</span>
+                  <div className="w-[78vw] sm:w-auto shrink-0 snap-start bg-white/[0.05] border border-white/10 hover:border-amber-400/40 rounded-2xl p-4 sm:p-5 transition-all">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-lg sm:text-xl">🤝</span>
                       <div>
-                        <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">22+ YEARS TRUST</div>
+                        <div className="text-[9px] sm:text-[10px] font-bold text-amber-400 uppercase tracking-wider">22+ YEARS TRUST</div>
                         <h3 className="font-heading text-sm sm:text-base font-bold text-white">12,000+ Happy Families</h3>
                       </div>
                     </div>
@@ -703,11 +713,11 @@ export default function HomePage() {
                   </div>
 
                   {/* Pillar 3 */}
-                  <div className="bg-white/[0.05] border border-white/10 hover:border-amber-400/40 rounded-2xl p-5 transition-all">
-                    <div className="flex items-center gap-2.5 mb-2">
-                      <span className="text-xl">📑</span>
+                  <div className="w-[78vw] sm:w-auto shrink-0 snap-start bg-white/[0.05] border border-white/10 hover:border-amber-400/40 rounded-2xl p-4 sm:p-5 transition-all">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-lg sm:text-xl">📑</span>
                       <div>
-                        <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">SPOT CONVEYANCE</div>
+                        <div className="text-[9px] sm:text-[10px] font-bold text-amber-400 uppercase tracking-wider">SPOT CONVEYANCE</div>
                         <h3 className="font-heading text-sm sm:text-base font-bold text-white">Immediate Spot Registration</h3>
                       </div>
                     </div>
@@ -718,16 +728,23 @@ export default function HomePage() {
 
                 </div>
 
+                {/* Mobile Swipe Hint for Approvals */}
+                <div className="flex sm:hidden items-center justify-center gap-1.5 text-[10px] text-white/50 mb-3">
+                  <span>←</span>
+                  <span>Swipe to view all 3 trust guarantees</span>
+                  <span>→</span>
+                </div>
+
                 {/* Compact Legal Strip */}
-                <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/70">
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
+                <div className="pt-3 sm:pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-white/70">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-[11px] sm:text-xs">
                     <span>🛡️ Clear Marketable Titles</span>
                     <span>📍 Numbered Survey Stones</span>
                     <span>🏛️ Bank Loan Facility</span>
                   </div>
                   <button
                     onClick={() => setModalOpen(true)}
-                    className="bg-amber-400 hover:bg-amber-300 text-neutral-950 text-xs font-bold px-5 py-2 rounded-full transition-colors shrink-0 shadow-sm"
+                    className="bg-amber-400 hover:bg-amber-300 text-neutral-950 text-xs font-bold px-4 py-1.5 sm:px-5 sm:py-2 rounded-full transition-colors shrink-0 shadow-sm"
                   >
                     Verify Layout Sanctions
                   </button>
@@ -763,10 +780,10 @@ export default function HomePage() {
             </div>
 
             {/* 🌟 FLAGSHIP SPOTLIGHT BANNER: Golden Palm City on NH-44 Macharam 🌟 */}
-            <div className="mb-14 bg-gradient-to-br from-neutral-900 via-[#111A2E] to-neutral-900 rounded-3xl sm:rounded-[36px] overflow-hidden shadow-2xl border border-neutral-800 text-white grid lg:grid-cols-12 items-center">
+            <div className="mb-8 sm:mb-14 bg-gradient-to-br from-neutral-900 via-[#111A2E] to-neutral-900 rounded-3xl sm:rounded-[36px] overflow-hidden shadow-2xl border border-neutral-800 text-white grid lg:grid-cols-12 items-center">
 
               {/* Left Image Side */}
-              <div className="lg:col-span-7 relative h-72 sm:h-96 lg:h-[460px] overflow-hidden bg-neutral-950">
+              <div className="lg:col-span-7 relative h-56 sm:h-80 lg:h-[440px] overflow-hidden bg-neutral-950">
                 <Image
                   src={FLAGSHIP.coverImage || FLAGSHIP.image}
                   alt={FLAGSHIP.name}
@@ -778,64 +795,64 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
 
                 {/* Floating Tags on Image */}
-                <div className="absolute top-4 left-4 bg-gradient-to-r from-amber-500 to-amber-600 text-neutral-950 text-xs font-extrabold px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+                <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 bg-gradient-to-r from-amber-500 to-amber-600 text-neutral-950 text-[11px] sm:text-xs font-extrabold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
                   <span>⭐</span>
                   <span>FLAGSHIP HIGHWAY TOWNSHIP</span>
                 </div>
 
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-semibold text-white/90">
-                  <span className="flex items-center gap-1">
+                <div className="absolute bottom-3 left-3.5 right-3.5 sm:bottom-4 sm:left-4 sm:right-4 flex items-center justify-between text-[11px] sm:text-xs font-semibold text-white/90">
+                  <span className="flex items-center gap-1 truncate max-w-[65%]">
                     <span>🛣️</span>
-                    <span>NH-44 Hyderabad-Bengaluru Corridor</span>
+                    <span className="truncate">NH-44 Hyderabad-Bengaluru</span>
                   </span>
-                  <span className="bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-amber-300 font-bold border border-white/20">
+                  <span className="bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-amber-300 font-bold border border-white/20 text-[10px] sm:text-xs shrink-0">
                     7.27 Acres • 9 Blocks
                   </span>
                 </div>
               </div>
 
               {/* Right Details Side */}
-              <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+              <div className="lg:col-span-5 p-5 sm:p-8 lg:p-10 flex flex-col justify-between">
                 <div>
-                  <div className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-1.5">
+                  <div className="text-amber-400 text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-1">
                     {FLAGSHIP.category} • NH-44 Macharam, Jadcherla
                   </div>
-                  <h3 className="font-heading text-2xl sm:text-3xl font-bold text-white mb-3">
+                  <h3 className="font-heading text-xl sm:text-3xl font-bold text-white mb-2 sm:mb-3">
                     {FLAGSHIP.name}
                   </h3>
-                  <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6">
+                  <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
                     {FLAGSHIP.shortDescription}
                   </p>
 
                   {/* Highlights Grid */}
-                  <div className="grid grid-cols-2 gap-3 mb-6 text-xs text-white/85">
-                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-5 sm:mb-6 text-xs text-white/85">
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2 sm:p-2.5 rounded-xl">
                       <span>🏊</span>
                       <span className="truncate">Clubhouse &amp; Pool</span>
                     </div>
-                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2 sm:p-2.5 rounded-xl">
                       <span>📜</span>
                       <span className="truncate">DTCP, MUDA &amp; RERA</span>
                     </div>
-                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2 sm:p-2.5 rounded-xl">
                       <span>📐</span>
                       <span className="truncate">161 – 2,950 sq.yds</span>
                     </div>
-                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2.5 rounded-xl">
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-2 sm:p-2.5 rounded-xl">
                       <span>📍</span>
                       <span className="truncate">Opp. Pharma SEZ</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-4">
+                <div className="pt-3.5 sm:pt-4 border-t border-white/10 flex items-center justify-between gap-4">
                   <div>
                     <div className="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Pricing</div>
-                    <div className="text-lg font-extrabold text-amber-400">Price On Request</div>
+                    <div className="text-base sm:text-lg font-extrabold text-amber-400">Price On Request</div>
                   </div>
                   <Link
                     href={`/projects/${FLAGSHIP.slug}`}
-                    className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-neutral-950 text-xs sm:text-sm font-extrabold px-6 py-3 rounded-xl transition-all shadow-lg hover:shadow-amber-400/20"
+                    className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-neutral-950 text-xs sm:text-sm font-extrabold px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl transition-all shadow-lg hover:shadow-amber-400/20"
                   >
                     <span>View Flagship Details</span>
                     <span>↗</span>
@@ -870,11 +887,56 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Project Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {/* Executive Carousel Navigation Bar */}
+            <div className="flex items-center justify-between gap-4 mb-4 pt-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-bold text-neutral-800">
+                  Showing {filteredProjects.length} Master-Planned Developments
+                </span>
+                <span className="hidden md:inline-block text-xs text-neutral-400">
+                  • Swipe horizontally or use navigation arrows
+                </span>
+              </div>
+
+              {/* Prev / Next Buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => scrollProjects('left')}
+                  aria-label="Previous project"
+                  className="w-10 h-10 rounded-full bg-white hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-300 shadow-sm hover:shadow transition-all flex items-center justify-center active:scale-95"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={() => scrollProjects('right')}
+                  aria-label="Next project"
+                  className="w-10 h-10 rounded-full bg-white hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-300 shadow-sm hover:shadow transition-all flex items-center justify-center active:scale-95"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+
+            {/* Horizontal Project Carousel */}
+            <div
+              ref={projectsScrollRef}
+              className="flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory scroll-hide scroll-smooth pb-5 pt-1 px-1 -mx-3 px-3 sm:mx-0 sm:px-0"
+            >
               {filteredProjects.map((project, idx) => (
-                <ProjectCard key={project.id} project={project} index={idx} />
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  index={idx}
+                  className="w-[84vw] max-w-[340px] sm:max-w-none sm:w-[360px] lg:w-[390px] shrink-0 snap-start"
+                />
               ))}
+            </div>
+
+            {/* Mobile Swipe Hint */}
+            <div className="flex sm:hidden items-center justify-center gap-2 text-xs text-neutral-500 mt-2 mb-4">
+              <span>←</span>
+              <span className="font-medium">Swipe horizontally to explore all {filteredProjects.length} layouts</span>
+              <span>→</span>
             </div>
 
             {/* View Complete Portfolio Button */}
@@ -897,24 +959,24 @@ export default function HomePage() {
             - Real estate icons & emojis
             - Clear, compelling investor value propositions
         ════════════════════════════════════════════════════════════ */}
-        <section id="why-us" className="bg-[#0B1528] py-16 sm:py-24 px-3 sm:px-6 lg:px-8 text-white relative">
+        <section id="why-us" className="bg-[#0B1528] py-12 sm:py-20 px-3 sm:px-6 lg:px-8 text-white relative">
           <div className="max-w-6xl mx-auto">
 
-            <div className="text-center max-w-3xl mx-auto mb-14">
-              <div className="inline-flex items-center gap-1.5 text-amber-400 text-xs font-bold uppercase tracking-[0.2em] mb-2.5">
+            <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+              <div className="inline-flex items-center gap-1.5 text-amber-400 text-xs font-bold uppercase tracking-[0.2em] mb-2">
                 <span>🏆</span>
                 <span>THE KINGS PRIDE ADVANTAGE</span>
               </div>
-              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-wide uppercase">
+              <h2 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-wide uppercase">
                 WHAT <span className="text-amber-400">SETS US APART?</span>
               </h2>
-              <p className="text-white/70 text-xs sm:text-sm mt-3 max-w-xl mx-auto leading-relaxed">
+              <p className="text-white/70 text-xs sm:text-sm mt-2 sm:mt-3 max-w-xl mx-auto leading-relaxed">
                 Why 12,000+ families have entrusted their land investments to KP Infra over the past 22 years.
               </p>
             </div>
 
             {/* 6 Real Estate Advantage Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {[
                 {
                   emoji: '🏗️',
@@ -959,7 +1021,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.45, delay: idx * 0.06 }}
-                  className="bg-white/[0.05] border border-white/10 hover:border-amber-400/40 hover:bg-white/[0.08] rounded-2xl p-6 sm:p-7 transition-all flex flex-col justify-between"
+                  className="bg-white/[0.05] border border-white/10 hover:border-amber-400/40 hover:bg-white/[0.08] rounded-2xl p-5 sm:p-7 transition-all flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-4">
@@ -1008,44 +1070,87 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {(TESTIMONIALS || []).slice(0, 4).map((t, idx) => (
-                <motion.div
+            {/* Testimonials Controls & Rating Header */}
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-bold text-neutral-800">
+                  ⭐ 4.9/5 Average Rating
+                </span>
+                <span className="text-xs text-neutral-400">
+                  • Verified Property Owners Across Telangana
+                </span>
+              </div>
+
+              {/* Prev / Next Buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => scrollTestimonials('left')}
+                  aria-label="Previous testimonial"
+                  className="w-10 h-10 rounded-full bg-white hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-300 shadow-sm hover:shadow transition-all flex items-center justify-center active:scale-95"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={() => scrollTestimonials('right')}
+                  aria-label="Next testimonial"
+                  className="w-10 h-10 rounded-full bg-white hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-300 shadow-sm hover:shadow transition-all flex items-center justify-center active:scale-95"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+
+            {/* Horizontal Testimonials Track */}
+            <div
+              ref={testimonialsScrollRef}
+              className="flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory scroll-hide scroll-smooth pb-5 pt-1 px-1 -mx-3 px-3 sm:mx-0 sm:px-0"
+            >
+              {(TESTIMONIALS || []).map((t, idx) => (
+                <div
                   key={t.name || idx}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.45, delay: idx * 0.08 }}
-                  className="bg-white border border-neutral-200 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between"
+                  className="w-[84vw] max-w-[340px] sm:max-w-none sm:w-[350px] md:w-[380px] shrink-0 snap-start bg-white border border-neutral-200/90 rounded-3xl p-6 sm:p-7 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between group"
                 >
                   <div>
-                    {/* 5 Stars */}
-                    <div className="flex gap-1 mb-3">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={15} fill="#F59E0B" className="text-[#F59E0B]" />
-                      ))}
+                    {/* 5 Stars & Verified Badge */}
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="flex gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} size={15} fill="#F59E0B" className="text-[#F59E0B]" />
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span>✓</span>
+                        <span>Verified Owner</span>
+                      </span>
                     </div>
 
-                    <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed mb-6 italic">
+                    <p className="text-neutral-700 text-xs sm:text-sm leading-relaxed mb-6 italic">
                       &ldquo;{t.quote || t.text}&rdquo;
                     </p>
                   </div>
 
                   <div className="pt-4 border-t border-neutral-100 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 font-bold text-sm flex items-center justify-center shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-600 to-neutral-900 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-sm">
                       {(t.name || 'C').charAt(0)}
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-neutral-900 line-clamp-1">
+                      <div className="text-xs sm:text-sm font-bold text-neutral-900 line-clamp-1">
                         {t.name}
                       </div>
-                      <div className="text-[10px] text-emerald-700 font-semibold line-clamp-1">
+                      <div className="text-[10px] sm:text-[11px] text-emerald-700 font-semibold line-clamp-1 mt-0.5">
                         🏡 {t.role || t.location}
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
+            </div>
+
+            {/* Mobile Swipe Hint */}
+            <div className="flex sm:hidden items-center justify-center gap-2 text-xs text-neutral-500 mt-2 mb-4">
+              <span>←</span>
+              <span className="font-medium">Swipe horizontally to read all client stories</span>
+              <span>→</span>
             </div>
 
             <div className="text-center mt-12">
