@@ -439,52 +439,129 @@ export default function HomePage() {
             - Hero image extends from very top to bottom of frame
             - Navbar elements sit directly on top of the image
             - Zero color tinting / golden glazing: 100% natural photo
+            - Astonishing animative effects: Cinematic Ken Burns, sheen-sweep, floating trust pills & scroll guide
         ════════════════════════════════════════════════════════════ */}
         <section className="bg-white p-2 sm:p-3 md:p-4">
           <div className="relative w-full rounded-2xl sm:rounded-3xl lg:rounded-[32px] overflow-hidden shadow-2xl h-[88vh] min-h-[620px] sm:min-h-[700px] md:min-h-[760px] lg:min-h-[820px] flex flex-col items-center justify-center text-center p-6 sm:p-10 md:p-14">
 
-            {/* Background Image — 100% Natural, No Color Glaze or Tint */}
-            <Image
-              src="/images/hero-hyderabad.jpg"
-              alt="Hyderabad Skyline — Kings Pride Infra"
-              fill
-              className="object-cover object-center"
-              priority
-              quality={95}
-            />
+            {/* Background Image — 100% Natural, No Color Glaze, with Cinematic Slow Ken Burns Drift */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <Image
+                src="/images/hero-hyderabad.jpg"
+                alt="Hyderabad Skyline — Kings Pride Infra"
+                fill
+                className="object-cover object-center ken-burns"
+                priority
+                quality={95}
+              />
+            </div>
 
-            {/* Hero Centered Content — Clean Serif Headline & Logo Pill */}
-            <div className="relative z-10 flex flex-col items-center max-w-5xl mx-auto mt-16 sm:mt-12">
+            {/* Hero Centered Content — Clean Serif Headline & Interactive Logo Pill */}
+            <div className="relative z-10 flex flex-col items-center max-w-5xl mx-auto mt-12 sm:mt-8">
+
+              {/* Prestige Eyebrow Badge with Pulsing Status Indicator */}
+              <motion.div
+                initial={{ opacity: 0, y: -15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: 'easeOut' }}
+                className="mb-4 sm:mb-5 inline-flex items-center gap-2 bg-black/45 backdrop-blur-md border border-white/25 text-white text-[10px] sm:text-xs font-bold uppercase tracking-[0.22em] px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full shadow-lg"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>ESTD. 2003 • 22+ YEARS OF REAL ESTATE EXCELLENCE</span>
+              </motion.div>
 
               {/* Main Headline — High Contrast Pure White with Deep Shadow for Crisp Legibility */}
               <motion.h1
                 initial={{ opacity: 0, y: 25 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-wider uppercase leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] [text-shadow:_0_3px_16px_rgba(0,0,0,0.85)]"
+                transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
+                className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-wider uppercase leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] [text-shadow:_0_3px_16px_rgba(0,0,0,0.9)]"
               >
                 BEST REAL ESTATE DEVELOPER<br />
                 <span className="text-white">IN TELANGANA</span>
               </motion.h1>
 
-              {/* Centered White Logo Pill Badge (Exact Googee Style) */}
+              {/* Luxury Subtitle */}
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+                className="mt-2.5 sm:mt-4 text-xs sm:text-base md:text-lg text-white/95 font-medium tracking-wide max-w-2xl mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+              >
+                Architecting Master-Planned Highway Townships &amp; Premium Gated Layouts
+              </motion.p>
+
+              {/* Centered White Logo Pill Badge with Sheen Sweep & Interactive Hover */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.88, y: 15 }}
+                initial={{ opacity: 0, scale: 0.88, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.25, ease: 'easeOut' }}
-                className="mt-8 sm:mt-12 bg-white rounded-full px-8 sm:px-12 py-3.5 sm:py-5 shadow-[0_20px_50px_rgba(0,0,0,0.45)] flex items-center justify-center border border-white/80"
+                transition={{ duration: 0.7, delay: 0.45, ease: 'easeOut' }}
+                whileHover={{ scale: 1.04, y: -2 }}
+                className="mt-6 sm:mt-10 bg-white rounded-full px-7 sm:px-12 py-3 sm:py-4.5 shadow-[0_20px_50px_rgba(0,0,0,0.45)] flex items-center justify-center border border-white/80 sheen-sweep cursor-pointer transition-shadow hover:shadow-[0_25px_60px_rgba(0,0,0,0.55)]"
               >
                 <Image
                   src="/images/logo-full.png"
                   alt="Kings Pride Infra Projects Pvt. Ltd."
                   width={240}
                   height={85}
-                  className="h-11 sm:h-14 md:h-16 w-auto object-contain"
+                  className="h-10 sm:h-13 md:h-15 w-auto object-contain"
                   priority
                 />
               </motion.div>
 
             </div>
+
+            {/* Floating Left Glass Trust Pill */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.65 }}
+              className="absolute bottom-6 left-6 z-10 hidden lg:flex items-center gap-3 bg-black/45 backdrop-blur-md border border-white/25 rounded-2xl px-4 py-2.5 text-white shadow-xl floating-pill"
+            >
+              <div className="w-8 h-8 rounded-xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-amber-300 text-base">
+                🏛️
+              </div>
+              <div className="text-left">
+                <div className="text-[10px] uppercase tracking-wider text-amber-300 font-bold">100% Sanctioned</div>
+                <div className="text-xs font-bold text-white">DTCP, HMDA &amp; TG RERA</div>
+              </div>
+            </motion.div>
+
+            {/* Floating Right Glass Trust Pill */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.65 }}
+              className="absolute bottom-6 right-6 z-10 hidden lg:flex items-center gap-3 bg-black/45 backdrop-blur-md border border-white/25 rounded-2xl px-4 py-2.5 text-white shadow-xl floating-pill"
+              style={{ animationDelay: '1.5s' }}
+            >
+              <div className="w-8 h-8 rounded-xl bg-emerald-400/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-base">
+                ⭐
+              </div>
+              <div className="text-left">
+                <div className="text-[10px] uppercase tracking-wider text-emerald-300 font-bold">Proven Track Record</div>
+                <div className="text-xs font-bold text-white">12,000+ Happy Families</div>
+              </div>
+            </motion.div>
+
+            {/* Animated Scroll to Explore Guide */}
+            <motion.a
+              href="#about"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.85 }}
+              className="absolute bottom-4 sm:bottom-6 z-10 flex flex-col items-center gap-1.5 text-white/80 hover:text-white transition-colors cursor-pointer group"
+            >
+              <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-bold drop-shadow-md">Explore</span>
+              <div className="w-4 sm:w-5 h-7 sm:h-8 rounded-full border-2 border-white/50 flex items-start justify-center p-1 group-hover:border-white transition-colors">
+                <motion.div
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-white"
+                />
+              </div>
+            </motion.a>
+
           </div>
         </section>
 
@@ -543,12 +620,12 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
               className="lg:col-span-5 relative"
             >
-              <div className="relative h-[420px] sm:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-neutral-100">
+              <div className="relative h-[420px] sm:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-neutral-100 group border border-neutral-200/60">
                 <Image
                   src="/images/mohammed-aleemuddin.jpg"
                   alt="Mohammed Aleemuddin — Founder & Chairman, K.P. Infra Projects Pvt. Ltd."
                   fill
-                  className="object-cover object-top"
+                  className="object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   priority
                 />
@@ -597,7 +674,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="w-full bg-neutral-50 border-l-4 border-[#B91C1C] p-4 sm:p-5 rounded-r-2xl mb-8">
+              <div className="w-full bg-neutral-50 border-l-4 border-[#B91C1C] p-4 sm:p-5 rounded-r-2xl mb-8 shadow-sm">
                 <p className="text-xs sm:text-sm text-neutral-700 italic leading-relaxed">
                   &ldquo;Recognized across Telangana for pioneering DTCP, HMDA, and TG RERA approved plotted communities with immediate spot registration and lifetime infrastructure integrity.&rdquo;
                 </p>
@@ -613,7 +690,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="bg-[#0B1528] text-white px-5 py-2.5 rounded-xl shadow-md flex items-center gap-2">
+                <div className="bg-[#0B1528] text-white px-5 py-2.5 rounded-xl shadow-md flex items-center gap-2 sheen-sweep">
                   <span className="text-[#F0C040] font-extrabold text-sm">22+</span>
                   <span className="text-[11px] text-white/80 font-medium uppercase tracking-wider">
                     Years of Leadership Excellence
@@ -637,9 +714,9 @@ export default function HomePage() {
 
             <div className="bg-[#0A1424] rounded-2xl sm:rounded-[36px] p-4 sm:p-8 lg:p-10 text-center text-white shadow-xl border border-amber-400/20 relative overflow-hidden">
 
-              {/* Subtle ambient light */}
-              <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+              {/* Subtle ambient light with breathing glow */}
+              <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none glow-pulse" />
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none glow-pulse" style={{ animationDelay: '2.5s' }} />
 
               <div className="relative z-10 max-w-5xl mx-auto">
 
@@ -795,7 +872,7 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
 
                 {/* Floating Tags on Image */}
-                <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 bg-gradient-to-r from-amber-500 to-amber-600 text-neutral-950 text-[11px] sm:text-xs font-extrabold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
+                <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 bg-gradient-to-r from-amber-500 to-amber-600 text-neutral-950 text-[11px] sm:text-xs font-extrabold px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full shadow-lg flex items-center gap-1.5 sheen-sweep">
                   <span>⭐</span>
                   <span>FLAGSHIP HIGHWAY TOWNSHIP</span>
                 </div>

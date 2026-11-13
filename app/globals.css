@@ -184,4 +184,49 @@
     transform: translateY(-8px);
     box-shadow: 0 32px 80px -16px rgba(11, 31, 53, 0.22);
   }
+
+  /* Luxury Sheen Sweep */
+  .sheen-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+  .sheen-sweep::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      60deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.45) 50%,
+      transparent 65%
+    );
+    transform: rotate(25deg) translateX(-100%);
+    animation: sheenSweep 6s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+  @keyframes sheenSweep {
+    0%, 65% { transform: rotate(25deg) translateX(-100%); }
+    85%, 100% { transform: rotate(25deg) translateX(100%); }
+  }
+
+  /* Subtle Floating Animation for Badges */
+  .floating-pill {
+    animation: floatingPill 4.5s ease-in-out infinite alternate;
+  }
+  @keyframes floatingPill {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-7px); }
+  }
+
+  /* Ambient Breathing Glow */
+  .glow-pulse {
+    animation: glowPulse 5s infinite ease-in-out alternate;
+  }
+  @keyframes glowPulse {
+    0% { opacity: 0.3; transform: scale(0.98); }
+    100% { opacity: 0.7; transform: scale(1.03); }
+  }
 }
